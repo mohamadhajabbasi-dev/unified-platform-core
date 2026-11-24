@@ -311,3 +311,6 @@
 ## BUILD-024 — current
 - [x] Author tracked allocation and sale/return lifecycle; update prior trace tests.
 - [ ] Verify full CI, fix failures; add actual competing tracked serial reservation and receipt races, then valuation/COGS and remaining domains. No real data or deployment.
+
+## FIX-004 — current
+- [ ] Verify 0024 rerun, including tracked sales and prior regressions. First run failed before tests; not yet certified.

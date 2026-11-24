@@ -260,3 +260,6 @@
 
 ## BUILD-024 — latest
 - 82 prototype tables if applied, 27 migration files. FEFO and tracked checkout/fulfillment/full return authored; CI pending. No production changes.
+
+## FIX-004 — current
+- First 0024 migration failed SQL syntax; corrected guard function delimiter. Full CI pending.

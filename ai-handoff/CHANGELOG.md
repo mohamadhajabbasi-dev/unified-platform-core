@@ -71,3 +71,5 @@
 - BUILD-023: split trace-aware receipt and transfer allocations, existing ledger, variant-first locks; CI pending.
 
 - BUILD-024: FEFO, exact reservation allocations, traced fulfillment and confirmed full return; CI pending.
+
+- FIX-004: correct guard_trace_movement dollar quote in unapplied 0024.

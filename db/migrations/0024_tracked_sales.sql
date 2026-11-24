@@ -80,7 +80,7 @@ BEGIN
  IF NEW.quantity_delta<0 AND qty+NEW.quantity_delta<inventory.trace_held(NEW.tenant_id,NEW.warehouse_id,NEW.variant_id,NEW.lot_id,NEW.serial_id,clock_timestamp())
  THEN RAISE EXCEPTION 'Insufficient unreserved traced stock' USING ERRCODE='23514'; END IF;
  RETURN NEW;
-END $;
+END $$;
 CREATE OR REPLACE FUNCTION inventory.reserve_stock_internal(p_warehouse uuid,p_variant uuid,p_quantity bigint,p_key text,p_expires_at timestamptz)
 RETURNS uuid LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog AS $$
 DECLARE t uuid:=inventory.require_access('inventory.reserve'); existing inventory.reservations%ROWTYPE; result_id uuid; at_time timestamptz; remaining bigint; take_qty bigint; x record; tracked boolean; seq integer:=0;

@@ -311,3 +311,6 @@
 
 ## BUILD-024 / 2026-11-24 — FEFO and tracked sales
 - Precheck TEST-026 972d5aa6e8177a129ec869cb00e9a60d55ac3f14; inventory, sales, trace and procurement paths inspected. Initial local text transformation validation stopped before any commit; corrected slice boundary. Added 0024 one reservation allocation table, FEFO with deadline, negative movement protection, multi-movement fulfillment and exact full return confirmation. Existing checkout and stock ledger reused. Updated prior fail-closed tests for newly enabled tracked reservations; synthetic end-to-end test added. CI pending. No partial/damaged returns, dedicated tracked serial race, costing or actual external proof yet. No operational access.
+
+## FIX-004 / 2026-11-24 — migration delimiter
+- Run 45435844245 job 138593302453 failed applying 0024 at 839c7e99ba9dc37b7b5ab03e99e3600882761c26: guard_trace_movement closing dollar quote had one dollar rather than two, from text transformation. Corrected delimiter; no SQL tests ran on first attempt. Rerun required. No production access.
