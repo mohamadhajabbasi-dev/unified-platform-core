@@ -97,3 +97,7 @@
 ## TEST-006 — current
 - [x] Verify full catalog, CRM, IAM, foundation and concurrent identity regression; all PASS.
 - [ ] Next: implement inventory warehouses, append-only stock ledger, reservations and derived balances. Use tenant-aware FK to catalog. Test idempotency, oversell, concurrency and module/permission gates. Then orders/payment/finance and remaining domains; catalog hierarchy, media, pricing policies and final security review remain open. No legacy access.
+
+## BUILD-005 — current
+- [x] Author stock ledger, warehouses, reservations and derived balances; CI negative/concurrent tests.
+- [ ] Verify full regression and inventory contention tests, fix demonstrated failures. Then implement sales order and payment core linked to canonical customer/catalog/reservations; finance/returns/transfer/valuation and other domains pending. No legacy access.

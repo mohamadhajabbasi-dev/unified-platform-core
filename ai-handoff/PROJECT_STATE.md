@@ -93,3 +93,6 @@
 
 ## TEST-006 — latest checkpoint
 - Phase 03: 20 tables across core, iam, crm, platform, catalog; 4 migrations and 5 test suites PASS. Run 45408223573 job 138494611409, verified tested SHA af18194ee17b2765f31288ca4e122cd7d886584c. Greenfield CI only; no operational database created or changed. Catalog hierarchy/media, price-list selection/rounding and final approval remain open. Next inventory stock ledger/reservations.
+
+## BUILD-005 — latest
+- Inventory migration 0005 authored: three tables and one derived view (23 prototype tables total if applied). Ledger/reservations, idempotency and pair-lock functions, synthetic and concurrent tests. CI pending. No production changes. Next verify regression and inventory concurrency, then sales.

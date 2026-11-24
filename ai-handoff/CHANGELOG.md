@@ -18,3 +18,5 @@
 - FIX-001: correct foundation regression test delimiter after BUILD-003; rerun pending.
 
 - 2026-11-24 BUILD-004: add canonical tenant catalog and non-overlapping temporal prices; regression CI pending.
+
+- 2026-11-24 BUILD-005: inventory ledger, reservations and derived balances; concurrent oversell CI pending.
