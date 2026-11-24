@@ -37,3 +37,11 @@
 - Scope limitation: full original 20-file ZIP was **not** completely uploaded; binary PDF, PNG, HTML and several auxiliary texts **remain pending**. The new Markdown master is a concise maintained version, not byte-identical to prior PDF.
 - Production/database changes: NONE. Read-only schema discovery: NOT_STARTED.
 - Next exact action: verify GitHub state, decide whether to archive complete original ZIP/PDF in repository via authorized upload method, then request approved read-only inventory.
+
+## INV-001 / 2026-11-24T16:43:00+03:30 — repository preflight
+- Phase: 01 — read-only discovery preparation. Actor: ChatGPT. Scope: verify repository and owner approval, no production changes.
+- Pre-check/operations: read AGENTS, README, MASTER_PLAN, ARCHITECTURE_CHART, .gitignore and all six ai-handoff files; list full recursive tree (11 text files, not truncated), review all 14 main commits, verify private repository and pull/push permissions. No prior schema evidence or migration code in this repo.
+- Result: DONE for repository review; owner explicitly authorizes read-only inventory in current instruction. Original binary archive remains optional/pending, not required for inventory. Database engine names remain owner-reported.
+- Evidence: verified starting main HEAD `503273567150bcf85893723085b145718956db37`, latest message 'docs: record verified remote initialized state and pending full archive'.
+- Paths changed: ai-handoff/WORK_LOG.md, PROJECT_STATE.md, NEXT_ACTIONS.md only. Database/server touched: NONE. Tests: GitHub read-back and commit history only; no DB tests. Rollback: documentation-only revert if needed.
+- Blocker: secure read-only access and actual source schema evidence not yet verified. Next: discover authorized source repositories / read-only connection; do not read secrets or customer rows; inventory metadata before proposing mapping. Checkpoint commit identified by Git history (cannot embed its own SHA).
