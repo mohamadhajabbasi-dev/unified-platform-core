@@ -89,3 +89,7 @@
 ## TEST-005 — current
 - [x] Verify full regression and concurrent resolution; all PASS.
 - [ ] Next: implement catalog product, variants, categories, product-category and price model; test isolation, uniqueness, temporal non-overlap and IAM/module enforcement. Then inventory/sales and other domains; no legacy access.
+
+## BUILD-004 — current
+- [x] Implement canonical catalog and pricing SQL plus acceptance tests.
+- [ ] Verify 0001–0004 regression and concurrency CI; fix observed failures. Then inventory warehouses, append-only stock ledger and reservations, derived balances; catalog media/hierarchy and pricing policy remain pending.

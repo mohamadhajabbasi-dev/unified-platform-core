@@ -16,3 +16,5 @@
 - 2026-11-24 BUILD-003: CRM access enforcement, conflict-safe verified identity linkage and concurrent test; CI pending.
 
 - FIX-001: correct foundation regression test delimiter after BUILD-003; rerun pending.
+
+- 2026-11-24 BUILD-004: add canonical tenant catalog and non-overlapping temporal prices; regression CI pending.

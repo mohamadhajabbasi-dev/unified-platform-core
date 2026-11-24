@@ -87,3 +87,6 @@
 
 ## TEST-005 — latest checkpoint
 - 14 prototype tables; 3 migrations and 4 test suites PASS. Run 45407886388, job 138493418952, tested SHA 0fc37d44cb9b9b7a99f0d83b2ca61a6a95438464. CRM read/write permissions, active module, verified link conflict and simultaneous resolution tested. Trusted external identity verification, detailed audit and final auth architecture remain open. No production changes. Next catalog/pricing.
+
+## BUILD-004 — latest
+- Catalog and pricing migration 0004 authored: six tables, 20 total if applied; independent tenant master and temporal prices with role/module gating. Runtime verification pending. Media/hierarchy and full financial pricing rules remain open. No production changes.
