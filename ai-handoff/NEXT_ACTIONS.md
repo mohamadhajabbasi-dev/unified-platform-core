@@ -288,3 +288,7 @@
 ## TEST-024 — current
 - [x] Verify 0021 and all previous regressions; 30 suites PASS including six actual concurrency suites. Competing supplier settlement rejected without duplicate payment/journal.
 - [ ] Next exercise concurrent transfer versus reservation/transfer and opposite direction lock ordering. Then design canonical lot/serial/expiry traceability integrated with receipt, reservation, sale, return, adjustment and transfer; costing and COGS via existing journal. No second stock master. Transit/approval, partial receipts/returns, bank account semantic mapping, tax/shipping, banking/cheques/installments, AI/ops/backups/API and unique migration identifiers pending. No real data or deployment.
+
+## BUILD-022 — current
+- [x] Author traceability foundation and transfer/reserve concurrency tests.
+- [ ] Verify CI; then integrate trace-aware receipts, reservations/fulfillment, return and transfer with same ledger; add expiry/FEFO and cost layers, actual serial contention and lock order tests. Tracked variants currently fail closed for unadapted paths. No real data or deployment.

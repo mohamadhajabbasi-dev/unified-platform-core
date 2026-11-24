@@ -63,3 +63,5 @@
 - BUILD-020: supplier invoices, partial settlements, existing journal/fiscal gate and derived payables; CI pending.
 
 - BUILD-021: atomic warehouse transfers and supplier settlement race/period guard; CI pending.
+
+- BUILD-022: lot/serial/expiry metadata and guarded trace adjustments, canonical ledger, transfer concurrency tests; CI pending.
