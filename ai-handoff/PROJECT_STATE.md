@@ -146,3 +146,6 @@
 
 ## BUILD-011 — latest
 - Dossier/settings and shared audit metadata migration 0011 authored (41 tables if applied). CI pending. Legal verification/vault and full audit still open. No operational changes.
+
+## TEST-013 — latest checkpoint
+- 41 prototype tables, 11 migrations, 14 suites PASS and 4 derived views. Run 45415077783 job 138518959088, tested SHA e35e34bca013180c8a6c73f94d0b544ade98c5aa. Dossier/settings and audit metadata tested. No production changes. Next Commerce purchase entitlement, then visitors and attribution. Legal identity/vault and complete audit remain provisional.

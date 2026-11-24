@@ -165,3 +165,7 @@
 ## BUILD-011 — current
 - [x] Implement five dependent dossier/settings tables and shared audit metadata, tests.
 - [ ] Verify full CI; then explicit Commerce purchase entitlement plus approved module, privacy-aware visits and attribution. Legal vault, platform audit access, ownership validation and complete audit coverage pending.
+
+## TEST-013 — current
+- [x] Verify full 11 migration/14 suite CI; all PASS.
+- [ ] Next explicit paid Commerce entitlement sourced from verified platform billing and independent approved module gate. Then privacy-aware visitor sessions/events, verified customer source and order attribution. Complete legal dossier verification/vault/audit later; no real personal data, legacy access or deployment.
