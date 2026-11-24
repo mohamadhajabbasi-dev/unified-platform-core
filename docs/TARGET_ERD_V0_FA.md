@@ -91,3 +91,10 @@ erDiagram
 - جمع‌آوری `web.visitor_sessions` و `web.visit_events` فقط با حق استفاده معتبر و تأیید ماژول Commerce؛ بازدیدکننده ناشناس هرگز به‌صورت خودکار مشتری محسوب نمی‌شود.
 - منبع جذب در `crm.customer_acquisition_events` به همان `crm.customers` تننت متصل می‌شود؛ منبع اولین ورود و انتساب هر سفارش را جداگانه محاسبه کن؛ از Customer/Users/Product دوباره‌سازی‌شده پرهیز کن.
 - ساختار گزارش‌گیری هر تننت باید تحلیل منابع ورود، کمپین، بازدید، مشتری تبدیل‌شده و سفارش را همراه با جداسازی tenant و کنترل داده شخصی پوشش دهد.
+
+
+## الحاقیه REQ-016 — اپ و Multi-price؛ بدون تکرار مرجع
+- کاتالوگ جدید **همین حالا** price_lists و price_entries دارد؛ چند قیمت همزمان برای یک variant در فهرست‌های مختلف پشتیبانی می‌شود. Price resolver/group/quantity tier و قیمت نهایی با مالیات/کوپن هنوز ناقص است. پیشنهاد: price-list assignment/rules و tiers وابسته، نه master price تکراری.
+- به جای `web.visitor_sessions` و `mobile.app_sessions` مستقل، **یک `analytics.sessions` و `analytics.events`** با tenant/channel/application/site و consent/referrer/attribution، و منابع مستقل «دانلود رسمی تجمیعی مارکت» و «نصب/اولین اجرا» ایجاد شوند. هنوز فقط طرح است.
+- مرجع‌های موجود `crm.customers`, `core.users`, `sales.orders`, `catalog.products` و `platform.modules` دست نخورده/یکتا بمانند؛ ردیابی اپ مجوز تننتی و داده واقعی خصوصی لازم دارد.
+- مشخصات کامل، حد مرز حریم خصوصی، آزمون‌ها و ترتیب اجرا: [APP_ANALYTICS_MULTI_PRICE_FA.md](APP_ANALYTICS_MULTI_PRICE_FA.md).
