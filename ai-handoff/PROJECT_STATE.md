@@ -254,3 +254,6 @@
 
 ## BUILD-023 — latest
 - 81 prototype tables, 26 migration files if applied; allocated receipt and transfer authored, no duplicate ledger. CI pending. Tracked reservation/sale/return not enabled.
+
+## TEST-026 — latest verified checkpoint
+- 81 prototype tables, 26 migration files, 33 suites PASS at 3f75d641754b5df16409d6f3056fd8d0765216b5, run 45434441176 job 138588298403. Existing receipt and transfer relations support explicit lot/serial allocations, no new table or stock master. Tracked sales/returns remain blocked. Dedicated serial race and full production lock/security review pending. No operational changes.

@@ -303,3 +303,7 @@
 ## BUILD-023 — current
 - [x] Author trace-aware receipt and transfer allocation in existing relations.
 - [ ] Verify full CI; then dedicated concurrent serial receipt/transfer and trace reservations, fulfillment/returns, FEFO and cost. No production changes.
+
+## TEST-026 — current
+- [x] Verify 0023 and all regressions: 33 suites PASS, seven previous concurrency suites.
+- [ ] Next tracked reservation allocation, checkout/fulfillment and return with exact lot/serial movement provenance, expiry handling and FEFO. Add tracked serial contention tests. Then valuation/COGS and remaining D-016 domains; full receipt only, no transit/partial receiving or historical backfill yet. No operational access, real data or deployment.
