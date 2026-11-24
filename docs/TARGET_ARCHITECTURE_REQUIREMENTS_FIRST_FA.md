@@ -1,3 +1,5 @@
+> **D-013:** توسعه آزمایشی مستقل با داده مصنوعی مجاز است. مراحل قدیمی بررسی legacy و انتظار برای تایید هر کار معمولی معوق‌اند؛ تایید نهایی معماری و انتقال عملیاتی محفوظ است. هیچ ارتباط با DB/سرور موجود.
+
 # TARGET_ARCHITECTURE_REQUIREMENTS_FIRST_FA
 **Status:** Draft for owner review — design principles confirmed in conversation, physical DDL/ERD pending.
 **Date:** 2026-11-24

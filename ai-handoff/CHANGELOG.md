@@ -6,3 +6,5 @@
 - 2026-11-24 DOC-004: مخزن خصوصی ساخته‌شده توسط مالک و آغاز ثبت مستندات راهبری؛ هیچ migration یا تغییر production اجرا نشده.
 
 - 2026-11-24 INV-002: افزودن چهار مستند اولیه inventory/data map/sync map/open questions بر اساس کد واقعی دو مخزن؛ بدون تغییر تولید، بدون ساخت جدول، بدون تأیید schema زنده. ثبت مغایرت provider و blocker دسترسی.
+
+- 2026-11-24 DESIGN-003: D-013 — greenfield GitHub-only development/test authorized; legacy access deferred, final approval retained.

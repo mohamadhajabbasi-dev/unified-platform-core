@@ -51,3 +51,9 @@
 - Result: `docs/TARGET_ERD_V0_FA.md` created and committed (`2c8e51fca4db3e77ef1c4b770b642363fe9840c3`); it is a **new requirements-first proposed design**, not a copy of ERPPlus/Commerce tables.
 - Status: **PROPOSED / AWAITING OWNER REVIEW**. DB and server unchanged; no physical tables created.
 - Next: confirm target design with owner, refine table/PK/FK/RLS model; treat legacy mapping solely as migration concern.
+
+## Checkpoint DESIGN-003 — 2026-11-24 (latest)
+- Phase: 03 — GREENFIELD_ISOLATED_IMPLEMENTATION_AUTHORIZED.
+- Starting main HEAD: `b413a25c6ccab350d85d04ee20d7d6a0781cdfea`; reviewed repository tree and 12 recent commits, all mandatory documents. No SQL, migrations or test harness existed.
+- Owner directs GitHub-only greenfield implementation and synthetic-data tests; legacy DB/server/source untouched, no Desktop Commander. Final design approval and deployment/transfer remain gated.
+- First exact next action: add versioned foundation migration and synthetic PostgreSQL acceptance tests for tenant isolation and customer verified identity. Provisional technical choices, not production approval.

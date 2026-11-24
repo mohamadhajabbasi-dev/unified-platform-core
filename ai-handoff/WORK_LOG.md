@@ -76,3 +76,9 @@
 - Evidence: GitHub create commit `2c8e51fca4db3e77ef1c4b770b642363fe9840c3`.
 - Result: PROPOSAL WRITTEN, **NOT APPROVED**; no DDL, migrations, production or old-repo changes.
 - Next action: owner review of target model (especially customer/product ownership, price and stock scope); then refine conceptual ERD, constraints and API boundaries. Legacy source mapping later, only for safe transfer.
+
+## DESIGN-003 / 2026-11-24 — isolated greenfield development authorization
+- Precheck: main `b413a25c6ccab350d85d04ee20d7d6a0781cdfea`, repository tree and 12 recent commits, mandatory architecture/handoff docs and README/master plan/decisions/changelog read. No executable SQL or test harness existed.
+- Operation: record D-013 in AGENTS and DECISIONS, align README/master/target docs, append PROJECT_STATE/NEXT_ACTIONS/WORK_LOG/CHANGELOG.
+- Result: DONE for scope update, no SQL executed. Owner authorizes normal isolated development and testing; not final approval of open technical choices nor production migration. No Desktop Commander, legacy repos, DB or server accessed/changed.
+- Evidence: commit/read-back; no runtime tests at this documentation step. Rollback: documentation revert only. Next: first migration and tenant/customer tests.
