@@ -65,3 +65,7 @@ Tenant administrator: only own tenant analytics / own legal dossier as permitted
 - Add visitor/session/event tables and acquisition links with tenant composite FKs, consent, retention, source classification, dedupe and synthetic tests. No parallel Customers table.
 - Integrate reporting + API only when authorization, performance, and GDPR/local privacy policy have been reviewed; load testing on synthetic data.
 - Every step: `WORK_LOG.md` append, `PROJECT_STATE.md`/`NEXT_ACTIONS.md` update and real GitHub commit; no legacy or production changes.
+
+
+## اصلاح تکمیلی REQ-016 — الگوی بازدید چندکاناله
+مدل پیشنهادی قبلیِ `web.visitor_sessions` و `web.visit_events` **دیگر نسخه ترجیحی نیست**، چون مالک ردیابی اپلیکیشن را نیز خواسته است. پیش از ساخت فیزیکی، یک مدل پایه `analytics.sessions` و `analytics.events` برای وب/Android/iOS/Windows طراحی کن و attributes کانال‌محور را فقط به صورت ستون/جدول وابسته با دلیل مستقل نگه دار. منبع دانلود مارکت باید با داده first_open/نصب متفاوت باشد. `crm.customers` همچنان یک پرونده برای هر تننت دارد. جزئیات: [APP_ANALYTICS_MULTI_PRICE_FA.md](APP_ANALYTICS_MULTI_PRICE_FA.md).
