@@ -40,7 +40,7 @@ INSERT INTO catalog.products(tenant_id,product_id,name,kind) VALUES
 INSERT INTO catalog.variants(tenant_id,variant_id,product_id,sku,name) VALUES
  (iam.current_tenant_id(),'83000000-0000-0000-0000-000000000002','82000000-0000-0000-0000-000000000002','same-sku','Default');
 INSERT INTO catalog.price_lists(tenant_id,price_list_id,list_key,currency,name) VALUES
- (iam.current_tenant_id(),'84000000-0000-0000-0000-000000000002','retail','USD','Retail B');
+ (iam.current_tenant_id(),'84000000-0000-0000-0000-000000000002','original','USD','Retail B');
 RESET SESSION AUTHORIZATION;
 
 SET SESSION AUTHORIZATION upc_cat_a;
@@ -70,7 +70,7 @@ BEGIN
   INSERT INTO catalog.product_categories VALUES(t,p,c);
   RAISE EXCEPTION 'FAIL duplicate category relation';
  EXCEPTION WHEN unique_violation THEN NULL; END;
- INSERT INTO catalog.price_lists(tenant_id,price_list_id,list_key,currency,name) VALUES(t,l,'retail','IRR','Retail A');
+ INSERT INTO catalog.price_lists(tenant_id,price_list_id,list_key,currency,name) VALUES(t,l,'original','IRR','Retail A');
  INSERT INTO catalog.price_entries(tenant_id,variant_id,price_list_id,amount,valid_during)
  VALUES(t,v,l,1000,tstzrange('2026-01-01 00:00+00',NULL,'[)')) RETURNING price_id INTO old_price;
  BEGIN

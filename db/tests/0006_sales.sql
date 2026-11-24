@@ -4,6 +4,7 @@ CREATE ROLE upc_inv_a LOGIN NOSUPERUSER NOBYPASSRLS;
 CREATE ROLE upc_inv_b LOGIN NOSUPERUSER NOBYPASSRLS;
 CREATE ROLE upc_inv_reader LOGIN NOSUPERUSER NOBYPASSRLS;
 GRANT upc_runtime TO upc_inv_a,upc_inv_b,upc_inv_reader;
+GRANT upc_checkout_offline TO upc_inv_a,upc_inv_b;
 INSERT INTO core.tenants(tenant_id,tenant_key,display_name) VALUES
  ('90000000-0000-0000-0000-000000000001','inv-a','Synthetic A'),
  ('90000000-0000-0000-0000-000000000002','inv-b','Synthetic B');
@@ -59,7 +60,7 @@ INSERT INTO catalog.products(tenant_id,product_id,name,kind) VALUES
 INSERT INTO catalog.variants(tenant_id,variant_id,product_id,sku,name) VALUES
  ('90000000-0000-0000-0000-000000000001','93000000-0000-0000-0000-000000000004','92000000-0000-0000-0000-000000000004','no-stock','No stock');
 INSERT INTO catalog.price_lists(tenant_id,price_list_id,list_key,currency,name) VALUES
- ('90000000-0000-0000-0000-000000000001','96000000-0000-0000-0000-000000000001','retail','IRR','Synthetic retail');
+ ('90000000-0000-0000-0000-000000000001','96000000-0000-0000-0000-000000000001','original','IRR','Synthetic retail');
 INSERT INTO catalog.price_entries(tenant_id,variant_id,price_list_id,amount,valid_during)
  SELECT '90000000-0000-0000-0000-000000000001',v.variant_id,'96000000-0000-0000-0000-000000000001',1000,tstzrange('2020-01-01 00:00+00',NULL,'[)')
  FROM catalog.variants v WHERE v.tenant_id='90000000-0000-0000-0000-000000000001';
@@ -73,22 +74,22 @@ DECLARE w uuid:='94000000-0000-0000-0000-000000000001'; v uuid:='93000000-0000-0
 BEGIN
  PERFORM inventory.adjust_stock(w,v,10,'sales-test-receipt','Receipt');
  BEGIN
-  PERFORM sales.create_checkout('atomic-fail',c,w,l,'web',deadline,lines||jsonb_build_array(jsonb_build_object('variant_id','93000000-0000-0000-0000-000000000004','quantity',1,'expected_unit_price',1000)));
+  PERFORM sales.create_checkout('atomic-fail',c,w,l,'in_person',deadline,lines||jsonb_build_array(jsonb_build_object('variant_id','93000000-0000-0000-0000-000000000004','quantity',1,'expected_unit_price',1000)));
   RAISE EXCEPTION 'FAIL atomic checkout';
  EXCEPTION WHEN check_violation THEN NULL; END;
  IF EXISTS(SELECT 1 FROM sales.orders) OR EXISTS(SELECT 1 FROM inventory.reservations) THEN RAISE EXCEPTION 'FAIL partial checkout persisted'; END IF;
  BEGIN
-  PERFORM sales.create_checkout('price-fail',c,w,l,'web',deadline,jsonb_build_array(jsonb_build_object('variant_id',v,'quantity',2,'expected_unit_price',999)));
+  PERFORM sales.create_checkout('price-fail',c,w,l,'in_person',deadline,jsonb_build_array(jsonb_build_object('variant_id',v,'quantity',2,'expected_unit_price',999)));
   RAISE EXCEPTION 'FAIL stale price';
  EXCEPTION WHEN check_violation THEN NULL; END;
  BEGIN
-  PERFORM sales.create_checkout('foreign','95000000-0000-0000-0000-000000000002',w,l,'web',deadline,lines);
+  PERFORM sales.create_checkout('foreign','95000000-0000-0000-0000-000000000002',w,l,'in_person',deadline,lines);
   RAISE EXCEPTION 'FAIL foreign customer';
  EXCEPTION WHEN foreign_key_violation THEN NULL; END;
- oid:=sales.create_checkout('checkout-1',c,w,l,'web',deadline,lines);
- IF sales.create_checkout('checkout-1',c,w,l,'web',deadline,lines)<>oid THEN RAISE EXCEPTION 'FAIL checkout retry'; END IF;
+ oid:=sales.create_checkout('checkout-1',c,w,l,'in_person',deadline,lines);
+ IF sales.create_checkout('checkout-1',c,w,l,'in_person',deadline,lines)<>oid THEN RAISE EXCEPTION 'FAIL checkout retry'; END IF;
  BEGIN
-  PERFORM sales.create_checkout('checkout-1',c,w,l,'app',deadline,lines);
+  PERFORM sales.create_checkout('checkout-1',c,w,l,'phone',deadline,lines);
   RAISE EXCEPTION 'FAIL checkout payload conflict';
  EXCEPTION WHEN unique_violation THEN NULL; END;
  IF (SELECT total FROM sales.order_totals WHERE order_id=oid) IS DISTINCT FROM 2000::numeric THEN RAISE EXCEPTION 'FAIL order total'; END IF;
@@ -128,7 +129,7 @@ BEGIN
   PERFORM sales.cancel_order(oid);
   RAISE EXCEPTION 'FAIL paid cancellation';
  EXCEPTION WHEN check_violation THEN NULL; END;
- oid2:=sales.create_checkout('checkout-2',c,w,l,'app',deadline,lines);
+ oid2:=sales.create_checkout('checkout-2',c,w,l,'phone',deadline,lines);
  BEGIN
   PERFORM sales.record_capture(oid2,'synthetic','acct','ref-1',2000,'IRR',captured);
   RAISE EXCEPTION 'FAIL cross order payment reuse';

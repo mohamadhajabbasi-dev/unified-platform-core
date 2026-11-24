@@ -4,6 +4,7 @@ CREATE ROLE upc_inv_a LOGIN NOSUPERUSER NOBYPASSRLS;
 CREATE ROLE upc_inv_b LOGIN NOSUPERUSER NOBYPASSRLS;
 CREATE ROLE upc_inv_reader LOGIN NOSUPERUSER NOBYPASSRLS;
 GRANT upc_runtime TO upc_inv_a,upc_inv_b,upc_inv_reader;
+GRANT upc_checkout_offline TO upc_inv_a;
 INSERT INTO core.tenants(tenant_id,tenant_key,display_name) VALUES
  ('90000000-0000-0000-0000-000000000001','inv-a','Synthetic A'),
  ('90000000-0000-0000-0000-000000000002','inv-b','Synthetic B');

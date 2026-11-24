@@ -9,6 +9,7 @@ CREATE ROLE upc_sale_a LOGIN NOSUPERUSER NOBYPASSRLS;
 CREATE ROLE upc_sale_b LOGIN NOSUPERUSER NOBYPASSRLS;
 CREATE ROLE upc_sale_reader LOGIN NOSUPERUSER NOBYPASSRLS;
 GRANT upc_runtime TO upc_sale_a,upc_sale_b,upc_sale_reader;
+GRANT upc_checkout_offline TO upc_sale_a;
 INSERT INTO core.tenants(tenant_id,tenant_key,display_name) VALUES
  ('a0000000-0000-0000-0000-000000000001','sale-a','Synthetic A'),
  ('a0000000-0000-0000-0000-000000000002','sale-b','Synthetic B');
@@ -64,7 +65,7 @@ INSERT INTO catalog.products(tenant_id,product_id,name,kind) VALUES
 INSERT INTO catalog.variants(tenant_id,variant_id,product_id,sku,name) VALUES
  ('a0000000-0000-0000-0000-000000000001','a3000000-0000-0000-0000-000000000004','a2000000-0000-0000-0000-000000000004','no-stock','No stock');
 INSERT INTO catalog.price_lists(tenant_id,price_list_id,list_key,currency,name) VALUES
- ('a0000000-0000-0000-0000-000000000001','a6000000-0000-0000-0000-000000000001','retail','IRR','Synthetic retail');
+ ('a0000000-0000-0000-0000-000000000001','a6000000-0000-0000-0000-000000000001','original','IRR','Synthetic retail');
 INSERT INTO catalog.price_entries(tenant_id,variant_id,price_list_id,amount,valid_during)
  SELECT 'a0000000-0000-0000-0000-000000000001',v.variant_id,'a6000000-0000-0000-0000-000000000001',1000,tstzrange('2020-01-01 00:00+00',NULL,'[)')
  FROM catalog.variants v WHERE v.tenant_id='a0000000-0000-0000-0000-000000000001';
@@ -74,7 +75,7 @@ SELECT inventory.adjust_stock('a4000000-0000-0000-0000-000000000001','a3000000-0
 RESET SESSION AUTHORIZATION;
 SQL
 deadline=$(psql_ci -c "SELECT clock_timestamp()+interval '1 hour'")
-checkout="SELECT sales.create_checkout('concurrent-checkout','a5000000-0000-0000-0000-000000000001','a4000000-0000-0000-0000-000000000001','a6000000-0000-0000-0000-000000000001','web','$deadline',jsonb_build_array(jsonb_build_object('variant_id','a3000000-0000-0000-0000-000000000001','quantity',2,'expected_unit_price',1000)));"
+checkout="SELECT sales.create_checkout('concurrent-checkout','a5000000-0000-0000-0000-000000000001','a4000000-0000-0000-0000-000000000001','a6000000-0000-0000-0000-000000000001','in_person','$deadline',jsonb_build_array(jsonb_build_object('variant_id','a3000000-0000-0000-0000-000000000001','quantity',2,'expected_unit_price',1000)));"
 race() {
  local phase="$1" statement="$2" ready=0 blocked=0 first second
  psql_ci >"$tmp/$phase-first" <<SQL &

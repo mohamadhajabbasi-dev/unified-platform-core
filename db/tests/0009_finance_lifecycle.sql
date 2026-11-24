@@ -4,6 +4,7 @@ CREATE ROLE upc_inv_a LOGIN NOSUPERUSER NOBYPASSRLS;
 CREATE ROLE upc_inv_b LOGIN NOSUPERUSER NOBYPASSRLS;
 CREATE ROLE upc_inv_reader LOGIN NOSUPERUSER NOBYPASSRLS;
 GRANT upc_runtime TO upc_inv_a,upc_inv_b,upc_inv_reader;
+GRANT upc_checkout_offline TO upc_inv_a,upc_inv_b;
 INSERT INTO core.tenants(tenant_id,tenant_key,display_name) VALUES
  ('90000000-0000-0000-0000-000000000001','inv-a','Synthetic A'),
  ('90000000-0000-0000-0000-000000000002','inv-b','Synthetic B');
@@ -59,7 +60,7 @@ INSERT INTO catalog.products(tenant_id,product_id,name,kind) VALUES
 INSERT INTO catalog.variants(tenant_id,variant_id,product_id,sku,name) VALUES
  ('90000000-0000-0000-0000-000000000001','93000000-0000-0000-0000-000000000004','92000000-0000-0000-0000-000000000004','no-stock','No stock');
 INSERT INTO catalog.price_lists(tenant_id,price_list_id,list_key,currency,name) VALUES
- ('90000000-0000-0000-0000-000000000001','96000000-0000-0000-0000-000000000001','retail','IRR','Synthetic retail');
+ ('90000000-0000-0000-0000-000000000001','96000000-0000-0000-0000-000000000001','original','IRR','Synthetic retail');
 INSERT INTO catalog.price_entries(tenant_id,variant_id,price_list_id,amount,valid_during)
  SELECT '90000000-0000-0000-0000-000000000001',v.variant_id,'96000000-0000-0000-0000-000000000001',1000,tstzrange('2020-01-01 00:00+00',NULL,'[)')
  FROM catalog.variants v WHERE v.tenant_id='90000000-0000-0000-0000-000000000001';
@@ -96,7 +97,7 @@ BEGIN
   PERFORM finance.open_period('Overlap',d,d+3); RAISE EXCEPTION 'FAIL period overlap';
  EXCEPTION WHEN exclusion_violation THEN NULL; END;
  PERFORM inventory.adjust_stock(w,v,10,'recognition-receipt','Receipt');
- oid:=sales.create_checkout('recognition-order',c,w,l,'web',clock_timestamp()+interval '1 hour',
+ oid:=sales.create_checkout('recognition-order',c,w,l,'in_person',clock_timestamp()+interval '1 hour',
  jsonb_build_array(jsonb_build_object('variant_id',v,'quantity',2,'expected_unit_price',1000)));
  pid:=sales.record_capture(oid,'synthetic','acct','recognition-pay',2000,'IRR',clock_timestamp());
  je:=finance.post_capture(pid,ca,adv);

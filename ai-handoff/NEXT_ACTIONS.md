@@ -255,3 +255,7 @@
 - [x] Verify four-price migration and all 23 suites; PASS.
 - [ ] Harden 0017: mixed-list carts, paid web/app checkout, discount and eligibility expiration/currency tests, direct private list/entry/tier access and service capability boundary, concurrent price/eligibility mutation vs checkout with lock-order review. Replace legacy retail fixtures and remove legacy fallback; validate bootstrap/upgrade constraints without relying on unmapped superuser. No customer-facing API until trusted authentication and row access review.
 - [ ] Then suppliers and purchasing, warehouse transfers/lot/serial/cost, shipping/promotion/tax/invoicing, banking/installments, AI/ops/backup/API. Coordinate duplicate migration identifiers. No operational access or deployment.
+
+## BUILD-018 — current
+- [x] Author original-only checkout, separate channel capabilities, bootstrap validation, lock-first pricing, mixed cart/expiry and race tests.
+- [ ] Verify all CI and fix observed failures; then canonical counterparties/supplier purchasing and goods receipt into existing stock ledger. Review payable accounting and remaining D-016 domains. No deployment.

@@ -4,6 +4,7 @@ CREATE ROLE upc_inv_a LOGIN NOSUPERUSER NOBYPASSRLS;
 CREATE ROLE upc_inv_b LOGIN NOSUPERUSER NOBYPASSRLS;
 CREATE ROLE upc_inv_reader LOGIN NOSUPERUSER NOBYPASSRLS;
 GRANT upc_runtime TO upc_inv_a,upc_inv_b,upc_inv_reader;
+GRANT upc_checkout_offline TO upc_inv_a,upc_inv_b;
 INSERT INTO core.tenants(tenant_id,tenant_key,display_name) VALUES
  ('90000000-0000-0000-0000-000000000001','inv-a','Synthetic A'),
  ('90000000-0000-0000-0000-000000000002','inv-b','Synthetic B');
@@ -59,7 +60,7 @@ INSERT INTO catalog.products(tenant_id,product_id,name,kind) VALUES
 INSERT INTO catalog.variants(tenant_id,variant_id,product_id,sku,name) VALUES
  ('90000000-0000-0000-0000-000000000001','93000000-0000-0000-0000-000000000004','92000000-0000-0000-0000-000000000004','no-stock','No stock');
 INSERT INTO catalog.price_lists(tenant_id,price_list_id,list_key,currency,name) VALUES
- ('90000000-0000-0000-0000-000000000001','96000000-0000-0000-0000-000000000001','retail','IRR','Synthetic retail');
+ ('90000000-0000-0000-0000-000000000001','96000000-0000-0000-0000-000000000001','original','IRR','Synthetic retail');
 INSERT INTO catalog.price_entries(tenant_id,variant_id,price_list_id,amount,valid_during)
  SELECT '90000000-0000-0000-0000-000000000001',v.variant_id,'96000000-0000-0000-0000-000000000001',1000,tstzrange('2020-01-01 00:00+00',NULL,'[)')
  FROM catalog.variants v WHERE v.tenant_id='90000000-0000-0000-0000-000000000001';
@@ -74,7 +75,7 @@ DECLARE w uuid:='94000000-0000-0000-0000-000000000001'; v uuid:='93000000-0000-0
  lines jsonb:=jsonb_build_array(jsonb_build_object('variant_id',v,'quantity',2,'expected_unit_price',1000));
 BEGIN
  PERFORM inventory.adjust_stock(w,v,10,'return-test-receipt','Receipt');
- oid:=sales.create_checkout('return-1',c,w,l,'web',deadline,lines);
+ oid:=sales.create_checkout('return-1',c,w,l,'in_person',deadline,lines);
  captured:=clock_timestamp();
  pid:=sales.record_capture(oid,'synthetic','acct','capture-1',2000,'IRR',captured);
  PERFORM sales.fulfill_order(oid);
@@ -107,7 +108,7 @@ BEGIN
   (SELECT count(*) FROM inventory.stock_ledger)<>3 OR (SELECT count(*) FROM sales.returns)<>1
  THEN RAISE EXCEPTION 'FAIL restock once'; END IF;
  -- Late capture after cancellation is recorded as review, never fulfilled.
- oid2:=sales.create_checkout('late-1',c,w,l,'app',deadline,lines);
+ oid2:=sales.create_checkout('late-1',c,w,l,'phone',deadline,lines);
  PERFORM sales.cancel_order(oid2);
  pid2:=sales.record_capture(oid2,'synthetic','acct','capture-2',2000,'IRR',clock_timestamp());
  IF NOT EXISTS(SELECT 1 FROM sales.orders WHERE order_id=oid2 AND state='payment_review')

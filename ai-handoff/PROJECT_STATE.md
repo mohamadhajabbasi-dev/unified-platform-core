@@ -218,3 +218,6 @@
 
 ## TEST-020 — latest verified checkpoint
 - 69 prototype tables, 20 SQL migration files, 23 suites PASS at 52c47b901105ab264f72818e0fc2c97f4e7080ee, run 45423622801 job 138549506735. Four standard prices, scoped eligibility, checkout per-line snapshot and RLS tested. No production changes. Provisional priority and same currency; legacy retail path remains for old fixtures; customer/channel service authentication, mixed-price cart/paid-channel tests and concurrent pricing tests pending.
+
+## BUILD-018 — latest
+- Pricing hardening authored, no new tables; 69 prototype tables. 21 migration files if applied; new synthetic and concurrency suites pending CI. No production changes. Next verify and then procurement.
