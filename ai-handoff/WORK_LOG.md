@@ -146,3 +146,7 @@
 
 ## TEST-009 / 2026-11-24 — returns and sales concurrency PASS
 - Run 45411865940 job 138507510205 completed success, tested SHA b2fa7580ddf353fb21f14f2d32d629379c8e8938. Logs confirm 0001–0007 applied and ten suites PASS including full returns/refunds, late capture review, actual competing checkout/capture locks, exactly one order/hold/payment. FIX-002 isolated synthetic role keys after first test setup failure. No production/legacy or real gateway operations. 28 prototype tables. Next tenant finance journal with verified capture/refund linkage, balanced immutable postings and tenant isolation.
+
+## BUILD-008 / 2026-11-24 — tenant finance foundation
+- Precheck TEST-009 e3f338cb7721b6e7bb43bfe04afbfdba467b1b66; required docs, current tree, returns/refunds and test fixtures reviewed. No finance schema existed.
+- Changes: db/migrations/0008_finance.sql, db/tests/0008_finance.sql, db/README, handoff/changelog. Three normalized tables and derived trial balance view; tenant/currency composite FK, signed balanced postings, deferred DB constraints, immutable posted history, unique capture/refund links and exact reversal, role/module gates and isolated checker. Manual/capture/refund test suite authored. CI pending. No production, legacy, actual payment or platform billing changes. Provisional customer advance/clearing treatment, no revenue recognition or period/tax/FX/valuation/settlement/invoices. Next verify CI and then extend finance/other domains.

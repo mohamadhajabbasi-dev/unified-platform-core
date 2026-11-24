@@ -26,3 +26,5 @@
 - 2026-11-24 BUILD-007: full returns, verified full refunds, late capture review and concurrent checkout/capture; CI pending.
 
 - FIX-002: isolate sales race fixture role keys from inventory race fixtures.
+
+- 2026-11-24 BUILD-008: tenant double-entry finance, capture/refund journal and derived trial balance; CI pending.

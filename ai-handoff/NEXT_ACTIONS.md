@@ -125,3 +125,7 @@
 ## TEST-009 — current
 - [x] Verify all seven migrations and ten test suites; actual sales concurrency PASS.
 - [ ] Next: implement tenant chart of accounts, balanced immutable journals and verified capture/refund posting links. Preserve separation from platform billing. Then remaining finance workflows, reconciliation, content, ops and backup; no legacy access.
+
+## BUILD-008 — current
+- [x] Author chart of accounts, double-entry journals, source postings and negative tests.
+- [ ] Verify full regression and finance test logs, fix demonstrated failures. Then fiscal period/recognition policy, platform subscription billing separate, remaining catalog/CRM/content/ops/backup/API domains. No legacy access.

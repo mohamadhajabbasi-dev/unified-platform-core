@@ -114,3 +114,6 @@
 
 ## TEST-009 — latest checkpoint
 - 28 prototype tables, 7 migrations, 10 suites PASS, 2 derived views. Run 45411865940 job 138507510205, tested SHA b2fa7580ddf353fb21f14f2d32d629379c8e8938. Full-only returns/refunds and late full capture review; concurrency proven. No production changes. Partial/damaged returns, multiple capture and durable reconciliation inbox remain pending. Next: finance.
+
+## BUILD-008 — latest
+- Finance migration 0008 authored, 3 new tables (31 if applied) and derived trial balance view. Balanced immutable journal, manual and verified capture/refund postings. CI pending. No production or real money operations. Next verify finance CI.
