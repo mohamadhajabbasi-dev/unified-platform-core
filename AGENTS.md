@@ -44,3 +44,11 @@
 - اپلیکیشن‌ها: منبع دانلود رسمی، نصب/first_open، نسخه، فعالیت، بازدید، منبع ورودی، deep link، سفارش و خطا را با معیارهای جدا و قابل ردیابی ثبت کن. آمار دانلود مارکت با first_open یکسان فرض نشود.
 - **بازدید وب و اپ از یک مدل analytics.sessions/events مشترک استفاده کنند**، نه جداول Master رویداد موازی برای وب و موبایل. Session/Install ناشناس خودکار Customer نمی‌شود. درآمد/سفارش فقط از Sales مرجع.
 - تمام رویدادها و قیمت‌ها tenant-scoped، RLS و permission/module/entitlement gated؛ PII را به GitHub عمومی نیاور و داده واقعی هیچ منبع قدیمی را نخوان.
+
+
+## D-016 — complete legacy data coverage WITHOUT copying legacy schema
+- Owner explicitly requests inventory of every persisted ERPPlus/CommerceAI business domain to ensure new DB has correct normalized canonical entities; **never build one new table per old DbSet**.
+- Begin with `docs/LEGACY_DBSET_COVERAGE_2026-11-24.md` (182 ERPPlus + 52 CommerceAI EF DbSet declarations), `docs/SOURCE_FIELD_EVIDENCE_FA.md` (verified source properties) and `docs/CANONICAL_TARGET_TABLE_DICTIONARY_V1_FA.md` (57 canonical table groups and status). EF DbSet count is **NOT** physical table count, and does not exhaust raw SQL/files/caches.
+- Migrations `0013` content/CRM, `0014` catalog multi-price/details, `0015` HR/payroll/commission are **authored but runtime UNVERIFIED**; check GitHub CI and fix failures before claiming PASS or adding an intersecting table.
+- Preserve primary Tenants/Users/Customers/Products/Orders/Prices and existing finance/stock ledgers. Separate legal/accounting event facts are not duplicate business masters. Every new table needs tenant-aware FK, RLS, permission/module authorization, privacy limits, uniqueness/idempotency and synthetic tests.
+- No Desktop Commander and no touching ERPPlus/CommerceAI databases, servers or source trees. Existing source inspection in this session used GitHub read-only; all edits restricted to unified-platform-core.
