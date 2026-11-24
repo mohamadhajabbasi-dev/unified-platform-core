@@ -184,3 +184,16 @@
 
 ## TEST-017 — latest verified distribution checkpoint
 - Tested SHA af330fdd8dbc2b07175bea1e68ae1cb70a8e10f2, run 45420046746 job 138536799970: 16 migration files, 19 test suites PASS, 53 prototype tables and 8 views including parallel content/CRM addition. Duplicate prefix 0013 needs coordination before migration runner adoption. Distribution reports and CRM engagement tested; provider integration not implemented. No production changes. Next verified customer/order attribution, then authorized price resolver.
+
+
+## Checkpoint SOURCE-004 / BUILD-013..015 — 2026-11-24 (LATEST)
+- Phase: **03 — independent greenfield PostgreSQL source-coverage & SQL development**.
+- Owner explicitly permits READ-ONLY GitHub source inspection of ERPPlus/CommerceAI for coverage, notwithstanding earlier D-013 source-read restriction. No permission to connect to/edit legacy DB/server/code or use Desktop Commander.
+- Source evidence: **182 ERPPlus + 52 CommerceAI EF DbSets**; exact source inventory, representative field evidence and 57-group normalized target matrix are committed. These are NOT live table counts or proof of complete field-level parity.
+- Original verified runtime baseline: **TEST-013** 41 tables / migrations 0001–0011 / 14 synthetic suites PASS. Migration 0012 authored but latest runtime status not independently checked in this turn.
+- NEW: migration **0013** (5 content/CRM tables), **0014** (6 catalog/media/quantity tier tables), **0015** (7 HR/payroll/commission tables) and matching tests all committed & GitHub read-back verified. Total **18 new authored table definitions**, potential **60 if 0012–0015 apply**. **CI: UNVERIFIED for these new migrations; cannot claim PASS**.
+- Existing canonical tenants, users, customer, product, orders, price entries and ledger reused. No mirror table for each legacy DbSet.
+- Repo public; ONLY synthetic fixture data and source-derived schema descriptors. No actual customer/employee/partner records or credentials uploaded.
+- Changes to ERPPlus, CommerceAI source, active databases, server, operational storefront: **NONE**. New production DB/deployment/data migration: **NONE**.
+- Current gate: full synthetic regression in GitHub Actions with exact tested commit SHA, repair failures before extending more SQL; security review of consent/message encryption, user-authorized price list/employee data, and final architecture approval remain pending.
+- Next: check Actions latest run; fix only proven errors. After pass, proceed with next uncovered domain from canonical dictionary, and log every action.
