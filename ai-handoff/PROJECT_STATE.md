@@ -158,3 +158,14 @@
 
 ## BUILD-013 — latest
 - Visitor analytics migration and tests authored, 44 prototype tables and 5 derived views if applied. CI pending. No real collection or deployment. Customer acquisition/order linkage pending.
+
+
+## Checkpoint REQ-016 — 2026-11-24 (latest; supersedes earlier feature-scope notes)
+- Phase: **03 — greenfield database implementation + requirements**.
+- Confirmed working baseline: **TEST-013**, migrations `0001..0011`, **41 provisional tables**, 14 test suites PASS, synthetic/isolated Postgres (run 45415077783).
+- Newer **BUILD-012**: `db/migrations/0012_commerce_entitlement.sql`, one new `platform.subscription_modules` table (**42 if applied**); SQL/test authored; CI PASS **not verified** in this checkpoint.
+- Multi-price **already partly implemented** by `catalog.price_lists`, `catalog.price_entries`, `catalog.price_at`, temporal constraints (0004). Automatic audience/channel/quantity/contract selection and final resolver **NOT implemented**.
+- App visits/downloads/analytics **NOT implemented**; owner requested complete per-tenant app lifecycle reporting. New requirement/architecture file `docs/APP_ANALYTICS_MULTI_PRICE_FA.md` committed at `475337172903c4efa55d123bbc978ef136734c5c`; other docs and AGENTS updated under D-015. Proposed unified `analytics.sessions`/`analytics.events` (web, Android, iOS, desktop) prevents duplicate web-only and mobile-only analytics masters.
+- Distinguish official marketplace downloads, first_opens, app installations, active users, in-app visits, and conversion; tenant/app entitlement & privacy apply.
+- GitHub visibility **PUBLIC** confirmed; no real telemetry or PII committed. Source projects, old databases, server and deployments **UNTOUCHED**.
+- First exact next action: verify BUILD-012 isolated CI; implement incremental tenant-safe shared analytics/app tracking with synthetic tests, then pricing rule resolver/tier selection without a second pricing master. Keep audit/updates after every action.
