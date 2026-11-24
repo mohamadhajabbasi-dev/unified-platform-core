@@ -432,3 +432,8 @@
 ## TEST-042 / TEST-043 — current
 - [x] Verify 0040; extend the existing COGS concurrency suite with actual transfer, reversal and restored cost capture contention.
 - [ ] Verify exact CI SHA (40 SQL + nine concurrency, five COGS race cases, four guard unit tests). Repair any failures. Next lifecycle fail-closed checks for configured variants and unposted sale/return costs; moving-average concurrency, complex dependency chains and tracked valuation remain pending. No production access.
+
+
+## TEST-043 / BUILD-026M — current
+- [x] Verify five concurrency races; author 0041 explicit read-only inventory-cost readiness guard.
+- [ ] Verify exact new CI SHA (41 SQL + nine concurrency, four guard tests), repair. Next broaden reconciliation and lifecycle enforcement only under approved design; moving-average races, complex transfer chains and tracked valuation pending. No production access.
