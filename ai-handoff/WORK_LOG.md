@@ -69,3 +69,10 @@
 - Operation: commit new `docs/TARGET_ARCHITECTURE_REQUIREMENTS_FIRST_FA.md` (SHA `c5aee0b55f9efbb12af23855eb97507e31a32474`); update governance and continuity files to prioritize greenfield target design.
 - Result: DOCUMENTATION ONLY. No physical database created; no app or production changes.
 - Next: conceptual target ERD and table responsibility / relationship matrix, owner review before any implementation.
+
+## DESIGN-002 / 2026-11-24 — proposed clean canonical target ERD
+- Precheck: reviewed requirements-first brief and GitHub legacy evidence only as migration risk, not target shape.
+- Operation: created `docs/TARGET_ERD_V0_FA.md` containing greenfield one-physical-PostgreSQL diagram, proposed core tenant-owned entities, access roles, module grants, platform dashboard, stock ledger, tenant-specific backup and acceptance scenarios.
+- Evidence: GitHub create commit `2c8e51fca4db3e77ef1c4b770b642363fe9840c3`.
+- Result: PROPOSAL WRITTEN, **NOT APPROVED**; no DDL, migrations, production or old-repo changes.
+- Next action: owner review of target model (especially customer/product ownership, price and stock scope); then refine conceptual ERD, constraints and API boundaries. Legacy source mapping later, only for safe transfer.
