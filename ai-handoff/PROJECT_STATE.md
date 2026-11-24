@@ -140,3 +140,6 @@
 - These **new features are design/requirements only**; no migrations, tests, application endpoints or UI implemented for them yet.
 - Source code of original ERPPlus/CommerceAI, old DBs and server: **UNTOUCHED**. Deployment: **NONE**.
 - First next action: verify latest 0009 CI evidence and fix if needed, then implement targeted tenant-profile/settings and visitor attribution migrations in separate incremental steps with RLS and synthetic tests. Never duplicate Tenants, Users or Customers.
+
+## TEST-012 — verified latest checkpoint (updates REQ-015 test status, preserves its requirements)
+- 35 prototype tables, 10 migrations, 13 test suites PASS, 4 derived views. Run 45414085343 job 138515432286, tested SHA 3b6e7b6d775174272d3f49aee6debc534bf47def. Fiscal lifecycle run 45413678605 also verified PASS. Subsequent docs-only changes preserved. D-014/REQ-015 new features remain requirements only. Billing separate from tenant ledger and module approval; explicit Commerce entitlement not yet implemented. No operational changes. Next migration 0011: tenant legal dossier and scoped settings, then Commerce entitlement and analytics/attribution. Fiscal/billing policy and year-end close, tax, proration, refunds, platform ledger remain provisional/pending.

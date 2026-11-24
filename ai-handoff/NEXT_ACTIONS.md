@@ -156,3 +156,8 @@
 - [ ] Add visitor sessions/events (consent, privacy, retention, bot filtering, tenant-safe attribution) and link verified traffic/CRM channels to existing `crm.customers` without creating duplicate Customers. Add isolation, non-entitled tenant, cross-store same-customer, and conversion tests.
 - [ ] Build eventual API/dashboard by tenant: visitor source/UTM/campaign, conversion, orders, legal info, partners, users and settings with auditable export.
 - [ ] CI/load/security tests with synthetic data; no legacy/production modifications or access. After **each action** append WORK_LOG and update state/next actions with remote commits.
+
+## TEST-012 — current (supersedes REQ-015 stale test status, not its scope)
+- [x] Verify 0009 and 0010 CI: runs 45413678605 and 45414085343, all 13 suites PASS at latest tested code.
+- [ ] Next migration 0011: implement D-014/REQ-015 legal tenant dossier, stakeholder/representative records, addresses and constrained tenant/membership settings with tenant-safe FK, RLS, synthetic tests; preserve existing canonical Tenants/Users/Customers.
+- [ ] Explicit Commerce paid entitlement tied to verified billing and separately approved module; then consent-aware sessions/events, customer acquisition and order attribution. No inferred entitlement from generic subscription; no real personal data. Then CRM/catalog/content/ops/outbox/backup/API and performance/security review. No legacy access/deployment.
