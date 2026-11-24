@@ -175,3 +175,6 @@
 
 ## BUILD-014 — latest
 - Shared analytics migration 0014 authored; 47 prototype tables if applied, 7 views. Existing web tables moved, not duplicated. Separate app eligibility and registry/releases/install first open. CI pending. No production changes.
+
+## TEST-016 — latest checkpoint
+- 47 prototype tables, 14 migrations, 17 suites PASS, 7 views. Run 45418858238 job 138532500500 tested SHA 15dacc4199930a943a897f00174969878c43d5cc. Single shared analytics.sessions/events and scoped app registry/releases/installation tested. No real SDK, distribution reports or production access. Next official download aggregates separate from first-open, then attribution and pricing. Tenant-owned apps and 30-day retention provisional.

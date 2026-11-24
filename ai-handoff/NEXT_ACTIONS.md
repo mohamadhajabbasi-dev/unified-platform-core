@@ -202,3 +202,7 @@
 ## BUILD-014 — current
 - [x] Implement shared analytics and app installation/registry foundation, tests.
 - [ ] Verify CI and actual logs; then official distribution reports with independent source metrics and idempotency; verified customer/order attribution and price resolver using existing price lists. Shared apps, privacy, quality metrics and load tests remain pending. No real data or legacy access.
+
+## TEST-016 — current
+- [x] Verify 14 migrations, 17 suites including shared analytics and previous concurrency tests; PASS.
+- [ ] Next: official app distribution report ingestion with provider provenance, tenant/app/release scope, exact idempotency, explicit unknown vs zero and distinct market metric definitions. No fabricated download statistics or user-level inference. Then verified acquisition/order attribution and existing price list audience/channel/quantity resolution and checkout checks. Shared app assignment, quality telemetry, consent/retention scheduler and load tests remain pending. No legacy/production access.
