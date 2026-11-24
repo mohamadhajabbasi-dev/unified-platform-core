@@ -169,3 +169,7 @@
 ## TEST-013 — current
 - [x] Verify full 11 migration/14 suite CI; all PASS.
 - [ ] Next explicit paid Commerce entitlement sourced from verified platform billing and independent approved module gate. Then privacy-aware visitor sessions/events, verified customer source and order attribution. Complete legal dossier verification/vault/audit later; no real personal data, legacy access or deployment.
+
+## BUILD-012 — current
+- [x] Author explicit paid Commerce entitlement and approval gate, tests.
+- [ ] Verify CI then add consent-aware visitor sessions/events and verified acquisition attribution using canonical CRM customer. No real tracking or legacy access.

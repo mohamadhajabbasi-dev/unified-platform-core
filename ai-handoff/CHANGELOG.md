@@ -34,3 +34,5 @@
 - BUILD-010: independent platform subscriptions, invoices and verified billing receipts; CI pending.
 
 - BUILD-011: legal dossier, stakeholders, addresses, typed tenant/member settings, shared audit metadata; CI pending.
+
+- BUILD-012: explicit purchased Commerce scope, paid term and approval gate; CI pending.

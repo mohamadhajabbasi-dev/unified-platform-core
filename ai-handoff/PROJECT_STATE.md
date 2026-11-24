@@ -149,3 +149,6 @@
 
 ## TEST-013 — latest checkpoint
 - 41 prototype tables, 11 migrations, 14 suites PASS and 4 derived views. Run 45415077783 job 138518959088, tested SHA e35e34bca013180c8a6c73f94d0b544ade98c5aa. Dossier/settings and audit metadata tested. No production changes. Next Commerce purchase entitlement, then visitors and attribution. Legal identity/vault and complete audit remain provisional.
+
+## BUILD-012 — latest
+- Explicit purchased module relation and Commerce eligibility authored, 42 tables if applied. CI pending. No operational changes. Next traffic and attribution after PASS.

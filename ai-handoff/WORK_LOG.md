@@ -187,3 +187,6 @@
 
 ## TEST-013 / 2026-11-24 — dossier and full regression PASS
 - Run 45415077783 job 138518959088 completed success at SHA e35e34bca013180c8a6c73f94d0b544ade98c5aa. Logs verify 11 migrations, 14 suites PASS: legal scope, stakeholder relationships, typed settings, self preferences, tenant separation, audit metadata and revocation, plus all three existing concurrency suites. Container cleanup successful. 41 prototype tables and 4 derived views. No operational access or changes. Legal vault, verification, document metadata, ownership aggregate validation, manager cycles and platform audited reads remain pending. Next explicit purchased Commerce entitlement, then privacy-aware analytics and attribution.
+
+## BUILD-012 / 2026-11-24 — explicit Commerce entitlement
+- Precheck TEST-013 d646782f516bf0f808d676205405b32b70d72aeb; required docs, D-014 and billing/IAM reviewed. Added 0012 migration and test, one subscription-module relation, pre-invoice scope lock, derived paid entitlement and separate approval check. Negative tests unpaid/generic-paid/unapproved/expired/cross-tenant. CI pending; no real data, legacy or production access. Provisional paid full term UTC; chargebacks/refunds and per-module pricing pending. Next verify then traffic/attribution.
