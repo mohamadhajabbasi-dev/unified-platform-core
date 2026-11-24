@@ -417,3 +417,8 @@
 ## TEST-039 / BUILD-026J — current
 - [x] Verify 0037; author 0038 ordinary moving-average atomic transfer cost capture and conservation tests.
 - [ ] Verify exact new CI SHA (38 SQL + nine concurrency, four guard tests), repair. Next transfer-in account provenance and downstream COGS, FIFO cross-warehouse receipt provenance, lifecycle and concurrency. No production access.
+
+
+## TEST-040 / BUILD-026K — current
+- [x] Verify 0038; author 0039 recursive same-asset transfer provenance and COGS tests.
+- [ ] Verify exact new CI SHA (39 SQL + nine concurrency, four guard tests), repair. Next FIFO transfer provenance across warehouses (do not duplicate ledger or allocation table), lifecycle and concurrency. No production access.

@@ -375,3 +375,10 @@
 
 ## BUILD-026J — latest
 - BUILD-026J: canonical 0038 implements ordinary moving-average interwarehouse cost replay and atomic paired capture using existing transfer_lines and cost facts. No new tables, no transfer journal, transfer movement excluded from consumed COGS, exact signed pair reconciliation, private existing cost writer, variant lock and same permissions/RLS. Tests cover source/destination isolated capture rejection, exact retry, roundtrip quantity/value conservation, no new journal and blocked downstream COGS after transfer-in pending asset account provenance. Conservative capture requires whole histories in both warehouses to be replayable in source-then-destination order; complex uncaptured dependency chains fail closed. FIFO transfer, tracked transfer, destination COGS account mapping, cross-account reclassification, approved policy and dedicated transfer cost concurrency remain pending. New CI pending; no production access.
+
+
+## TEST-040 — verified
+- TEST-040: run 45448040617 job 138637116976 at 99964953c72573165a5a11ee4fe63203af236059 completed success; 38 migrations, 47 SQL/concurrency suites (38 SQL + nine concurrency) PASS and four migration guard tests; exact transfer cost pairs verified. 85 tables.
+
+## BUILD-026K — latest
+- BUILD-026K: canonical 0039 extends shared COGS posting to same-asset moving-average transfer provenance. Private recursive cutoff validator follows exact earlier paired transfer cost facts through warehouses to all preceding confirmed purchase/return journal debits, deduplicates nodes and rejects mixed account provenance, including remote inputs. No new table, no transfer journal or account reclassification. Updated 0038 regression to verify destination posting with correct account and reject wrong account. New 0039 tests cover destination/roundtrip COGS, remote mixed account rejection, balanced asset/cost and private helper permissions. Conservative history-wide input rule including exhausted inputs; cross-account transfers, FIFO, tracked, partial/zero-cost return and complex dependency chains remain pending, no production policy approval. CI pending; no operational access.

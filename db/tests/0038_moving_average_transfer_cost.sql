@@ -175,7 +175,7 @@ BEGIN
  OR (SELECT net_debit FROM finance.trial_balance WHERE account_id=asset)<>880
  THEN RAISE EXCEPTION 'FAIL roundtrip conservation or spurious journal'; END IF;
  BEGIN PERFORM finance.preview_inventory_valuation(w,v,'IRR','fifo'); RAISE EXCEPTION 'FAIL FIFO transfer unsupported'; EXCEPTION WHEN check_violation THEN NULL; END;
- -- No downstream COGS after transfer-in until inventory-account provenance is implemented.
+ -- Destination COGS must follow exact paired transfers to the original purchase account.
  oid:=sales.create_checkout('valuation-destination-sale',c,w2,pl,'in_person',clock_timestamp()+interval '1 hour',jsonb_build_array(jsonb_build_object('variant_id',v,'quantity',1,'expected_unit_price',1000)));
  PERFORM sales.record_capture(oid,'synthetic','acct','valuation-destination-payment',1000,'IRR',clock_timestamp());
  PERFORM sales.fulfill_order(oid);
@@ -183,8 +183,12 @@ BEGIN
  IF n IS DISTINCT FROM 1 THEN RAISE EXCEPTION 'FAIL destination sale capture'; END IF;
  SELECT cf.movement_id INTO STRICT mid2 FROM finance.movement_cost_facts cf JOIN inventory.stock_ledger sl ON sl.tenant_id=cf.tenant_id AND sl.movement_id=cf.movement_id
  JOIN sales.order_items si ON si.tenant_id=sl.tenant_id AND si.reservation_id=sl.reservation_id WHERE si.order_id=oid;
- BEGIN PERFORM finance.post_inventory_cogs(mid2,asset,expense,'moving_average'); RAISE EXCEPTION 'FAIL transfer account provenance bypass'; EXCEPTION WHEN check_violation THEN NULL; END;
- IF (SELECT count(*) FROM finance.journal_entries)<>3 THEN RAISE EXCEPTION 'FAIL unexpected destination journal'; END IF;
+ BEGIN PERFORM finance.post_inventory_cogs(mid2,other_asset,expense,'moving_average'); RAISE EXCEPTION 'FAIL transfer account provenance bypass'; EXCEPTION WHEN check_violation THEN NULL; END;
+ eid:=finance.post_inventory_cogs(mid2,asset,expense,'moving_average');
+ IF finance.post_inventory_cogs(mid2,asset,expense,'moving_average')<>eid OR (SELECT count(*) FROM finance.journal_entries)<>4
+ OR (SELECT net_debit FROM finance.trial_balance WHERE account_id=asset)<>770
+ OR (SELECT net_debit FROM finance.trial_balance WHERE account_id=expense)<>1430
+ THEN RAISE EXCEPTION 'FAIL destination COGS and balance'; END IF;
 END $$;
 RESET SESSION AUTHORIZATION;
 SET SESSION AUTHORIZATION upc_inv_reader;
@@ -203,4 +207,4 @@ DO $$ BEGIN
 END $$;
 RESET SESSION AUTHORIZATION;
 ROLLBACK;
-\echo PASS atomic moving-average transfer pairs, reverse direction conservation, no transfer COGS or journal, account provenance gate
+\echo PASS atomic moving-average transfer pairs, reverse direction conservation, no transfer COGS or journal, verified destination account
