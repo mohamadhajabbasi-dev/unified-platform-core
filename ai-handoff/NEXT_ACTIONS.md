@@ -272,3 +272,7 @@
 - [x] Verify 0019 and full regression; 27 suites PASS, actual concurrent receipt lock and exactly one movement observed.
 - [ ] Next inspect latest tree and D-016 dictionary/evidence. Implement verified supplier invoice linked to canonical received purchase, no duplicate party/product/stock master; unique invoice ref, derived payable balance and balanced journal recognition, idempotent settlement and period/account checks. Separate physical receipt from invoice/financial liability. Provisional single full invoice/payment if appropriate, no actual money or production access.
 - [ ] Extend partial receipts/returns, cost valuation, transfers/lot/serial/expiry, shipping/promotions/tax/invoicing, bank/cheques/installments, AI/ops/backup/API. Coordinate migration IDs, authenticated service and full security/performance/rollback review.
+
+## BUILD-020 — current
+- [x] Author supplier invoice, settlement and derived payable, atomic journal tests.
+- [ ] Verify CI, fix failures. Add concurrent settlement and closed-period settlement tests, then transfers and valuation/lot/serial, partial receipts and returns. Accounting policy, bank verification and real deployment remain pending.

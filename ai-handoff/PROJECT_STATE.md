@@ -230,3 +230,6 @@
 
 ## TEST-022 — latest verified checkpoint
 - 74 prototype tables, 22 migration files, 27 suites PASS at 990d6df716acd4ee8a942019dab63a4019000932, run 45426509033 job 138559865461. Counterparty, purchase and full receipt integrated with canonical inventory ledger; actual duplicate receipt race passed. No production changes. Supplier invoices/payables/settlement and valuation not implemented. Next verified supplier invoice and finance integration; partial receiving/returns and legal party verification pending.
+
+## BUILD-020 — latest
+- Supplier finance authored; 76 prototype tables if applied, 23 migration files. Invoice and partial settlement linked to existing journal and fiscal periods; CI pending. No operational changes.
