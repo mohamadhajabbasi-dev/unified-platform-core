@@ -92,3 +92,6 @@ One immutable allocation child of canonical reservation; exact movement referenc
 
 ## Tracked serial concurrency
 Dedicated CI suite verifies competing receipt across warehouses, double reservation and reserve versus transfer, with observed lock waits and ledger conservation. Synthetic only; no schema changes.
+
+## 0025 — order allocation cap and receipt cost evidence
+Enforce total traced allocations <=1000 per checkout, matching full return payload limit; exact retries unchanged. New finance.receipt_cost_basis invoker view derives purchase receipt movement cost and invoice match from existing relations; requires all three read/module gates. It is not valuation or COGS. Boundary test 1001 rejected atomically, 1000 checkout/fulfill/return. See docs/INVENTORY_VALUATION_DESIGN_FA.md for provisional next design. No new table or production migration.

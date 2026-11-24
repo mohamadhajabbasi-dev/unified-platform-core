@@ -91,11 +91,15 @@ BEGIN
  po:=procurement.issue_purchase('invoice-po',s,w,'IRR',ln);
  BEGIN PERFORM finance.record_supplier_invoice(po,'INV-1',d,d+7,2000,'IRR',digest,asset,ap); RAISE EXCEPTION 'FAIL invoice before receipt'; EXCEPTION WHEN check_violation THEN NULL; END;
  PERFORM procurement.receive_purchase(po,'invoice-receipt','delivery');
+ IF NOT EXISTS(SELECT 1 FROM finance.receipt_cost_basis WHERE purchase_id=po AND quantity=5 AND agreed_cost=2000 AND unit_cost=400 AND invoice_id IS NULL AND cost_status='agreed_uninvoiced')
+ THEN RAISE EXCEPTION 'FAIL uninvoiced receipt cost basis'; END IF;
  IF EXISTS(SELECT 1 FROM finance.supplier_invoices) OR EXISTS(SELECT 1 FROM finance.journal_entries) THEN RAISE EXCEPTION 'FAIL receipt created liability'; END IF;
  BEGIN PERFORM finance.record_supplier_invoice(po,'INV-1',d,d+7,1999,'IRR',digest,asset,ap); RAISE EXCEPTION 'FAIL wrong amount'; EXCEPTION WHEN check_violation THEN NULL; END;
  BEGIN PERFORM finance.record_supplier_invoice(po,'INV-1',d,d+7,2000,'USD',digest,asset,ap); RAISE EXCEPTION 'FAIL wrong currency'; EXCEPTION WHEN check_violation THEN NULL; END;
  BEGIN PERFORM finance.record_supplier_invoice(po,'INV-1',d,d+7,2000,'IRR',digest,ap,asset); RAISE EXCEPTION 'FAIL wrong accounts'; EXCEPTION WHEN foreign_key_violation THEN NULL; END;
  iid:=finance.record_supplier_invoice(po,'INV-1',d,d+7,2000,'IRR',digest,asset,ap);
+ IF NOT EXISTS(SELECT 1 FROM finance.receipt_cost_basis WHERE purchase_id=po AND agreed_cost=2000 AND invoice_id=iid AND cost_status='invoiced_exact_cost')
+ THEN RAISE EXCEPTION 'FAIL invoiced receipt cost basis'; END IF;
  IF finance.record_supplier_invoice(po,'INV-1',d,d+7,2000,'IRR',digest,asset,ap)<>iid THEN RAISE EXCEPTION 'FAIL invoice retry'; END IF;
  BEGIN PERFORM finance.record_supplier_invoice(po,'INV-1',d,d+7,2000,'IRR',digest,asset,other); RAISE EXCEPTION 'FAIL invoice account conflict'; EXCEPTION WHEN unique_violation THEN NULL; END;
  IF NOT EXISTS(SELECT 1 FROM finance.supplier_payables WHERE invoice_id=iid AND outstanding=2000 AND state='unpaid') THEN RAISE EXCEPTION 'FAIL initial payable'; END IF;
@@ -134,7 +138,7 @@ RESET SESSION AUTHORIZATION;
 SET CONSTRAINTS ALL IMMEDIATE;
 SET SESSION AUTHORIZATION upc_inv_b;
 DO $$ BEGIN
- IF EXISTS(SELECT 1 FROM finance.supplier_payables) OR EXISTS(SELECT 1 FROM finance.supplier_settlements) THEN RAISE EXCEPTION 'FAIL tenant leakage'; END IF;
+ IF EXISTS(SELECT 1 FROM finance.supplier_payables) OR EXISTS(SELECT 1 FROM finance.supplier_settlements) OR EXISTS(SELECT 1 FROM finance.receipt_cost_basis) THEN RAISE EXCEPTION 'FAIL tenant leakage'; END IF;
  BEGIN PERFORM finance.record_supplier_invoice(gen_random_uuid(),'forbidden',current_date,current_date,1,'IRR',decode(repeat('ab',32),'hex'),gen_random_uuid(),gen_random_uuid()); RAISE EXCEPTION 'FAIL verifier capability'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
 END $$;
 RESET SESSION AUTHORIZATION;

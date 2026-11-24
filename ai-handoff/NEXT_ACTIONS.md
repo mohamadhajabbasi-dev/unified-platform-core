@@ -329,3 +329,7 @@
 ## TEST-028 — current
 - [x] Verify dedicated serial concurrency and full regression; 35 suites PASS.
 - [ ] Align total tracked checkout allocation cap with return normalization cap (1000), with boundary regression. Then cost valuation using existing stock ledger and journal: explicit FIFO/weighted average policy, cost provenance, COGS and reversals. No duplicate inventory master. Partial/damaged/expired returns, historical migration, transit, remaining D-016 domains, unique migration IDs and production review pending. No real data or deployment.
+
+## BUILD-025 — current
+- [x] Author total checkout allocation cap, boundary and rollback test, receipt cost provenance view, provisional valuation design.
+- [ ] Verify CI. Then implement actual opt-in FIFO and moving weighted-average cost layers/allocation and journal COGS, handling cost provenance and transfer/return. Do not equate receipt cost evidence with stock valuation. Review accounting policy, opening/adjustment costs, partial/damaged returns, security and concurrency; no operational access.

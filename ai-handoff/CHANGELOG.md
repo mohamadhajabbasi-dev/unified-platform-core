@@ -77,3 +77,5 @@
 - FIX-005: avoid shadowing return query alias by PL/pgSQL record.
 
 - TEST-028 candidate: serial receipt, reservation and transfer race test; CI pending.
+
+- BUILD-025: checkout total tracked allocation cap and receipt cost evidence view; CI pending. Valuation design proposed.
