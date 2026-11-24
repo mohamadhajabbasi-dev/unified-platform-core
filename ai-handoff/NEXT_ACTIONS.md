@@ -333,3 +333,7 @@
 ## BUILD-025 — current
 - [x] Author total checkout allocation cap, boundary and rollback test, receipt cost provenance view, provisional valuation design.
 - [ ] Verify CI. Then implement actual opt-in FIFO and moving weighted-average cost layers/allocation and journal COGS, handling cost provenance and transfer/return. Do not equate receipt cost evidence with stock valuation. Review accounting policy, opening/adjustment costs, partial/damaged returns, security and concurrency; no operational access.
+
+## TEST-029 — current
+- [x] Verify allocation boundary and receipt cost evidence; all 36 suites PASS.
+- [ ] Implement opt-in FIFO and moving weighted average using canonical stock movements and immutable cost provenance, staged synthetic tests. Address transfers, returns, invoice timing and balanced journal COGS, rounding and unknown cost; no duplicate inventory. Accounting policy provisional pending approval. Remaining lifecycle and D-016 domains, migration IDs and production security review pending. No real data or deployment.
