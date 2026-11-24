@@ -263,3 +263,7 @@
 ## TEST-021 — current
 - [x] Verify 0018 and complete regression: 25 suites PASS, actual two competing price/eligibility checkout locks observed. Removed retail checkout bypass; synthetic fixtures updated, paid app/web tested.
 - [ ] Next inspect current tree and D-016 source evidence/dictionary, design one canonical tenant counterparty/supplier relationship without copying customer master; purchase orders and lines, idempotent goods receipts into existing inventory.stock_ledger. Provisional full receipt and explicit payable/accounting policy; test cross-tenant and concurrent receipts. Then transfers/lots/cost, shipping/tax/invoices, banking/AI/ops/backups/API. Coordinate duplicate migration IDs and production gates; no real data or operational access.
+
+## BUILD-019 — current
+- [x] Author counterparty/purchase commitment/full receipt, stock movement integration and actual receipt race test.
+- [ ] Verify full CI, fix failures; then supplier invoice, payable/settlement accounting via existing journal, cost valuation and partial receipt lifecycle. No deployment, real data or legacy access.

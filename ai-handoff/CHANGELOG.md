@@ -57,3 +57,5 @@
 - BUILD-017: four standard prices, eligibility, discount guard, private RLS and checkout snapshots; CI pending.
 
 - BUILD-018: original-only checkout, trusted channels, bootstrap constraints and actual pricing race acceptance tests; CI pending.
+
+- BUILD-019: counterparties, purchase orders/items, full receipts and canonical stock ledger provenance; CI pending.
