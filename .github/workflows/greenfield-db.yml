@@ -1,0 +1,48 @@
+name: Greenfield PostgreSQL tests
+on:
+  push:
+    paths:
+      - 'db/**'
+      - '.github/workflows/greenfield-db.yml'
+  pull_request:
+    paths:
+      - 'db/**'
+      - '.github/workflows/greenfield-db.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: upc_greenfield_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres -d upc_greenfield_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Apply ordered greenfield migrations
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: |
+          set -euo pipefail
+          for migration in db/migrations/*.sql; do
+            echo "Applying $migration"
+            docker exec -i "$PG_CONTAINER" psql -X -U postgres -d upc_greenfield_test -v ON_ERROR_STOP=1 < "$migration"
+          done
+      - name: Run synthetic acceptance tests
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: |
+          set -euo pipefail
+          for test in db/tests/*.sql; do
+            echo "Testing $test"
+            docker exec -i "$PG_CONTAINER" psql -X -U postgres -d upc_greenfield_test -v ON_ERROR_STOP=1 < "$test"
+          done

@@ -57,3 +57,9 @@
 - Starting main HEAD: `b413a25c6ccab350d85d04ee20d7d6a0781cdfea`; reviewed repository tree and 12 recent commits, all mandatory documents. No SQL, migrations or test harness existed.
 - Owner directs GitHub-only greenfield implementation and synthetic-data tests; legacy DB/server/source untouched, no Desktop Commander. Final design approval and deployment/transfer remain gated.
 - First exact next action: add versioned foundation migration and synthetic PostgreSQL acceptance tests for tenant isolation and customer verified identity. Provisional technical choices, not production approval.
+
+## Checkpoint BUILD-001 — 2026-11-24 (latest)
+- Phase: 03 — GREENFIELD_FOUNDATION_IMPLEMENTATION / CI_UNVERIFIED.
+- Baseline DESIGN-003 `1b1205f8d66a12b0f72e6ab21b3058b69c5396f7`; first SQL migration, acceptance tests and GitHub-hosted isolated CI workflow authored. No existing SQL duplicated. No legacy access, server access, production changes or migration of old data.
+- Prototype: tenant/user/membership, private trusted login scope, CRM customers/identifiers/addresses; RLS, composite FK, unique verified identity, transactional resolver. Details and limitations in db/README.md. Choices provisional, not final approved security architecture.
+- Runtime result: NOT_YET_VERIFIED. Next exact action: query GitHub Actions runs for BUILD-001 commit, inspect job logs, record observed result and fix any failure; if workflow write/trigger denied, record blocker. Then add IAM/module grant and catalog/price migrations and tests incrementally.

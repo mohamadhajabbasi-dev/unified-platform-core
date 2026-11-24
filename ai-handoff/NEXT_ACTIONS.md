@@ -49,3 +49,9 @@
 - [ ] Implement first isolated SQL migration (core tenant/user, membership, canonical customer + identifiers, tenant-aware FK/RLS) and tests. Use only disposable GitHub-hosted PostgreSQL, no legacy endpoints/secrets.
 - [ ] Verify CI evidence; then IAM permissions/modules, catalog/pricing, stock ledger/reservations, order/payment/finance, content/outbox/audit/backup and integration tests in incremental migrations.
 - [ ] Final design review, isolation/load/recovery tests, migration/rollback plan and owner approval before any legacy transfer. Do not access legacy now.
+
+## Checkpoint BUILD-001 — current
+- [x] Author first isolated foundation migration and synthetic acceptance tests; CI definition included if accepted by GitHub.
+- [ ] First: verify actual GitHub Actions run and job logs for BUILD-001, record exact run/SHA and pass/fail; no PASS claim until evidence. Fix failures without touching legacy.
+- [ ] Harden non-superuser function ownership, verified identity linking/ambiguity and concurrency, RLS write/permissions/audit; add IAM roles and approved module grants; then catalog/price, stock, order/payment/finance, content/outbox/backup and integration/recovery/load tests.
+- [ ] Final review and owner approval only after isolated tests and migration/rollback plan; legacy remains entirely outside current scope.

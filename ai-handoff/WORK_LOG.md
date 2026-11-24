@@ -82,3 +82,10 @@
 - Operation: record D-013 in AGENTS and DECISIONS, align README/master/target docs, append PROJECT_STATE/NEXT_ACTIONS/WORK_LOG/CHANGELOG.
 - Result: DONE for scope update, no SQL executed. Owner authorizes normal isolated development and testing; not final approval of open technical choices nor production migration. No Desktop Commander, legacy repos, DB or server accessed/changed.
 - Evidence: commit/read-back; no runtime tests at this documentation step. Rollback: documentation revert only. Next: first migration and tenant/customer tests.
+
+## BUILD-001 / 2026-11-24 — foundation prototype and CI
+- Precheck: mandatory docs re-read, DESIGN-003 HEAD `1b1205f8d66a12b0f72e6ab21b3058b69c5396f7` verified; no prior SQL files. Scope D-013.
+- Operation: add db/migrations/0001_core_crm.sql, db/tests/0001_core_crm.sql, db/README.md, .github/workflows/greenfield-db.yml; append handoff and changelog. No other repo, live DB or server touched.
+- Result: authored versioned prototype with canonical tenant customer, composite FK, verified identity unique constraint, trusted session login binding and RLS; synthetic acceptance suite. Runtime tests not yet observed; CI status pending verification. No real user or credential data.
+- Provisional choices: PostgreSQL 16, dedicated trusted backend login mapping, verifier function, test-only bootstrap owner. No final architectural approval; distinct identity linking, least-privilege owner, IAM/modules, other domains, audit and concurrency tests pending. Rollback: disposable CI container removal; repo revert if necessary.
+- Next: inspect GitHub Actions run for this commit and log actual results, then next domain. SHA in Git history.
