@@ -419,3 +419,10 @@
 
 ## BUILD-026I
 - BUILD-026I: canonical 0037 extends existing return replay and shared COGS posting for moving_average; one shared reversal implementation with strict compatibility FIFO wrapper, same journal sources, historical exact cost from captured sale and reversal. Pool accepts confirmed return debit only to the same inventory asset; all preceding purchases still must match. No fictitious FIFO layers. Test changes rate via a later receipt, checks original 1320 returned, resale 2290, net COGS 2400, no duplicate debit, rejection before reversal, wrong method/account and closed period. No new tables. Provisional full ordinary sellable returns only; transfers, zero cost, tracked/partial/damaged returns, automatic lifecycle and dedicated return concurrency remain pending. CI pending; no production access.
+
+
+## TEST-039 / 2026-11-24
+- TEST-039: run 45447390713 job 138634807713 at 01b420d7dac44ecf8ca0f082ede752321934740c completed success; 37 migrations, 46 SQL/concurrency suites (37 SQL + nine concurrency) PASS, four migration guard tests. Moving-average return and resale verified; 85 tables.
+
+## BUILD-026J
+- BUILD-026J: canonical 0038 implements ordinary moving-average interwarehouse cost replay and atomic paired capture using existing transfer_lines and cost facts. No new tables, no transfer journal, transfer movement excluded from consumed COGS, exact signed pair reconciliation, private existing cost writer, variant lock and same permissions/RLS. Tests cover source/destination isolated capture rejection, exact retry, roundtrip quantity/value conservation, no new journal and blocked downstream COGS after transfer-in pending asset account provenance. Conservative capture requires whole histories in both warehouses to be replayable in source-then-destination order; complex uncaptured dependency chains fail closed. FIFO transfer, tracked transfer, destination COGS account mapping, cross-account reclassification, approved policy and dedicated transfer cost concurrency remain pending. New CI pending; no production access.
