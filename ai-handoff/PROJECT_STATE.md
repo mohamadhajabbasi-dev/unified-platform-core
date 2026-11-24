@@ -197,3 +197,6 @@
 - Changes to ERPPlus, CommerceAI source, active databases, server, operational storefront: **NONE**. New production DB/deployment/data migration: **NONE**.
 - Current gate: full synthetic regression in GitHub Actions with exact tested commit SHA, repair failures before extending more SQL; security review of consent/message encryption, user-authorized price list/employee data, and final architecture approval remain pending.
 - Next: check Actions latest run; fix only proven errors. After pass, proceed with next uncovered domain from canonical dictionary, and log every action.
+
+## TEST-018 / BUILD-016 — reconciled baseline
+- Run 45421101715 job 138540527723 at 8bb8e9d554f832afc77e1498f34690fcade741c4: 18 migrations/21 suites PASS, 66 prototype tables. New 0016 attribution authored (68 if applied), CI pending. Preserve D-016 and parallel changes. No deployment. Existing tier table not duplicate; audience/checkout authorization pending.

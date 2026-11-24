@@ -228,3 +228,7 @@
 - [ ] After each domain, write versioned migration + synthetic acceptance/negative/concurrent tests, update mapping; preserve prior tables and do not copy legacy EF models blindly.
 - [ ] Require final owner approval, migration/rollback and staging isolation/load/recovery tests before any transfer of old data. Don't touch existing servers or databases or request Desktop Commander.
 - [ ] Update WORK_LOG, PROJECT_STATE, NEXT_ACTIONS, CHANGELOG after each action and verify GitHub commit SHAs.
+
+## BUILD-016 — current
+- [x] Verify parallel catalog/HR baseline runtime (21 suites PASS); implement verified acquisition and order attribution on current canonical masters.
+- [ ] Verify current full CI, fix observed errors; then inspect existing price tiers and implement authorized list resolution and checkout integration, and remaining D-016 procurement/warehouse, banking, shipping, AI/ops domains. Coordinate migration prefix collisions and privacy scheduler; no operational access.

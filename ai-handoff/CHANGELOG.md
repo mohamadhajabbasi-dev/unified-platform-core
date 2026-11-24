@@ -48,3 +48,5 @@
 
 
 - 2026-11-24 SOURCE-004/BUILD-013..015: read 182 ERPPlus and 52 CommerceAI EF DbSet definitions via GitHub; map 234 source declarations to 57 normalized canonical target table groups. Authored new independent migrations 0013 (5 content/CRM tables), 0014 (6 catalog/price-tier tables), 0015 (7 HR/payroll tables) with matching synthetic tests. All newly authored test results PENDING. No ERPPlus/CommerceAI/production changes.
+
+- BUILD-016: consented acquisition and order attribution, source/retention rules; CI pending. Parallel catalog/HR baseline verified.
