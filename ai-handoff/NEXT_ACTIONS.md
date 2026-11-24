@@ -292,3 +292,6 @@
 ## BUILD-022 — current
 - [x] Author traceability foundation and transfer/reserve concurrency tests.
 - [ ] Verify CI; then integrate trace-aware receipts, reservations/fulfillment, return and transfer with same ledger; add expiry/FEFO and cost layers, actual serial contention and lock order tests. Tracked variants currently fail closed for unadapted paths. No real data or deployment.
+
+## FIX-003 — current
+- [ ] Verify rerun including inventory/transfer races; do not mark BUILD-022 passed until logs confirm. Trace-aware receipt/reservation/fulfillment/return/transfer still pending.

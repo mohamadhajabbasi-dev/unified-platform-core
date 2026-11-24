@@ -65,3 +65,5 @@
 - BUILD-021: atomic warehouse transfers and supplier settlement race/period guard; CI pending.
 
 - BUILD-022: lot/serial/expiry metadata and guarded trace adjustments, canonical ledger, transfer concurrency tests; CI pending.
+
+- FIX-003: update old inventory race readiness for added trace advisory lock, preserve assertions.

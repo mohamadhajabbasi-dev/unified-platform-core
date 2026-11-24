@@ -245,3 +245,6 @@
 
 ## BUILD-022 — latest
 - 81 prototype tables if applied, 25 migration files; trace metadata and guarded ledger adjustments authored, transfer races added. CI pending. Tracked sales/procurement/transfer allocation not enabled. No deployment.
+
+## FIX-003 — current
+- First BUILD-022 CI failed in old inventory concurrency readiness check after trace lock added; SQL tests passed. Fixture corrected, full CI pending.

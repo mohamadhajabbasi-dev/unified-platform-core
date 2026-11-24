@@ -296,3 +296,6 @@
 
 ## BUILD-022 / 2026-11-24 — trace foundation and transfer race
 - Precheck TEST-024 9e12201409213bfc48da3f6af0ea1576b742ea14; docs and canonical movement paths reviewed. Added 0022 three metadata tables, ledger FKs, scoped immutable enrollment and lot/serial registration, trace-aware adjustment, expiry admission guard and derived balances. Unadapted tracked receipt/reserve/transfer/sales return paths fail closed; ordinary available zero. Added actual transfer/reserve and reverse-direction lock tests. CI pending. Provisional UTC expiry, variant-scoped serial, only unused variants, no full lifecycle allocation or costing. No real data/legacy/production access.
+
+## FIX-003 / 2026-11-24 — trace lock regression fixture
+- Run 45432989819 job 138583077296 failed at 96e7cc3c23c74f7984f95672d1c38eab1d5bc27b. 25 migrations and 25 SQL tests plus identity concurrency passed; inventory race readiness required exactly 2 granted advisory locks, but new trace variant lock adds a third. No SQL error in failed step. Update readiness to >=3; actual wait, oversell rejection and balance checks unchanged. Remaining concurrency skipped in first run. Re-run CI; no production access.

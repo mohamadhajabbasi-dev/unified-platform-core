@@ -65,7 +65,7 @@ SQL
 first=$!
 ready=0
 for i in {1..40}; do
- if [[ "$(psql_ci -c "SELECT count(*) FROM pg_locks l JOIN pg_stat_activity a USING(pid) WHERE a.application_name='upc_inventory_first' AND l.locktype='advisory' AND l.granted")" == 2 ]]; then ready=1; break; fi
+ if [[ "$(psql_ci -c "SELECT count(*) FROM pg_locks l JOIN pg_stat_activity a USING(pid) WHERE a.application_name='upc_inventory_first' AND l.locktype='advisory' AND l.granted")" -ge 3 ]]; then ready=1; break; fi
  sleep 0.1
 done
 [[ "$ready" == 1 ]]
