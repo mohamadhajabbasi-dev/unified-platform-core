@@ -206,3 +206,7 @@
 ## TEST-016 — current
 - [x] Verify 14 migrations, 17 suites including shared analytics and previous concurrency tests; PASS.
 - [ ] Next: official app distribution report ingestion with provider provenance, tenant/app/release scope, exact idempotency, explicit unknown vs zero and distinct market metric definitions. No fabricated download statistics or user-level inference. Then verified acquisition/order attribution and existing price list audience/channel/quantity resolution and checkout checks. Shared app assignment, quality telemetry, consent/retention scheduler and load tests remain pending. No legacy/production access.
+
+## BUILD-015 — current
+- [x] Author official distribution aggregate schema/import API and tests.
+- [ ] Verify full CI including parallel content/CRM changes; resolve duplicate numeric migration prefix by coordination before deployment. Then verified customer/order attribution using existing CRM consent/session references; authorized price list resolution. Actual provider connectors, coverage and reconciliation pending. No real data or legacy access.

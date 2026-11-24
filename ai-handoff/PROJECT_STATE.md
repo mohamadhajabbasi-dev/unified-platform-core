@@ -178,3 +178,6 @@
 
 ## TEST-016 — latest checkpoint
 - 47 prototype tables, 14 migrations, 17 suites PASS, 7 views. Run 45418858238 job 138532500500 tested SHA 15dacc4199930a943a897f00174969878c43d5cc. Single shared analytics.sessions/events and scoped app registry/releases/installation tested. No real SDK, distribution reports or production access. Next official download aggregates separate from first-open, then attribution and pricing. Tenant-owned apps and 30-day retention provisional.
+
+## BUILD-015 — latest
+- Distribution report migration 0015 authored, one table and one derived view. CI pending. Parallel content/CRM additions preserved; table and migration counts to be reconciled from current tree. Actual provider import integration not implemented. No operational changes.
