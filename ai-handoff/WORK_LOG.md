@@ -394,3 +394,10 @@
 
 ## FIX-009 / 2026-11-24
 - FIX-009 — run 45443813770 job 138621932950 at 0c84496d2238d44065e5ccb2fac34c7a4012db2a failed in 0034 acceptance test after guard and all 34 migrations passed; 33 SQL suites passed, concurrency skipped. Error 42702 ambiguous column reference amount in finance.reverse_fifo_cogs line 34. Renamed local amount to v_original_cost and updated both original journal line comparisons, preserving qualified l.amount and all existing assertions. No table, permission, accounting semantics or test change. Last fully verified TEST-035: 85 tables, 33 migrations, 42 suites and four guard unit tests. New CI pending, prototype only; no operational access.
+
+
+## TEST-036 / 2026-11-24
+- TEST-036: run 45444335208 job 138623820708 at 6a53d994df36bd00036244d744b87270f2351e74 completed success; 34 migrations, 43 suites PASS (34 SQL + nine concurrency) and four migration guard tests. FIX-009 verified. 85 tables.
+
+## BUILD-026G
+- BUILD-026G: canonical 0035 extends existing replay function (no duplicate tables or valuation API). Only full ordinary FIFO returns with exact original captured sale, confirmed COGS and reversal journal, original invoiced receipt allocations and sales access are admitted. Restores historical quantities/cost at end of FIFO queue, retains original receipt IDs and consolidates recurring receipt layers when consumed. Existing capture/journal APIs reused; no second inventory debit. Updated 0034 regression to reject unreversed returns and verify captured reversed returns; dedicated 0035 tests resale cost and journal conservation. Provisional FIFO return re-entry timing/order, no moving-average returns, transfer valuation, partial/damaged/zero-cost return, automatic posting, production approval or dedicated return concurrency. New CI pending. No operational access.

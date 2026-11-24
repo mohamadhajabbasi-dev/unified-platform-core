@@ -392,3 +392,8 @@
 ## FIX-009 — current
 - [x] Diagnose failed return reversal test and remove ambiguous PL/pgSQL variable without weakening tests.
 - [ ] Verify exact new CI SHA (34 SQL + nine concurrency, four guard tests). Then canonical 0035: integrate returned stock into replay with original cost provenance; moving average, transfer, lifecycle and policy approval remain pending. No production access.
+
+
+## TEST-036 / BUILD-026G — current
+- [x] Verify FIX-009, author 0035 FIFO return replay and resale tests.
+- [ ] Verify exact new CI SHA (35 SQL + nine concurrency, four guard tests), repair. Next moving-average confirmed COGS and returns, transfer value, lifecycle guards and return concurrency. No production access.

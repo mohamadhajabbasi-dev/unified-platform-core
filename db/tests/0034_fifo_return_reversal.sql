@@ -144,6 +144,7 @@ BEGIN
  rid:=sales.receive_full_return(oid,'valuation-return','All units inspected and sellable');
  SELECT l.movement_id INTO STRICT return_mid FROM inventory.stock_ledger l JOIN sales.order_items i ON i.tenant_id=l.tenant_id
  AND l.adjustment_key='sales-return:'||rid::text||':'||i.item_id::text WHERE i.order_id=oid;
+ BEGIN PERFORM finance.capture_movement_costs(w,v); RAISE EXCEPTION 'FAIL capture before return reversal'; EXCEPTION WHEN check_violation THEN NULL; END;
  rev:=finance.reverse_fifo_cogs(mid);
  IF finance.reverse_fifo_cogs(mid)<>rev OR (SELECT count(*) FROM finance.journal_entries)<>5
  OR NOT EXISTS(SELECT 1 FROM finance.journal_entries WHERE entry_id=rev AND cogs_return_movement_id=return_mid)
@@ -151,10 +152,15 @@ BEGIN
  OR (SELECT net_debit FROM finance.trial_balance WHERE account_id=expense)<>120
  OR (SELECT sum(quantity_delta) FROM inventory.stock_ledger WHERE variant_id=v)<>19
  THEN RAISE EXCEPTION 'FAIL historical return reversal and conservation'; END IF;
- BEGIN PERFORM finance.capture_movement_costs(w,v); RAISE EXCEPTION 'FAIL premature resale valuation'; EXCEPTION WHEN check_violation THEN NULL; END;
+ IF finance.capture_movement_costs(w,v)<>1 OR finance.capture_movement_costs(w,v)<>0
+ OR NOT EXISTS(SELECT 1 FROM finance.movement_cost_facts WHERE movement_id=return_mid AND quantity_delta=12 AND value_delta=1240)
+ THEN RAISE EXCEPTION 'FAIL confirmed return capture'; END IF;
+ SELECT * INTO a FROM finance.configured_inventory_preview(w,v);
+ IF a.on_hand<>19 OR a.remaining_value<>2080 OR a.consumed_cost<>120 THEN RAISE EXCEPTION 'FAIL restored value'; END IF;
  PERFORM finance.close_period(period);
  PERFORM sales.receive_full_return(oid2,'valuation-return-2','All units inspected and sellable');
  BEGIN PERFORM finance.reverse_fifo_cogs(mid2); RAISE EXCEPTION 'FAIL closed period reversal'; EXCEPTION WHEN check_violation THEN NULL; END;
+ BEGIN PERFORM finance.capture_movement_costs(w,v); RAISE EXCEPTION 'FAIL unreversed return capture'; EXCEPTION WHEN check_violation THEN NULL; END;
  IF finance.reverse_fifo_cogs(mid)<>rev OR (SELECT count(*) FROM finance.journal_entries)<>5
  THEN RAISE EXCEPTION 'FAIL closed-period reversal retry/rollback'; END IF;
 END $$;
@@ -175,4 +181,4 @@ DO $$ BEGIN
 END $$;
 RESET SESSION AUTHORIZATION;
 ROLLBACK;
-\echo PASS explicit full sellable FIFO return reversal, original accounts and amount, exact retry, closed period and fail-closed resale
+\echo PASS explicit full sellable FIFO return reversal, original accounts and amount, exact retry, closed period and fail-closed unreversed return
