@@ -442,3 +442,8 @@
 ## FIX-011 — current
 - [x] Diagnose 0041 test syntax failure and repair literal delimiters, preserving assertions.
 - [ ] Verify exact new CI SHA (41 SQL + nine concurrency, four guard tests); fix remaining failures before 0042 reconciliation of replay and posted journal amounts. No production access.
+
+
+## TEST-044 / BUILD-026N — current
+- [x] Verify FIX-011; extend readiness with replay and journal amount reconciliation.
+- [ ] Verify exact new CI SHA (42 SQL + nine concurrency, four guard tests), repair before further migrations. Next moving-average cost contention, tenant-level account reconciliation design, tracked valuation and complex transfer chains. Policy/production approval still pending. No production access.

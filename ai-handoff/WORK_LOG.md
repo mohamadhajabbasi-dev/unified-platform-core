@@ -458,3 +458,10 @@
 
 ## FIX-011 / 2026-11-24
 - FIX-011: run 45463597151 job 138692481291 at 2b87e1fa16799dd157e3a49f366d55e7721642d9 failed in 0041 acceptance test with syntax error near BEGIN. All 41 migrations and migration ID guard passed; 40 SQL suites passed, concurrency skipped. Read-back found two END $; and one DO $ BEGIN instead of double-dollar delimiters in the test (JS replacement-string expansion). Corrected only those three delimiters using literal callback replacement, verified all three DO blocks have matching delimiters. No SQL runtime changes, no test assertions removed. Last fully verified baseline: 40 migrations, 49 suites (40 SQL + nine concurrency, five COGS races), four guard tests, 85 tables. New CI pending; no operational access.
+
+
+## TEST-044 / 2026-11-24
+- TEST-044: run 45463986659 job 138693842767 at 1284fd4aa06521355e217a4bb4269870d47161a6 success; 41 migrations, 50 suites (41 SQL + nine concurrency), four guard tests. FIX-011 and lifecycle diagnostics verified; 85 tables.
+
+## BUILD-026N
+- BUILD-026N: canonical 0042 extends existing read-only inventory_cost_issues (same readiness API, no table) with invoice journal amount/type/currency checks against whole supplier invoice, COGS signed amount/type/currency checks against immutable fact, return journal exact original account/amount reversal and returned fact match. After basic lifecycle checks pass, replays configured warehouse/variant and compares each captured sequence, quantity, cost, invoiced status and exact FIFO sources; replay check violation yields scope-level issue. Synthetic fault injection via privileged test transaction and savepoints, including temporary immutable trigger disable ONLY in disposable CI and rollback, validates balanced but wrong invoice/reversal and changed sale cost/allocation/sequence; normal API cannot mutate facts. No automatic posting/closure, no complete tenant-wide financial certification or account-balance reconciliation. Scope snapshot only, may require load testing. New CI pending. No production access.
