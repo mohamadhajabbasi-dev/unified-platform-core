@@ -357,3 +357,8 @@
 ## TEST-032 / BUILD-026D — current
 - [x] Verify 0028 and 39 suites; author FIFO receipt provenance and tests.
 - [ ] Verify 0029 CI, repair. Next explicit COGS journal with source FK, matched inventory account and fiscal gate, then reversal, transfers and concurrency. No production access.
+
+
+## FIX-006 — current
+- [x] Diagnose CI failure and correct conflicting fixture aliases without weakening assertions.
+- [ ] Verify new CI SHA, all 32 SQL + eight concurrency suites; repair any failure before COGS migration. No operational access.

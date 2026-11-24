@@ -113,8 +113,8 @@ BEGIN
  IF finance.capture_movement_costs(w,v)<>3 THEN RAISE EXCEPTION 'FAIL initial capture'; END IF;
  IF finance.capture_movement_costs(w,v)<>0 THEN RAISE EXCEPTION 'FAIL retry'; END IF;
  IF (SELECT count(*) FROM finance.fifo_cost_allocations)<>2
- OR NOT EXISTS(SELECT 1 FROM finance.fifo_cost_allocations a JOIN finance.receipt_cost_basis b ON b.tenant_id=a.tenant_id AND b.movement_id=a.receipt_movement_id WHERE b.purchase_id=po1 AND a.quantity=10 AND a.cost=1000)
- OR NOT EXISTS(SELECT 1 FROM finance.fifo_cost_allocations a JOIN finance.receipt_cost_basis b ON b.tenant_id=a.tenant_id AND b.movement_id=a.receipt_movement_id WHERE b.purchase_id=po AND a.quantity=2 AND a.cost=240)
+ OR NOT EXISTS(SELECT 1 FROM finance.fifo_cost_allocations fa JOIN finance.receipt_cost_basis rb ON rb.tenant_id=fa.tenant_id AND rb.movement_id=fa.receipt_movement_id WHERE rb.purchase_id=po1 AND fa.quantity=10 AND fa.cost=1000)
+ OR NOT EXISTS(SELECT 1 FROM finance.fifo_cost_allocations fa JOIN finance.receipt_cost_basis rb ON rb.tenant_id=fa.tenant_id AND rb.movement_id=fa.receipt_movement_id WHERE rb.purchase_id=po AND fa.quantity=2 AND fa.cost=240)
  THEN RAISE EXCEPTION 'FAIL exact FIFO receipt provenance'; END IF;
  BEGIN DELETE FROM finance.fifo_cost_allocations; RAISE EXCEPTION 'FAIL allocation delete'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
  BEGIN UPDATE finance.fifo_cost_allocations SET cost=0; RAISE EXCEPTION 'FAIL allocation update'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;

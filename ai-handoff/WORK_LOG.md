@@ -357,3 +357,7 @@
 
 ## BUILD-026D / 2026-11-24
 - BUILD-026D: one new normalized finance.fifo_cost_allocations child relation for exact outgoing-to-receipt cost provenance, same tenant/warehouse/variant composite FKs to existing movement cost facts. Single replay algorithm now emits FIFO source allocation detail; existing preview/replay signatures preserved. Capture checks allocation quantity and cost reconcile to outgoing cost and immutable retry. Moving average still uses aggregate cost facts, no artificial FIFO provenance. CI pending. No automatic costing enforcement, COGS posting, transfers/returns, or production access.
+
+
+## FIX-006
+- FIX-006 / 2026-11-24 — run 45441720623 job 138614372664 at 8ef451d9d7d52f088d402a932290d62a7ae6aa37 failed after 32 migrations applied and 31 SQL suites passed. SQLSTATE undefined_column from PL/pgSQL record b shadowing receipt alias b in 0029 test (record b has no field tenant_id). Renamed both SQL aliases a/b to fa/rb in both receipt provenance assertions; quantities, costs and all assertions preserved. No production SQL change; all concurrency suites skipped by failed job. Full CI rerun required. Last fully verified baseline TEST-032: 84 tables, 31 migrations, 39 suites PASS. Candidate: 85 tables, 32 migrations. No legacy/operational access.
