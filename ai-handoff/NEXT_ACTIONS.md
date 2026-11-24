@@ -276,3 +276,7 @@
 ## BUILD-020 — current
 - [x] Author supplier invoice, settlement and derived payable, atomic journal tests.
 - [ ] Verify CI, fix failures. Add concurrent settlement and closed-period settlement tests, then transfers and valuation/lot/serial, partial receipts and returns. Accounting policy, bank verification and real deployment remain pending.
+
+## TEST-023 — current
+- [x] Verify 0020 and all prior regressions: 28 suites PASS, including five previous concurrency suites.
+- [ ] Add actual competing supplier settlement race (distinct refs, overpay denial, exact retry), closed-period settlement rollback and account mapping review. No actual disbursement. Then implement interwarehouse transfers through existing stock ledger, traceability and valuation, partial receipt/returns. Continue tax/shipping, banking/cheques/installments, AI/ops/backups/API and coordinated migration IDs, service authentication, security/performance and rollback review. No production access or real data.

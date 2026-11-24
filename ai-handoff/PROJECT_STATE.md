@@ -233,3 +233,6 @@
 
 ## BUILD-020 — latest
 - Supplier finance authored; 76 prototype tables if applied, 23 migration files. Invoice and partial settlement linked to existing journal and fiscal periods; CI pending. No operational changes.
+
+## TEST-023 — latest verified checkpoint
+- 76 prototype tables, 23 migration files, 28 suites PASS at ffe6d0fd8dcbd07feceea6c6ef49a48efdc2ac8d, run 45427508836 job 138563413627. Supplier invoice and partial/full settlement with derived payable and existing journal/fiscal gate tested. No operational changes. Dedicated settlement race and closed-period settlement test pending, as are account mapping, COGS, actual bank verification and invoice variance/tax/returns. Next harden then warehouse transfers and valuation.
