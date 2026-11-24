@@ -145,3 +145,14 @@
 ## BUILD-010 — current
 - [x] Implement separate subscription terms, invoices and verified billing receipts; tests.
 - [ ] Verify full CI then complete CRM interactions, catalog media/category hierarchy and tenant content, before ops/outbox/backup/API. Platform billing lifecycle and accounting policy remain provisional.
+
+
+## Checkpoint REQ-015 — newest next actions, supersedes previous priorities
+- [x] Inspect latest repo (as of baseline BUILD-009) and existing prototypes for duplicate schema; add owner-requested legal/partners/org/user settings + Commerce-only visitor/source tracking design in `docs/TENANT_IDENTITY_VISITOR_ATTRIBUTION_FA.md`.
+- [x] Extend target ERD, master plan, AGENTS and decisions; note **public** repository and no real personal data allowed.
+- [ ] **First** verify 0009 run on GitHub Actions and test logs (if workflow quota prevents, record blocker; do not label PASS).
+- [ ] In next versioned migration after 0009, implement scoped tenant legal profile, partner/representative and organization/user setting entities with composite FK, RLS, permissions and negative tests; reuse existing Tenants/Users/Memberships.
+- [ ] Implement real Commerce entitlement/purchase **AND** superadmin module approval check; source-of-truth for entitlement must be independent of a second module-enabled flag.
+- [ ] Add visitor sessions/events (consent, privacy, retention, bot filtering, tenant-safe attribution) and link verified traffic/CRM channels to existing `crm.customers` without creating duplicate Customers. Add isolation, non-entitled tenant, cross-store same-customer, and conversion tests.
+- [ ] Build eventual API/dashboard by tenant: visitor source/UTM/campaign, conversion, orders, legal info, partners, users and settings with auditable export.
+- [ ] CI/load/security tests with synthetic data; no legacy/production modifications or access. After **each action** append WORK_LOG and update state/next actions with remote commits.
