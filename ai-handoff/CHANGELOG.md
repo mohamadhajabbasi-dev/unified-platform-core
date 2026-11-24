@@ -32,3 +32,5 @@
 - BUILD-009: fiscal periods, posting gate and fulfillment-based revenue recognition; CI pending.
 
 - BUILD-010: independent platform subscriptions, invoices and verified billing receipts; CI pending.
+
+- BUILD-011: legal dossier, stakeholders, addresses, typed tenant/member settings, shared audit metadata; CI pending.

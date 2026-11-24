@@ -161,3 +161,7 @@
 - [x] Verify 0009 and 0010 CI: runs 45413678605 and 45414085343, all 13 suites PASS at latest tested code.
 - [ ] Next migration 0011: implement D-014/REQ-015 legal tenant dossier, stakeholder/representative records, addresses and constrained tenant/membership settings with tenant-safe FK, RLS, synthetic tests; preserve existing canonical Tenants/Users/Customers.
 - [ ] Explicit Commerce paid entitlement tied to verified billing and separately approved module; then consent-aware sessions/events, customer acquisition and order attribution. No inferred entitlement from generic subscription; no real personal data. Then CRM/catalog/content/ops/outbox/backup/API and performance/security review. No legacy access/deployment.
+
+## BUILD-011 — current
+- [x] Implement five dependent dossier/settings tables and shared audit metadata, tests.
+- [ ] Verify full CI; then explicit Commerce purchase entitlement plus approved module, privacy-aware visits and attribution. Legal vault, platform audit access, ownership validation and complete audit coverage pending.
