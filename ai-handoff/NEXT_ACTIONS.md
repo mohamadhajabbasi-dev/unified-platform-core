@@ -32,3 +32,9 @@
 - [ ] Then catalog/variant/price/inventory source audit; IAM/modules; orders/accounting; conceptual ERD and decisions.
 - [ ] Live database metadata verification remains a later gate before migration. **Do not require or repeatedly request Desktop Commander for source audit.**
 - [ ] Update WORK_LOG, PROJECT_STATE and this file after every action; commit and verify SHA.
+
+## Checkpoint DESIGN-001 — newest priority / owner correction
+- [x] Registered requirement-first redesign brief `docs/TARGET_ARCHITECTURE_REQUIREMENTS_FIRST_FA.md`; original legacy analysis remains **only migration evidence**.
+- [ ] **NEXT ACTION**: create **new greenfield conceptual target ERD** from the approved business invariants, then draft table dictionary/tenant scope/PK-FK/RLS/uniqueness and ask owner to approve. Do NOT copy current EF tables by default.
+- [ ] Legacy source audits may proceed as parallel **migration mapping**, not as gate for defining the proposed target. Live database inventory is required later for safe migration, not to start architecture design.
+- [ ] Keep reports/decisions logged after every step. No actual DDL or production changes.
