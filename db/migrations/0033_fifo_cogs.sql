@@ -30,7 +30,7 @@ BEGIN
  IF NEW.source_key LIKE 'supplier-settlement:%' THEN NEW.supplier_settlement_id:=substring(NEW.source_key from 21)::uuid; END IF;
  IF NEW.source_key LIKE 'cogs:%' THEN NEW.cogs_movement_id:=substring(NEW.source_key from 6)::uuid; END IF;
  RETURN NEW;
-END $;
+END $$;
 GRANT SELECT ON sales.order_items TO upc_finance_executor;
 CREATE POLICY finance_cogs_item_dependency ON sales.order_items FOR SELECT TO upc_finance_executor USING(tenant_id=iam.current_tenant_id());
 GRANT EXECUTE ON FUNCTION sales.lock_order(uuid,uuid) TO upc_finance_executor;

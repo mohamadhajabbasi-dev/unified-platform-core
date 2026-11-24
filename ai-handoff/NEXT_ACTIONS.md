@@ -372,3 +372,8 @@
 ## FIX-007 / MIG-ID-001 — current (canonical IDs supersede historical numbering)
 - [x] Diagnose failed COGS migration, correct delimiter, normalize migration/test IDs and add CI guard.
 - [ ] Verify exact new CI SHA: guard (4 unit tests), 33 SQL suites and 8 concurrency suites. Fix any failure first. COGS now 0033; next new migration 0034. Then continue return reversal, moving-average posting, transfer valuation and lifecycle/concurrency. No production access.
+
+
+## FIX-008 — current
+- [x] Verify renumbered tree and repair actual delimiter after read-back detected replacement escaping.
+- [ ] Check CI for latest exact SHA (33 SQL, eight concurrency, four guard tests). Record outcome. Next 0034 only after full PASS.

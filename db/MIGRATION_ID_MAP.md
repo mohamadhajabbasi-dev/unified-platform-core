@@ -39,3 +39,5 @@ Baseline: 86deadf3f95edda175168eda605774546300e4ee. The previous CI used lexical
 | `0030_fifo_cogs.sql` | `0033_fifo_cogs.sql` | `0030_fifo_cogs.sql` | `0033_fifo_cogs.sql` |
 
 Next unused ID: **0034**. CI rejects invalid names, duplicates, gaps and mismatched migration/test ID sets before SQL application. Accounting rules remain provisional; no production approval implied.
+
+Read-back correction FIX-008: actual one-character delimiter fix is committed separately after MIG-ID-001; both numbering and original SQL order were verified unchanged.
