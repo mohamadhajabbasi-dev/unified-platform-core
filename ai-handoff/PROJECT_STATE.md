@@ -181,3 +181,6 @@
 
 ## BUILD-015 — latest
 - Distribution report migration 0015 authored, one table and one derived view. CI pending. Parallel content/CRM additions preserved; table and migration counts to be reconciled from current tree. Actual provider import integration not implemented. No operational changes.
+
+## TEST-017 — latest verified distribution checkpoint
+- Tested SHA af330fdd8dbc2b07175bea1e68ae1cb70a8e10f2, run 45420046746 job 138536799970: 16 migration files, 19 test suites PASS, 53 prototype tables and 8 views including parallel content/CRM addition. Duplicate prefix 0013 needs coordination before migration runner adoption. Distribution reports and CRM engagement tested; provider integration not implemented. No production changes. Next verified customer/order attribution, then authorized price resolver.

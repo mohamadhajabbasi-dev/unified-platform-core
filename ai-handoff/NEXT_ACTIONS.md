@@ -210,3 +210,8 @@
 ## BUILD-015 — current
 - [x] Author official distribution aggregate schema/import API and tests.
 - [ ] Verify full CI including parallel content/CRM changes; resolve duplicate numeric migration prefix by coordination before deployment. Then verified customer/order attribution using existing CRM consent/session references; authorized price list resolution. Actual provider connectors, coverage and reconciliation pending. No real data or legacy access.
+
+## TEST-017 — current
+- [x] Verify distribution and integrated regression, including 0013_content_crm_engagement and all 3 concurrency suites; 19 suites PASS at af330fdd8dbc2b07175bea1e68ae1cb70a8e10f2.
+- [ ] Reconcile unique migration identifiers with parallel work before production migration tracking; do not overwrite or delete other contributor changes.
+- [ ] Implement verified customer acquisition and order attribution from shared analytics sessions, canonical CRM and sales, with consent/retention and no duplicate master; inspect current tree for overlapping parallel work first. Then existing price list audience/channel/quantity resolution and checkout enforcement. Provider adapters and ownership verification, coverage matrix, shared apps, quality metrics, privacy scheduling and load/security review remain pending. No real data or legacy access.
