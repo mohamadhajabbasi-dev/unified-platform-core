@@ -77,6 +77,8 @@ INSERT INTO iam.role_grants SELECT tenant_id,role_id,p.permission_key FROM iam.r
 INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
  SELECT t.tenant_id,m.module_id,true,'b6100000-0000-0000-0000-000000000001','Synthetic finance'
  FROM core.tenants t CROSS JOIN platform.modules m WHERE t.tenant_key IN ('cogs-race-a','cogs-race-b') AND m.module_key='finance';
+INSERT INTO inventory.warehouses(tenant_id,warehouse_id,warehouse_key,name) VALUES
+ ('b6000000-0000-0000-0000-000000000001','b6400000-0000-0000-0000-000000000003','second','Synthetic destination');
 SET SESSION AUTHORIZATION upc_cogs_a;
 DO $$
 DECLARE t uuid:=iam.current_tenant_id(); w uuid:='b6400000-0000-0000-0000-000000000001'; v uuid:='b6300000-0000-0000-0000-000000000001';

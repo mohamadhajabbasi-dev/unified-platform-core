@@ -427,3 +427,8 @@
 ## TEST-041 / BUILD-026L — current
 - [x] Verify 0039; author 0040 ordinary FIFO paired transfers and remote receipt provenance.
 - [ ] Verify exact new CI SHA (40 SQL + nine concurrency, four guard tests); repair. Next cost transfer/return concurrency and lifecycle guards, complex chain capture, tracked valuation and policy approval. No production access.
+
+
+## TEST-042 / TEST-043 — current
+- [x] Verify 0040; extend the existing COGS concurrency suite with actual transfer, reversal and restored cost capture contention.
+- [ ] Verify exact CI SHA (40 SQL + nine concurrency, five COGS race cases, four guard unit tests). Repair any failures. Next lifecycle fail-closed checks for configured variants and unposted sale/return costs; moving-average concurrency, complex dependency chains and tracked valuation remain pending. No production access.
