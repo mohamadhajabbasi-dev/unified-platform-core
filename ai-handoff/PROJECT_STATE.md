@@ -239,3 +239,6 @@
 
 ## BUILD-021 — latest
 - 78 prototype tables if applied, 24 migration files; transfer and settlement hardening authored. CI pending. No operational changes.
+
+## TEST-024 — latest verified checkpoint
+- 78 prototype tables, 24 migration files, 30 suites PASS at 1f24f141ac1f1f70d9caa96c6db68866f46d5ba8, run 45431863822 job 138579086006. Atomic interwarehouse transfer and supplier settlement concurrency/closed-period guard verified. No operational changes. Dedicated transfer races, transit/approval, lot/serial/expiry, valuation, full bank mapping pending.
