@@ -95,3 +95,6 @@
 
 ## TEST-002 / 2026-11-24 — public runner retry
 - Precheck: mandatory documents, tree, current main and visibility verified. Owner made repository public; no visibility change performed by agent. Retried run 45404619911 after changed visibility. Attempt 3 job 138489581659 reached in_progress; setup succeeded, container initialization started. SQL result pending at this checkpoint. Only handoff files changed; no production access. Next: verify final run and logs, then continue only on PASS.
+
+## TEST-003 / 2026-11-24 — foundation PASS
+- Run 45404619911 attempt 3, job 138489581659: completed success. Checkout SHA 605e42f116bf5cf4adf99cdd218283289b712ae2; PostgreSQL 16.16; migration 0001 committed, test 0001 rolled back synthetic fixtures and printed PASS foundation: identity reuse, cross-tenant isolation, verified uniqueness, FK, privilege, spoofing, fail-closed and revocation. Read job logs and step conclusions; container removed. Warnings: trust authentication confined to isolated CI; checkout Node 20 deprecation. Neither production nor legacy touched. Next: harden function ownership and implement IAM/module approval in incremental migration, rerun regression.

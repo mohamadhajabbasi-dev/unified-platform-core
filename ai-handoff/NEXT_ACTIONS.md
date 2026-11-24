@@ -64,3 +64,7 @@
 ## TEST-002 — current
 - [x] Retry after owner changed visibility; GitHub runner initialized.
 - [ ] Read final run 45404619911 attempt 3 and job logs; fix demonstrated failures or proceed with foundation hardening and IAM on PASS.
+
+## TEST-003 — current
+- [x] Foundation CI passed; logs and code SHA verified.
+- [ ] Next: harden SECURITY DEFINER ownership, add tenant IAM and module approvals with negative tests and rerun all migrations and tests. Then remaining domains as BUILD-001 checklist. Keep all data synthetic and CI isolated.
