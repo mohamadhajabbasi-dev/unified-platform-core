@@ -54,3 +54,7 @@
 - در `docs/LEGACY_DBSET_COVERAGE_2026-11-24.md` فهرست دقیق نام‌ها و در `docs/CANONICAL_TARGET_TABLE_DICTIONARY_V1_FA.md` دامنه‌های مقصد و وضعیت پیاده‌سازی ثبت شد. فیلدهای نمونه با سند `SOURCE_FIELD_EVIDENCE_FA.md` مستند شدند.
 - اسکریپت‌های `0013`, `0014`, `0015` فقط برای دیتابیس جدید و تست مستقل نوشته شده‌اند؛ موفقیت آزمون و مصوبه نهایی هنوز لازم است. قبل از ساخت هر جدول دیگر، این‌ها را دوباره بررسی کن.
 - تمام اطلاعات موجود در کدها از جمله HR، بانک، تامین‌کننده، انبار، نقدی/اقساط، محتوا، هوش مصنوعی، سئو، مارکت، رویداد و یکپارچه‌سازی باید به‌صورت دامنه جدا ولی با FK معتبر به همان مرجع مرکزی طراحی شوند؛ هیچ داده واقعی یا سری از گذشته اکنون منتقل نشود.
+
+
+### Scope clarification — D-016 supersedes only the source-read part of D-013
+Owner's latest request **explicitly permits read-only inspection of GitHub source files in ERPPlus and CommerceAI** to inventory their data models. This **does not** permit altering either source repository, accessing either operational database, running migrations there, connecting to the original server, or requesting Desktop Commander. All new code and documentation writes remain confined to `unified-platform-core`.
