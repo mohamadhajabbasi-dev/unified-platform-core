@@ -123,3 +123,6 @@
 
 ## BUILD-009 — latest
 - 32 prototype tables if applied; fiscal periods and recognition authored; CI pending. No production changes. Next verify tests then independent platform billing.
+
+## TEST-011 — latest checkpoint
+- 32 tables, 9 migrations, 12 suites PASS and 3 derived views. Run 45413678605 job 138513980630, tested SHA 4cc134d8f2758d3caa121cc16b3b47d6b35a808c. Fiscal periods and recognition tested. No operational changes. Next platform subscription billing.

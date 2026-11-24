@@ -156,3 +156,6 @@
 
 ## BUILD-009 / 2026-11-24 — fiscal periods and recognition
 - Precheck TEST-010 d06a0131b6ed848c5d69a10260695cce10d4f01b; required docs, finance migration and tests reviewed. Initial local orchestration syntax error before any GitHub write; corrected approach, reused existing writer. Added migration/test 0009, updated 0008 fixture, README and handoff. One fiscal period table, non-overlap, UTC posting gate, close serialization, explicit fulfillment recognition and refund reversal. No year-end closing entries, tax/COGS or actual money. CI pending. No legacy/production access. Next verify CI then independent billing.
+
+## TEST-011 / 2026-11-24 — fiscal lifecycle and full regression PASS
+- Run 45413678605, job 138513980630, tested SHA 4cc134d8f2758d3caa121cc16b3b47d6b35a808c, completed success. Logs confirm 9 migrations and 12 suites PASS, including period gate, non-overlap, recognition after fulfillment, full refund reversal, closed-period rejection, tenant isolation and prior concurrency suites. 32 prototype tables. No operational changes. Next: separate platform subscription billing. Period UTC and recognition model provisional; annual closing entries, accounting policy, tax/COGS and historical upgrade path pending.

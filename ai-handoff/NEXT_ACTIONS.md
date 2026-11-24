@@ -137,3 +137,7 @@
 ## BUILD-009 — current
 - [x] Implement period gate and recognition/refund lifecycle, tests.
 - [ ] Verify CI then separate subscription billing. Fiscal policy and period closing workflow remain provisional.
+
+## TEST-011 — current
+- [x] Verify nine migrations and twelve suites; all PASS.
+- [ ] Next: platform subscription terms, non-overlapping invoice service periods, verified payment and isolated billing permissions, tenant own read-only visibility. No automatic grant of modules; approved module decisions remain sole entitlement. Then remaining content/ops/backup/API domains. Accounting policies remain provisional.
