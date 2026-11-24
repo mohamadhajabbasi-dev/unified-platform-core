@@ -24,3 +24,11 @@
 - [ ] Collect metadata only: table/column/type, PK/FK, unique/index, views/triggers/jobs, RLS/grants and estimated volume, no secrets or business rows; timeouts and load limits. Compare live evidence with pinned code and map source ownership, tenant/store and field semantics, then identify actual duplicate risk. Complete maps with evidence.
 - [ ] Inventory remaining producers/consumers and active sync. Propose ADR/ERD for owner approval after inventory; staging/migration only after gates. Never disable sync or modify live systems in this phase.
 - [ ] Original binary archive optional, deferred.
+
+
+## Checkpoint INV-003 — GitHub-only work is unblocked
+- [x] Read original code evidence directly from GitHub and write `docs/GITHUB_ONLY_DISCOVERY_PLAN.md` (`05bff1977c2a8b61c18a1b8978fd80a8ef29fd90`).
+- [ ] **Next action now**: inspect Customer/BusinessPartner entities, Commerce Customer API/upsert, ERP CRM mapping, EF migrations; write `docs/CUSTOMER_SOURCE_AUDIT.md` with precise code anchors.
+- [ ] Then catalog/variant/price/inventory source audit; IAM/modules; orders/accounting; conceptual ERD and decisions.
+- [ ] Live database metadata verification remains a later gate before migration. **Do not require or repeatedly request Desktop Commander for source audit.**
+- [ ] Update WORK_LOG, PROJECT_STATE and this file after every action; commit and verify SHA.
