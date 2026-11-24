@@ -169,3 +169,6 @@
 - Distinguish official marketplace downloads, first_opens, app installations, active users, in-app visits, and conversion; tenant/app entitlement & privacy apply.
 - GitHub visibility **PUBLIC** confirmed; no real telemetry or PII committed. Source projects, old databases, server and deployments **UNTOUCHED**.
 - First exact next action: verify BUILD-012 isolated CI; implement incremental tenant-safe shared analytics/app tracking with synthetic tests, then pricing rule resolver/tier selection without a second pricing master. Keep audit/updates after every action.
+
+## TEST-015 — verified latest checkpoint (updates REQ-016 stale CI status)
+- 44 prototype tables, 13 migrations, 16 suites PASS, 5 views. Run 45416207835 job 138522973195, tested SHA 9afb677dcfb50ea16262fe750ab8e80a254c0bba. TEST-014 Commerce also PASS. Subsequent docs-only D-015/REQ-016 preserved. Web tables exist; next migrate/generalize them to shared analytics.sessions/events, not duplicate tables. App telemetry and automatic price resolution not yet implemented. No operational changes.

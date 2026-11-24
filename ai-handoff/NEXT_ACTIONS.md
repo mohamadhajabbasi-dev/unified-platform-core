@@ -193,3 +193,8 @@
 - [ ] Build price selection from **existing** `catalog.price_lists` and `catalog.price_entries`: client groups, wholesale/VIP/retail, contract, channel/app/site, quantity tiers, valid periods, currency and checkout consistency. New rules/child relations only where necessary, no parallel price master.
 - [ ] Report app/download/active user/conversion per tenant to superadmin and authorized tenant admin; downloads from stores as externally sourced aggregate, not inferred from app opens. Test cross-tenant denial, consent/retention, dedupe, pricing conflict and concurrent checkout. No real data, legacy access or deployment.
 - [ ] Commit WORK_LOG, PROJECT_STATE and NEXT_ACTIONS after each action and verify SHA.
+
+## TEST-015 — current (D-015/REQ-016)
+- [x] Verify 13 migrations/16 suites, including 0012 and 0013; PASS.
+- [ ] Read docs/APP_ANALYTICS_MULTI_PRICE_FA.md and migrate/generalize 0013 tables into shared analytics.sessions/events. Separate app paid entitlement plus approval, scoped registry/releases, installs/first_open and distribution reports; synthetic tests. No parallel masters.
+- [ ] Verified customer/order attribution, consent and retention; extend existing catalog price lists/entries with audience/channel/quantity resolution and server checkout enforcement. No second price master. Then remaining CRM/catalog/content/ops/backup/API and security/performance. No real data or legacy access.
