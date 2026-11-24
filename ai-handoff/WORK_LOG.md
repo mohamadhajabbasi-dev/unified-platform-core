@@ -162,3 +162,19 @@
 
 ## BUILD-010 / 2026-11-24 — separate platform billing
 - Precheck TEST-011 b1fdb0b8c43c5e79e8ba75377c4233cb6eba7fff; mandatory docs, current tree and IAM model reviewed. Added migration/test 0010, db README and handoff. Three normalized platform billing tables, derived status, nonoverlapping priced terms, invoice and verified receipt idempotency, private billing executor, active superadmin checks and separate recorder, own-tenant read-only access. No effects on tenant sales/finance or module approvals. CI pending. Provisional full-payment one-term policy, no refund/proration/tax, delegated staff, real gateway or platform accounting. No legacy/production access. Next verify CI then remaining CRM/catalog/content/ops.
+
+
+## REQ-015 / 2026-11-24 — tenant legal profiles, user settings and Commerce traffic attribution
+- Phase: 03 GREENFIELD / requirements and schema-design extension.
+- Input: owner's request for visitor/source-of-customer records per Commerce-enabled tenant; tenant full identity, corporate/person, partners, authorized representatives, org/user settings.
+- Pre-check: main HEAD `4cc134d8f2758d3caa121cc16b3b47d6b35a808c` (BUILD-009); inspected AGENTS, PROJECT_STATE, NEXT_ACTIONS, TARGET ERD, DB README and migrations 0001/0002. Already existing canonical `core.tenants`, `core.users`, `iam.memberships`, `crm.customers`; no new master duplicates.
+- Actions:
+  - Created `docs/TENANT_IDENTITY_VISITOR_ATTRIBUTION_FA.md` (commit `551520621e108a19948d072a08586f4821286a41`).
+  - Extended `docs/TARGET_ERD_V0_FA.md` (commit `73eb1d6645c8390fb79c738b9d0a3a1ac1fcc831`).
+  - Extended `docs/MASTER_PLAN_FA.md` (commit `66ecbb564bc59bf73632069b1593888732e2d8b4`).
+  - Extended `AGENTS.md` (commit `155a1314a0bab6a2e5398038b553fca2af5528bc`).
+  - Added decision D-014 to `ai-handoff/DECISIONS.md` (commit `8811e95733531508d063ee66cf44685d61913ea1`).
+- Findings: Existing PostgreSQL prototype migration set 0001..0009 covers foundational domains but not verified legal/partner/visitor attribution features. TEST-010 PASS (0001..0008; 31 prototype tables, 11 suites); 0009 CI result unverified in current check (no GitHub check statuses exposed by connector).
+- Repository visibility **PUBLIC**, unlike stale original header claiming PRIVATE. Only synthetic documentation committed, no personal data.
+- Result: REQUIREMENTS/DESIGN ADDED; **NO SQL implementation for new requested features yet**. No legacy, server or production changes. No Desktop Commander.
+- Next: verify 0009 CI; add organization legal/member settings as non-duplicating normalized migration/tests, then Commerce entitlement gating and visitor/customer-source migration/tests; update handoff after each action.
