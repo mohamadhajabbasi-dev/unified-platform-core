@@ -25,15 +25,15 @@ INSERT INTO iam.db_principals VALUES
  ('upc_sale_b','a0000000-0000-0000-0000-000000000002','a1000000-0000-0000-0000-000000000002'),
  ('upc_sale_reader','a0000000-0000-0000-0000-000000000001','a1000000-0000-0000-0000-000000000003');
 INSERT INTO iam.roles(tenant_id,role_key) VALUES
- ('a0000000-0000-0000-0000-000000000001','inventory-editor'),
- ('a0000000-0000-0000-0000-000000000002','inventory-editor'),
- ('a0000000-0000-0000-0000-000000000001','inventory-reader');
+ ('a0000000-0000-0000-0000-000000000001','sales-race-editor'),
+ ('a0000000-0000-0000-0000-000000000002','sales-race-editor'),
+ ('a0000000-0000-0000-0000-000000000001','sales-race-reader');
 INSERT INTO iam.role_grants SELECT r.tenant_id,r.role_id,p.permission_key FROM iam.roles r CROSS JOIN iam.permissions p
- WHERE r.role_key='inventory-editor' AND p.permission_key LIKE 'inventory.%';
-INSERT INTO iam.role_grants SELECT tenant_id,role_id,'inventory.read' FROM iam.roles WHERE role_key='inventory-reader';
+ WHERE r.role_key='sales-race-editor' AND p.permission_key LIKE 'inventory.%';
+INSERT INTO iam.role_grants SELECT tenant_id,role_id,'inventory.read' FROM iam.roles WHERE role_key='sales-race-reader';
 INSERT INTO iam.membership_roles SELECT m.tenant_id,m.user_id,r.role_id FROM iam.memberships m JOIN iam.roles r USING(tenant_id)
- WHERE (m.user_id='a1000000-0000-0000-0000-000000000003' AND r.role_key='inventory-reader')
- OR (m.user_id<>'a1000000-0000-0000-0000-000000000003' AND r.role_key='inventory-editor');
+ WHERE (m.user_id='a1000000-0000-0000-0000-000000000003' AND r.role_key='sales-race-reader')
+ OR (m.user_id<>'a1000000-0000-0000-0000-000000000003' AND r.role_key='sales-race-editor');
 INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
  SELECT t.tenant_id,m.module_id,true,'a1000000-0000-0000-0000-000000000001','Synthetic test'
  FROM core.tenants t CROSS JOIN platform.modules m WHERE t.tenant_key IN ('sale-a','sale-b') AND m.module_key='inventory';
@@ -51,8 +51,8 @@ INSERT INTO inventory.warehouses(tenant_id,warehouse_id,warehouse_key,name) VALU
 
 GRANT upc_payment_recorder TO upc_sale_a;
 INSERT INTO iam.role_grants SELECT r.tenant_id,r.role_id,p.permission_key FROM iam.roles r CROSS JOIN iam.permissions p
- WHERE r.role_key='inventory-editor' AND (p.permission_key LIKE 'sales.%' OR p.permission_key IN ('crm.read','catalog.read'));
-INSERT INTO iam.role_grants SELECT tenant_id,role_id,'sales.read' FROM iam.roles WHERE role_key='inventory-reader';
+ WHERE r.role_key='sales-race-editor' AND (p.permission_key LIKE 'sales.%' OR p.permission_key IN ('crm.read','catalog.read'));
+INSERT INTO iam.role_grants SELECT tenant_id,role_id,'sales.read' FROM iam.roles WHERE role_key='sales-race-reader';
 INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
  SELECT t.tenant_id,m.module_id,true,'a1000000-0000-0000-0000-000000000001','Synthetic sales test'
  FROM core.tenants t CROSS JOIN platform.modules m WHERE t.tenant_key IN ('sale-a','sale-b') AND m.module_key IN ('sales','crm','catalog');

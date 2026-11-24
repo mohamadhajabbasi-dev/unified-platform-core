@@ -24,3 +24,5 @@
 - 2026-11-24 BUILD-006: atomic checkout, order snapshots, verified payment capture and fulfillment; regression CI pending.
 
 - 2026-11-24 BUILD-007: full returns, verified full refunds, late capture review and concurrent checkout/capture; CI pending.
+
+- FIX-002: isolate sales race fixture role keys from inventory race fixtures.

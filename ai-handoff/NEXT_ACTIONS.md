@@ -117,3 +117,7 @@
 ## BUILD-007 — current
 - [x] Author full return/refund, late full capture review and concurrent sales tests.
 - [ ] Verify CI including actual sales contention. Fix demonstrated errors. Next tenant double-entry finance journal with canonical capture/refund source linkage; partial returns/refunds, reconciliation inbox and remaining domains pending.
+
+## FIX-002 — current
+- [x] Fix observed duplicate synthetic role grants in sales race setup.
+- [ ] Verify full CI and actual checkout/capture contention; then finance journal.

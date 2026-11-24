@@ -108,3 +108,6 @@
 
 ## BUILD-007 — latest
 - Returns/refunds migration 0007 and concurrent checkout/capture tests authored. 28 prototype tables if applied. CI pending; no actual funds or production access. Next verify CI and finance journal.
+
+## FIX-002 — latest
+- BUILD-007 migrations and nine suites passed; sales concurrency fixture setup failed on duplicate role grants. Isolated role keys; rerun pending. No production changes.

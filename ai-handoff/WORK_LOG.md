@@ -140,3 +140,6 @@
 
 ## BUILD-007 / 2026-11-24 — sales concurrency, returns and refunds
 - Precheck TEST-008 2359298b0f2257a6c3a414a1ff94fda838d70550; required docs and existing sales SQL/test/workflow reviewed. Added 0007 migration/test, sales concurrency script, CI step and handoff. Two event tables; full inspected return uses existing stock ledger, verified full refund uses original payment, late capture goes to review, no direct refund transaction or external gateway. Provisional full-only scope; extra captures, partials, damaged returns, durable external reconciliation and accounting still open. CI pending. No legacy or production access. Next verify CI then finance journal.
+
+## FIX-002 / 2026-11-24 — sales concurrency fixture isolation
+- Run 45411682401 job 138506869813: seven migrations and nine suites passed (including returns and both previous concurrency suites); new sales concurrency setup failed with duplicate role_grants_pkey before contention. Existing inventory concurrency leaves synthetic fixtures in disposable container, so shared role_key selected earlier roles as well. Changed sales fixture role keys to distinct sales-race-editor/reader. No migration or production change. Full rerun pending.
