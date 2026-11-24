@@ -105,3 +105,7 @@
 ## TEST-007 — current
 - [x] Verify all five migrations, regression suites and both concurrency suites; all PASS.
 - [ ] Next: implement canonical sales order, order lines and payment records with tenant-aware customer/catalog/reservation FKs, price snapshots, atomic state transitions and idempotency; test checkout and duplicate payment. Then returns/finance, catalog media/hierarchy, inventory transfers/valuation and remaining domains. No legacy access or deployment.
+
+## BUILD-006 — current
+- [x] Author canonical physical checkout, order lines, capture records, derived totals and lifecycle tests.
+- [ ] Verify full regression CI; fix demonstrated failures. Then concurrent checkout/capture tests, refund/late-capture recovery and finance; digital/service delivery, tax/shipping/discount and audit remain open. No legacy access.

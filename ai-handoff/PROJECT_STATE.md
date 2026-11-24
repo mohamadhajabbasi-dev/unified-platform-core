@@ -99,3 +99,6 @@
 
 ## TEST-007 — latest checkpoint
 - Phase 03: 23 prototype tables, 5 migrations and 7 test suites PASS, plus derived stock_balances view. Run 45408923495 job 138497113024, tested SHA a3f27494ad6956b063d09cfb1ecf192835186d5f. Real concurrent oversell test passed. Greenfield disposable CI only; no operational DB created or changed. Whole units/full consumption provisional; transfer/valuation/lot/serial/partial fulfillment and order linkage remain pending. Next: sales orders/payment core.
+
+## BUILD-006 — latest
+- Sales migration 0006 authored: three tables (26 total if applied) and derived order totals view. Checkout, snapshot, reservations, verified capture recording and cancel/fulfill lifecycle; test suite authored. CI pending. No production changes or real payments. Next verify CI.

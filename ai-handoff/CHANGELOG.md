@@ -20,3 +20,5 @@
 - 2026-11-24 BUILD-004: add canonical tenant catalog and non-overlapping temporal prices; regression CI pending.
 
 - 2026-11-24 BUILD-005: inventory ledger, reservations and derived balances; concurrent oversell CI pending.
+
+- 2026-11-24 BUILD-006: atomic checkout, order snapshots, verified payment capture and fulfillment; regression CI pending.
