@@ -58,3 +58,7 @@
 
 ### Scope clarification — D-016 supersedes only the source-read part of D-013
 Owner's latest request **explicitly permits read-only inspection of GitHub source files in ERPPlus and CommerceAI** to inventory their data models. This **does not** permit altering either source repository, accessing either operational database, running migrations there, connecting to the original server, or requesting Desktop Commander. All new code and documentation writes remain confined to `unified-platform-core`.
+
+
+## D-017 — چهار نوع قیمت اصلی کالا (2026-11-24)
+مالک چهار نوع قیمت پایه برای هر محصول/تنوع در تننت مشخص کرد: ۱) اصلی، ۲) تخفیف‌خورده، ۳) همکار، ۴) عمده. چند فهرست قیمت در `catalog.price_lists`/`catalog.price_entries` فعلی امکان ذخیره هر چهار مقدار را دارد؛ `price_quantity_tiers` به قیمت موجود وابسته است. انتخاب قیمت/تخفیف معتبر/صلاحیت همکار و عمده نیازمند تکمیل SQL، API و تست است؛ نقش‌ها و تخفیف نباید به‌صورت خودکار برای مشتری عمومی افشا شوند. متن تصمیم و تست‌ها: `docs/FOUR_PRODUCT_PRICE_TYPES_FA.md`.
