@@ -38,3 +38,6 @@
 - BUILD-012: explicit purchased Commerce scope, paid term and approval gate; CI pending.
 
 - BUILD-013: consented visitor sessions/events, source reporting, withdrawal and bounded retention purge; CI pending.
+
+
+- 2026-11-24 REQ-016: Added tenant-scoped app download/first-open/activity/attribution/quality reporting and unified web/app analytics design; validated existing multi-price price lists and documented missing channel/quantity/customer price resolution. D-015/AGENTS/MASTER_PLAN/ERD/handoff updated. No SQL or production changes for requested features.
