@@ -78,3 +78,6 @@
 
 ## TEST-004 — latest checkpoint
 - Phase 03: 0001/0002 migration and regression tests PASS. Run 45407145508 job 138490807758, tested SHA 8921f7e7b90fa9b778699115c8767444aa546f5e. 14 prototype tables across core/iam/crm/platform. Module and IAM check functions tested; existing CRM access not yet wired to them. No production changes. Next: enforce permission+module gates on CRM and test.
+
+## BUILD-003 — latest
+- CRM permissions/module enforcement and verified identity linking authored; no new tables; concurrency and negative tests added. Runtime verification pending. Next: check CI then catalog/price; no production changes.

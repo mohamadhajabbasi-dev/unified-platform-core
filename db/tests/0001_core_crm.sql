@@ -20,8 +20,19 @@ INSERT INTO iam.db_principals VALUES
  ('upc_test_a','00000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000001'),
  ('upc_test_b','00000000-0000-0000-0000-000000000002','10000000-0000-0000-0000-000000000002'),
  ('upc_test_readonly','00000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000001');
+-- Administrative synthetic fixture only; never used by application roles.
+INSERT INTO iam.roles(tenant_id,role_key) SELECT tenant_id,'test-crm' FROM core.tenants WHERE tenant_key IN ('tenant-a','tenant-b');
+INSERT INTO iam.role_grants(tenant_id,role_id,permission_key)
+ SELECT r.tenant_id,r.role_id,p.permission_key FROM iam.roles r CROSS JOIN iam.permissions p
+ WHERE r.role_key='test-crm' AND p.permission_key IN ('crm.read','crm.write');
+INSERT INTO iam.membership_roles(tenant_id,user_id,role_id)
+ SELECT m.tenant_id,m.user_id,r.role_id FROM iam.memberships m JOIN iam.roles r USING(tenant_id)
+ WHERE r.role_key='test-crm';
+INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
+ SELECT t.tenant_id,m.module_id,true,'10000000-0000-0000-0000-000000000001','Synthetic test setup'
+ FROM core.tenants t CROSS JOIN platform.modules m WHERE t.tenant_key IN ('tenant-a','tenant-b') AND m.module_key='crm';
 SET SESSION AUTHORIZATION upc_test_a;
-DO $$
+DO $
 DECLARE first_id uuid; second_id uuid;
 BEGIN
   first_id := crm.resolve_verified_customer('phone','','+15550000001','Synthetic customer A');

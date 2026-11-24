@@ -46,3 +46,7 @@ jobs:
             echo "Testing $test"
             docker exec -i "$PG_CONTAINER" psql -X -U postgres -d upc_greenfield_test -v ON_ERROR_STOP=1 < "$test"
           done
+      - name: Run concurrent identity acceptance test
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/tests/concurrency/identity.sh

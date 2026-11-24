@@ -106,3 +106,7 @@
 
 ## TEST-004 / 2026-11-24 — IAM regression PASS
 - Run 45407145508 job 138490807758 completed success, exact head 8921f7e7b90fa9b778699115c8767444aa546f5e. Both migrations 0001 and 0002 applied; both tests executed and printed PASS foundation and PASS IAM. Job logs read and verified: function owners, tenant-scoped roles, denied escalation, platform approvals, expiry and actor history. No production access/change. Next: enforce CRM authorization by permission and module grant, add denied-operation tests; catalog after enforcement.
+
+## BUILD-003 / 2026-11-24 — CRM access gates and identity linkage
+- Precheck: TEST-004 HEAD 897ecdd852c7799ab6147c831d9cc8492282991d; mandatory docs and existing migrations/tests reviewed. No duplicate master tables.
+- Changes: migration 0003, regression fixtures 0001/0002, test 0003, concurrency shell test, existing CI workflow, db README and handoff. Restrictive RLS on CRM and resolver write gate; verified link with conflict rejection and shared advisory lock; two-session concurrency test. No legacy or production access. SQL/CI results pending. Provisional choices: CRM module required for CRM access, separate read/write permissions and trusted verifier; no automatic merge. Next: inspect CI logs and fix any failure.

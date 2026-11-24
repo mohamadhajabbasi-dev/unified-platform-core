@@ -77,3 +77,7 @@
 ## TEST-004 — current
 - [x] BUILD-002 CI confirmed PASS for both migrations and both test suites.
 - [ ] Next: enforce permission and module gates on CRM and test allowed/denied calls, revocation, cross-tenant write; strengthen identity linking/concurrency. Then catalog/price and other domains. No legacy access.
+
+## BUILD-003 — current
+- [x] Implement CRM read/write module/permission gates and verified link; add two-session test.
+- [ ] Verify all regression and concurrency tests in CI; fix demonstrated failures. Then catalog/product variants/price entries with tenant constraints and permissions. Audit, verification workflow and final security review remain open.
