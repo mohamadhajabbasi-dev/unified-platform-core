@@ -93,3 +93,7 @@
 ## BUILD-004 — current
 - [x] Implement canonical catalog and pricing SQL plus acceptance tests.
 - [ ] Verify 0001–0004 regression and concurrency CI; fix observed failures. Then inventory warehouses, append-only stock ledger and reservations, derived balances; catalog media/hierarchy and pricing policy remain pending.
+
+## TEST-006 — current
+- [x] Verify full catalog, CRM, IAM, foundation and concurrent identity regression; all PASS.
+- [ ] Next: implement inventory warehouses, append-only stock ledger, reservations and derived balances. Use tenant-aware FK to catalog. Test idempotency, oversell, concurrency and module/permission gates. Then orders/payment/finance and remaining domains; catalog hierarchy, media, pricing policies and final security review remain open. No legacy access.

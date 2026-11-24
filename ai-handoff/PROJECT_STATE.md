@@ -90,3 +90,6 @@
 
 ## BUILD-004 — latest
 - Catalog and pricing migration 0004 authored: six tables, 20 total if applied; independent tenant master and temporal prices with role/module gating. Runtime verification pending. Media/hierarchy and full financial pricing rules remain open. No production changes.
+
+## TEST-006 — latest checkpoint
+- Phase 03: 20 tables across core, iam, crm, platform, catalog; 4 migrations and 5 test suites PASS. Run 45408223573 job 138494611409, verified tested SHA af18194ee17b2765f31288ca4e122cd7d886584c. Greenfield CI only; no operational database created or changed. Catalog hierarchy/media, price-list selection/rounding and final approval remain open. Next inventory stock ledger/reservations.
