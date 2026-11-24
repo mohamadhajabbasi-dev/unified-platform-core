@@ -307,3 +307,7 @@
 ## TEST-026 — current
 - [x] Verify 0023 and all regressions: 33 suites PASS, seven previous concurrency suites.
 - [ ] Next tracked reservation allocation, checkout/fulfillment and return with exact lot/serial movement provenance, expiry handling and FEFO. Add tracked serial contention tests. Then valuation/COGS and remaining D-016 domains; full receipt only, no transit/partial receiving or historical backfill yet. No operational access, real data or deployment.
+
+## BUILD-024 — current
+- [x] Author tracked allocation and sale/return lifecycle; update prior trace tests.
+- [ ] Verify full CI, fix failures; add actual competing tracked serial reservation and receipt races, then valuation/COGS and remaining domains. No real data or deployment.

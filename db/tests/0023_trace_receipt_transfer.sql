@@ -110,7 +110,7 @@ BEGIN
  OR EXISTS(SELECT 1 FROM inventory.trace_balances WHERE warehouse_id=w AND serial_id=s1)
  THEN RAISE EXCEPTION 'FAIL transfer conservation'; END IF;
  BEGIN PERFORM inventory.transfer_allocated('transfer',w,dst,'Synthetic',jsonb_build_array(alloc->1,alloc->2)); RAISE EXCEPTION 'FAIL transfer changed retry'; EXCEPTION WHEN unique_violation THEN NULL; END;
- BEGIN PERFORM inventory.reserve_stock(dst,sv,1,'not-yet',clock_timestamp()+interval '1 hour'); RAISE EXCEPTION 'FAIL unallocated reservation'; EXCEPTION WHEN check_violation THEN NULL; END;
+ PERFORM inventory.release_reservation(inventory.reserve_stock(dst,sv,1,'trace-hold',clock_timestamp()+interval '1 hour'));
 END $$;
 RESET SESSION AUTHORIZATION;
 SET SESSION AUTHORIZATION upc_inv_b;

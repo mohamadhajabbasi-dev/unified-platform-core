@@ -73,7 +73,7 @@ BEGIN
  PERFORM inventory.adjust_traced(w,v,l,NULL,-2,'lot-out','Synthetic disposal');
  BEGIN PERFORM inventory.adjust_stock(w,v,1,'plain-tracked','Synthetic'); RAISE EXCEPTION 'FAIL untracked adjustment'; EXCEPTION WHEN check_violation THEN NULL; END;
  BEGIN PERFORM inventory.adjust_stock(w,ov,1,'trace:forged','Synthetic'); RAISE EXCEPTION 'FAIL forged namespace'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
- BEGIN PERFORM inventory.reserve_stock(w,v,1,'trace-hold',clock_timestamp()+interval '1 hour'); RAISE EXCEPTION 'FAIL unallocated reservation'; EXCEPTION WHEN check_violation THEN NULL; END;
+ PERFORM inventory.release_reservation(inventory.reserve_stock(w,v,1,'trace-hold',clock_timestamp()+interval '1 hour'));
  BEGIN PERFORM inventory.transfer_stock('trace-transfer',w,dest,'Synthetic',jsonb_build_array(jsonb_build_object('variant_id',v,'quantity',1))); RAISE EXCEPTION 'FAIL untracked transfer'; EXCEPTION WHEN check_violation THEN NULL; END;
  PERFORM inventory.configure_tracking(sv,'serial',false);
  s:=inventory.register_serial(sv,'SERIAL-1');
@@ -83,7 +83,7 @@ BEGIN
  BEGIN PERFORM inventory.adjust_traced(dest,sv,NULL,s,-1,'serial-wrong-warehouse','Synthetic'); RAISE EXCEPTION 'FAIL serial negative'; EXCEPTION WHEN check_violation THEN NULL; END;
  IF NOT EXISTS(SELECT 1 FROM inventory.trace_balances WHERE lot_id=l AND on_hand=3 AND expiry_state='valid')
  OR NOT EXISTS(SELECT 1 FROM inventory.trace_balances WHERE serial_id=s AND on_hand=1)
- OR NOT EXISTS(SELECT 1 FROM inventory.stock_balances WHERE variant_id=v AND on_hand=3 AND available=0)
+ OR NOT EXISTS(SELECT 1 FROM inventory.stock_balances WHERE variant_id=v AND on_hand=3 AND available=3)
  OR NOT EXISTS(SELECT 1 FROM inventory.stock_balances WHERE variant_id=ov AND available=1) THEN RAISE EXCEPTION 'FAIL derived balances'; END IF;
  BEGIN UPDATE inventory.inventory_lots SET expires_on=d+100; RAISE EXCEPTION 'FAIL lot mutation'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
 END $$;

@@ -69,3 +69,5 @@
 - FIX-003: update old inventory race readiness for added trace advisory lock, preserve assertions.
 
 - BUILD-023: split trace-aware receipt and transfer allocations, existing ledger, variant-first locks; CI pending.
+
+- BUILD-024: FEFO, exact reservation allocations, traced fulfillment and confirmed full return; CI pending.
