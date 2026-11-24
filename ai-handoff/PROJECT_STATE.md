@@ -221,3 +221,6 @@
 
 ## BUILD-018 — latest
 - Pricing hardening authored, no new tables; 69 prototype tables. 21 migration files if applied; new synthetic and concurrency suites pending CI. No production changes. Next verify and then procurement.
+
+## TEST-021 — latest verified checkpoint
+- 69 prototype tables, 21 migration files, 25 test suites PASS at 33ed911cf34b2944351ce7e4163d0f358bbc7d40, run 45424606919 job 138553037717. Original-only checkout, trusted web/app/offline channel capabilities, bootstrap validation, mixed cart, expiry and actual price/revoke concurrency tested. No new tables or operational changes. Production identity/service channel proof, load and upgrade review pending. Next supplier/purchasing/receipts using canonical stock ledger.

@@ -259,3 +259,7 @@
 ## BUILD-018 — current
 - [x] Author original-only checkout, separate channel capabilities, bootstrap validation, lock-first pricing, mixed cart/expiry and race tests.
 - [ ] Verify all CI and fix observed failures; then canonical counterparties/supplier purchasing and goods receipt into existing stock ledger. Review payable accounting and remaining D-016 domains. No deployment.
+
+## TEST-021 — current
+- [x] Verify 0018 and complete regression: 25 suites PASS, actual two competing price/eligibility checkout locks observed. Removed retail checkout bypass; synthetic fixtures updated, paid app/web tested.
+- [ ] Next inspect current tree and D-016 source evidence/dictionary, design one canonical tenant counterparty/supplier relationship without copying customer master; purchase orders and lines, idempotent goods receipts into existing inventory.stock_ledger. Provisional full receipt and explicit payable/accounting policy; test cross-tenant and concurrent receipts. Then transfers/lots/cost, shipping/tax/invoices, banking/AI/ops/backups/API. Coordinate duplicate migration IDs and production gates; no real data or operational access.
