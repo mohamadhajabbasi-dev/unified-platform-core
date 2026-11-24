@@ -232,3 +232,12 @@
 ## BUILD-016 — current
 - [x] Verify parallel catalog/HR baseline runtime (21 suites PASS); implement verified acquisition and order attribution on current canonical masters.
 - [ ] Verify current full CI, fix observed errors; then inspect existing price tiers and implement authorized list resolution and checkout integration, and remaining D-016 procurement/warehouse, banking, shipping, AI/ops domains. Coordinate migration prefix collisions and privacy scheduler; no operational access.
+
+
+## Checkpoint PRICE-017 — LATEST, takes precedence on catalog pricing
+- [x] Reopen source 0004, 0014 and handoff; confirm existing single canonical price list+entries and authored quantity tiers.
+- [x] Register owner's 4 categories **original / discounted / colleague / wholesale** in new design `docs/FOUR_PRODUCT_PRICE_TYPES_FA.md`, AGENTS D-017, DECISIONS, ERD and MASTER_PLAN. No price master duplication.
+- [ ] **Immediate gate**: get exact GitHub Actions CI evidence for migrations 0012–0015 (including 0013–0015 tests) and fix demonstrated failures; if unable mark UNVERIFIED.
+- [ ] Next incremental implementation: bootstrap 4 standard tenant price lists, validate discount <= original with identical currency/variant/validity, implement wholesale quantity threshold, colleague entitlement, deny public reading private price lists and prevent client-controlled list id escalation. Use only existing `catalog.price_lists`, `catalog.price_entries`, `catalog.price_quantity_tiers`.
+- [ ] Test ordinary guest view (original struck-through when discount), colleague and wholesale authorization, expired discounts, invalid price, tenant isolation, quantity thresholds, concurrency and checkout server-side price recalculation + immutable order price snapshot.
+- [ ] No Desktop Commander, old DB, old repos writes or production server changes; record actual tests/commits after every action.
