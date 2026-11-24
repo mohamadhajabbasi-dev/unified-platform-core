@@ -361,3 +361,10 @@
 
 ## BUILD-026H — latest
 - BUILD-026H: canonical 0036 introduces one shared explicit COGS posting implementation for FIFO and moving_average, retains existing strict FIFO wrapper without duplicate posting logic; existing journal source FK, idempotency, period and permission gates reused. Moving-average positive confirmed sale cost from captured immutable facts; every preceding positive pool movement must be an invoiced purchase receipt debited to the same inventory account, including depleted receipts (conservative restriction pending accounting approval). Mixed account pool rejected, exact retry, no fabricated FIFO allocations. Synthetic tests verify 1320 COGS and 880 asset balance, wrong account/method and closed period. No table, no production access or policy approval. Moving-average return, transfer, zero-cost handling, lifecycle and concurrent moving-average tests pending. New CI pending.
+
+
+## TEST-038 — verified
+- TEST-038: run 45446414562 job 138631301536 at 97756def76543e792a30c5f029a02288c4dae549 completed success; 36 migrations, 45 SQL/concurrency suites (36 SQL + nine concurrency) PASS and four migration guard tests. Shared moving-average posting verified; 85 tables.
+
+## BUILD-026I — latest
+- BUILD-026I: canonical 0037 extends existing return replay and shared COGS posting for moving_average; one shared reversal implementation with strict compatibility FIFO wrapper, same journal sources, historical exact cost from captured sale and reversal. Pool accepts confirmed return debit only to the same inventory asset; all preceding purchases still must match. No fictitious FIFO layers. Test changes rate via a later receipt, checks original 1320 returned, resale 2290, net COGS 2400, no duplicate debit, rejection before reversal, wrong method/account and closed period. No new tables. Provisional full ordinary sellable returns only; transfers, zero cost, tracked/partial/damaged returns, automatic lifecycle and dedicated return concurrency remain pending. CI pending; no production access.

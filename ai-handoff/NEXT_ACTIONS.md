@@ -407,3 +407,8 @@
 ## TEST-037 / BUILD-026H — current
 - [x] Verify FIX-010 and return replay; author 0036 shared moving-average COGS and tests.
 - [ ] Verify exact new CI SHA (36 SQL + nine concurrency, four guard tests), fix failures. Next 0037 moving-average historical return, transfer cost, lifecycle and concurrency. No production access.
+
+
+## TEST-038 / BUILD-026I — current
+- [x] Verify 0036; author 0037 moving-average historical return and resale using shared APIs.
+- [ ] Verify exact new CI SHA (37 SQL + nine concurrency, four guard tests); repair. Next 0038 transfer valuation with exact paired movements and account provenance, lifecycle gates and concurrent returns. No production access.
