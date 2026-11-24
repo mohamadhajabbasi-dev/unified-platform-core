@@ -422,3 +422,8 @@
 ## TEST-040 / BUILD-026K — current
 - [x] Verify 0038; author 0039 recursive same-asset transfer provenance and COGS tests.
 - [ ] Verify exact new CI SHA (39 SQL + nine concurrency, four guard tests), repair. Next FIFO transfer provenance across warehouses (do not duplicate ledger or allocation table), lifecycle and concurrency. No production access.
+
+
+## TEST-041 / BUILD-026L — current
+- [x] Verify 0039; author 0040 ordinary FIFO paired transfers and remote receipt provenance.
+- [ ] Verify exact new CI SHA (40 SQL + nine concurrency, four guard tests); repair. Next cost transfer/return concurrency and lifecycle guards, complex chain capture, tracked valuation and policy approval. No production access.

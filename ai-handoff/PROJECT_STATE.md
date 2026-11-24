@@ -382,3 +382,10 @@
 
 ## BUILD-026K — latest
 - BUILD-026K: canonical 0039 extends shared COGS posting to same-asset moving-average transfer provenance. Private recursive cutoff validator follows exact earlier paired transfer cost facts through warehouses to all preceding confirmed purchase/return journal debits, deduplicates nodes and rejects mixed account provenance, including remote inputs. No new table, no transfer journal or account reclassification. Updated 0038 regression to verify destination posting with correct account and reject wrong account. New 0039 tests cover destination/roundtrip COGS, remote mixed account rejection, balanced asset/cost and private helper permissions. Conservative history-wide input rule including exhausted inputs; cross-account transfers, FIFO, tracked, partial/zero-cost return and complex dependency chains remain pending, no production policy approval. CI pending; no operational access.
+
+
+## TEST-041 — verified
+- TEST-041: run 45448694965 job 138639477153 at 0013124130b576811f240ce5f62fb539652fc925 success; 39 migrations, 48 suites (39 SQL + nine concurrency), four guard tests. Recursive transfer asset provenance verified, 85 tables.
+
+## BUILD-026L — latest
+- BUILD-026L: canonical 0040 extends existing FIFO replay and paired transfer capture, preserving original invoiced receipt IDs and exact source cost allocations across warehouses. Replaces only receipt-side same-warehouse FK with tenant+variant+movement FK backed by unique constraint; outgoing warehouse FK unchanged. No table. Incoming FIFO layers appended in original receipt chronological order (provisional policy; not exact physical ordering of mixed restored layers). Tests cover paired atomicity, two receipt costs, roundtrip, original remote receipt allocation, destination COGS, full sellable return and resale, wrong account and permission. No transfer journal; same-asset receipt proof for COGS. Complex unrecorded dependency chains, tracked stock, zero/partial/damaged returns, account reclassification, lifecycle gates and dedicated cost concurrency remain pending. New CI pending; no production access.
