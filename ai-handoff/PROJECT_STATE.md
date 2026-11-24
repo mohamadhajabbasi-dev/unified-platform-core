@@ -96,3 +96,6 @@
 
 ## BUILD-005 — latest
 - Inventory migration 0005 authored: three tables and one derived view (23 prototype tables total if applied). Ledger/reservations, idempotency and pair-lock functions, synthetic and concurrent tests. CI pending. No production changes. Next verify regression and inventory concurrency, then sales.
+
+## TEST-007 — latest checkpoint
+- Phase 03: 23 prototype tables, 5 migrations and 7 test suites PASS, plus derived stock_balances view. Run 45408923495 job 138497113024, tested SHA a3f27494ad6956b063d09cfb1ecf192835186d5f. Real concurrent oversell test passed. Greenfield disposable CI only; no operational DB created or changed. Whole units/full consumption provisional; transfer/valuation/lot/serial/partial fulfillment and order linkage remain pending. Next: sales orders/payment core.

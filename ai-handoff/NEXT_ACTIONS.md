@@ -101,3 +101,7 @@
 ## BUILD-005 — current
 - [x] Author stock ledger, warehouses, reservations and derived balances; CI negative/concurrent tests.
 - [ ] Verify full regression and inventory contention tests, fix demonstrated failures. Then implement sales order and payment core linked to canonical customer/catalog/reservations; finance/returns/transfer/valuation and other domains pending. No legacy access.
+
+## TEST-007 — current
+- [x] Verify all five migrations, regression suites and both concurrency suites; all PASS.
+- [ ] Next: implement canonical sales order, order lines and payment records with tenant-aware customer/catalog/reservation FKs, price snapshots, atomic state transitions and idempotency; test checkout and duplicate payment. Then returns/finance, catalog media/hierarchy, inventory transfers/valuation and remaining domains. No legacy access or deployment.
