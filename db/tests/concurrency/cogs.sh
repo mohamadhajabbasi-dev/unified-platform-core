@@ -141,5 +141,108 @@ DO \$\$ BEGIN
 END \$\$;
 RESET SESSION AUTHORIZATION;
 SQL
-echo 'PASS COGS concurrency: five competing lock races (capture, posting, paired transfer, reversal, return capture), exact retries, remote receipt cost and balanced journals, permission and tenant gates'
+# Same tenant, warehouse, roles and lock-wait harness; use existing unused physical
+# variant and separate asset/expense accounts to isolate the moving-average scenario.
+variant=b6300000-0000-0000-0000-000000000004
+asset=b6700000-0000-0000-0000-000000000005
+expense=b6700000-0000-0000-0000-000000000006
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+DO \$\$
+DECLARE t uuid:=iam.current_tenant_id(); s uuid; po uuid; oid uuid;
+ d date:=(clock_timestamp() AT TIME ZONE 'UTC')::date; digest bytea:=decode(repeat('ab',32),'hex');
+BEGIN
+ PERFORM finance.configure_valuation_preview('$variant','moving_average','IRR');
+ INSERT INTO finance.accounts(tenant_id,account_id,account_code,name,account_type,currency) VALUES
+ (t,'$asset','avg-inventory','Average inventory','asset','IRR'),(t,'$expense','avg-cogs','Average COGS','expense','IRR');
+ s:=procurement.register_counterparty('avg-race-supplier',NULL,'Synthetic average');
+ po:=procurement.issue_purchase('avg-race-po1',s,'$warehouse','IRR',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',10,'unit_cost',100)));
+ PERFORM procurement.receive_purchase(po,'avg-race-r1','delivery');
+ PERFORM finance.record_supplier_invoice(po,'AVG-RACE-1',d,d+7,1000,'IRR',digest,'$asset','b6700000-0000-0000-0000-000000000002');
+ po:=procurement.issue_purchase('avg-race-po2',s,'$warehouse','IRR',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',10,'unit_cost',120)));
+ PERFORM procurement.receive_purchase(po,'avg-race-r2','delivery');
+ PERFORM finance.record_supplier_invoice(po,'AVG-RACE-2',d,d+7,1200,'IRR',digest,'$asset','b6700000-0000-0000-0000-000000000002');
+ oid:=sales.create_checkout('avg-race-sale','$customer','$warehouse','$pricelist','in_person',clock_timestamp()+interval '1 hour',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',12,'expected_unit_price',1000)));
+ PERFORM sales.record_capture(oid,'synthetic','acct','avg-race-payment',12000,'IRR',clock_timestamp());
+ PERFORM sales.fulfill_order(oid);
+END \$\$;
+SQL
+race avg_capture "SELECT finance.capture_movement_costs('$warehouse','$variant');"
+[[ "$(grep -E '^[0-9]+$' "$tmp/first")" == 3 ]]
+[[ "$(grep -E '^[0-9]+$' "$tmp/second")" == 0 ]]
+mid=$(psql_ci -c "SELECT movement_id FROM finance.movement_cost_facts WHERE tenant_id='$tenant' AND variant_id='$variant' AND quantity_delta=-12 AND value_delta=-1320")
+[[ "$mid" =~ ^[0-9a-f-]{36}$ ]]
+race avg_post "SELECT finance.post_inventory_cogs('$mid','$asset','$expense','moving_average');"
+eid=$(grep -E '^[0-9a-f-]{36}$' "$tmp/first")
+[[ "$eid" =~ ^[0-9a-f-]{36}$ ]]
+[[ "$eid" == "$(grep -E '^[0-9a-f-]{36}$' "$tmp/second")" ]]
+[[ "$(psql_ci -c "SELECT count(*)=2 AND sum(amount)=0 AND sum(amount) FILTER(WHERE account_id='$expense')=1320 AND sum(amount) FILTER(WHERE account_id='$asset')=-1320 FROM finance.journal_lines WHERE tenant_id='$tenant' AND entry_id='$eid'")" == t ]]
+tid=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT inventory.transfer_stock('avg-race-transfer','$warehouse','$warehouse2','Synthetic average transfer',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',3)));
+SQL
+)
+[[ "$tid" =~ ^[0-9a-f-]{36}$ ]]
+race avg_transfer "SELECT finance.capture_transfer_costs('$tid','$variant');"
+[[ "$(grep -E '^[0-9]+$' "$tmp/first")" == 2 ]]
+[[ "$(grep -E '^[0-9]+$' "$tmp/second")" == 0 ]]
+[[ "$(psql_ci -c "SELECT count(*)=1 FROM inventory.transfer_lines tl JOIN finance.movement_cost_facts fo ON fo.tenant_id=tl.tenant_id AND fo.movement_id=tl.outgoing_movement_id JOIN finance.movement_cost_facts fi ON fi.tenant_id=tl.tenant_id AND fi.movement_id=tl.incoming_movement_id WHERE tl.tenant_id='$tenant' AND tl.transfer_id='$tid' AND tl.variant_id='$variant' AND fo.value_delta=-330 AND fi.value_delta=330")" == t ]]
+oid2=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT sales.create_checkout('avg-race-destination-sale','$customer','$warehouse2','$pricelist','in_person',clock_timestamp()+interval '1 hour',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',3,'expected_unit_price',1000)));
+SQL
+)
+[[ "$oid2" =~ ^[0-9a-f-]{36}$ ]]
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT sales.record_capture('$oid2','synthetic','acct','avg-race-destination-payment',3000,'IRR',clock_timestamp());
+SELECT sales.fulfill_order('$oid2');
+SQL
+[[ "$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT finance.capture_movement_costs('$warehouse2','$variant');
+SQL
+)" == 1 ]]
+mid2=$(psql_ci -c "SELECT cf.movement_id FROM finance.movement_cost_facts cf JOIN inventory.stock_ledger sl ON sl.tenant_id=cf.tenant_id AND sl.movement_id=cf.movement_id JOIN sales.order_items si ON si.tenant_id=sl.tenant_id AND si.reservation_id=sl.reservation_id WHERE si.tenant_id='$tenant' AND si.order_id='$oid2' AND cf.value_delta=-330")
+[[ "$mid2" =~ ^[0-9a-f-]{36}$ ]]
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT finance.post_inventory_cogs('$mid2','$asset','$expense','moving_average');
+SELECT sales.receive_full_return('$oid2','avg-race-return','Inspected sellable');
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.capture_movement_costs('$warehouse2','$variant'); RAISE EXCEPTION 'FAIL average capture before reversal'; EXCEPTION WHEN check_violation THEN NULL; END;
+ BEGIN PERFORM finance.reverse_fifo_cogs('$mid2'); RAISE EXCEPTION 'FAIL average FIFO reversal mismatch'; EXCEPTION WHEN check_violation THEN NULL; END;
+END \$\$;
+SQL
+race avg_reversal "SELECT finance.reverse_inventory_cogs('$mid2','moving_average');"
+rev=$(grep -E '^[0-9a-f-]{36}$' "$tmp/first")
+[[ "$rev" =~ ^[0-9a-f-]{36}$ ]]
+[[ "$rev" == "$(grep -E '^[0-9a-f-]{36}$' "$tmp/second")" ]]
+race avg_return_capture "SELECT finance.capture_movement_costs('$warehouse2','$variant');"
+[[ "$(grep -E '^[0-9]+$' "$tmp/first")" == 1 ]]
+[[ "$(grep -E '^[0-9]+$' "$tmp/second")" == 0 ]]
+[[ "$(psql_ci -c "SELECT count(*)=7 AND sum(value_delta)=880 AND sum(quantity_delta) FILTER(WHERE warehouse_id='$warehouse')=5 AND sum(quantity_delta) FILTER(WHERE warehouse_id='$warehouse2')=3 AND sum(value_delta) FILTER(WHERE warehouse_id='$warehouse')=550 AND sum(value_delta) FILTER(WHERE warehouse_id='$warehouse2')=330 FROM finance.movement_cost_facts WHERE tenant_id='$tenant' AND variant_id='$variant'")" == t ]]
+[[ "$(psql_ci -c "SELECT count(*)=0 FROM finance.fifo_cost_allocations WHERE tenant_id='$tenant' AND variant_id='$variant'")" == t ]]
+[[ "$(psql_ci -c "SELECT count(*)=1 FROM finance.journal_entries j JOIN finance.movement_cost_facts cf ON cf.tenant_id=j.tenant_id AND cf.movement_id=j.cogs_return_movement_id WHERE j.tenant_id='$tenant' AND j.entry_id='$rev' AND cf.variant_id='$variant' AND cf.value_delta=330")" == t ]]
+[[ "$(psql_ci -c "SELECT count(*)=2 AND sum(amount)=0 AND sum(amount) FILTER(WHERE account_id='$expense')=-330 AND sum(amount) FILTER(WHERE account_id='$asset')=330 FROM finance.journal_lines WHERE tenant_id='$tenant' AND entry_id='$rev'")" == t ]]
+[[ "$(psql_ci -c "SELECT sum(amount) FILTER(WHERE account_id='$asset')=880 AND sum(amount) FILTER(WHERE account_id='$expense')=1320 FROM finance.journal_lines WHERE tenant_id='$tenant'")" == t ]]
+[[ "$(psql_ci -c "SELECT count(*)=10 FROM finance.journal_entries WHERE tenant_id='$tenant'")" == t ]]
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT finance.assert_inventory_cost_ready('$warehouse','$variant');
+SELECT finance.assert_inventory_cost_ready('$warehouse2','$variant');
+RESET SESSION AUTHORIZATION;
+SET SESSION AUTHORIZATION upc_cogs_reader;
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.reverse_inventory_cogs('$mid2','moving_average'); RAISE EXCEPTION 'FAIL unauthorized average reversal'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END \$\$;
+RESET SESSION AUTHORIZATION;
+SET SESSION AUTHORIZATION upc_cogs_b;
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.reverse_inventory_cogs('$mid2','moving_average'); RAISE EXCEPTION 'FAIL cross-tenant average reversal'; EXCEPTION WHEN foreign_key_violation THEN NULL; END;
+END \$\$;
+RESET SESSION AUTHORIZATION;
+SQL
+echo 'PASS COGS concurrency: ten competing lock races (five FIFO, five moving average), exact paired costs and reversals, readiness and tenant isolation'
+
 

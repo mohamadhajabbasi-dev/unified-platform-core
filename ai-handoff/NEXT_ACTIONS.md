@@ -447,3 +447,8 @@
 ## TEST-044 / BUILD-026N — current
 - [x] Verify FIX-011; extend readiness with replay and journal amount reconciliation.
 - [ ] Verify exact new CI SHA (42 SQL + nine concurrency, four guard tests), repair before further migrations. Next moving-average cost contention, tenant-level account reconciliation design, tracked valuation and complex transfer chains. Policy/production approval still pending. No production access.
+
+
+## TEST-045 / TEST-046 — current
+- [x] Verify 0042; extend current COGS harness to ten actual lock races, five per method.
+- [ ] Verify exact new CI SHA (42 SQL + nine concurrency, ten COGS race cases, four guard tests). Repair failures. Next canonical 0043 tenant-level inventory cost reconciliation, complex transfer chains and tracked valuation. No production access.
