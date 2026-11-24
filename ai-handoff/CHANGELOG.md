@@ -75,3 +75,5 @@
 - FIX-004: correct guard_trace_movement dollar quote in unapplied 0024.
 
 - FIX-005: avoid shadowing return query alias by PL/pgSQL record.
+
+- TEST-028 candidate: serial receipt, reservation and transfer race test; CI pending.

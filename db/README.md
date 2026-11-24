@@ -89,3 +89,6 @@ Extend existing receipt/transfer lines to multiple movements per variant, no new
 
 ## 0024 — FEFO reservation and tracked sale lifecycle
 One immutable allocation child of canonical reservation; exact movement references, no stock master. Automatically choose eligible nonexpired lots by expiry ascending, deterministic UUID tie, serial per unit; deadline cannot extend beyond lot expiry. Traced negative movements preserve active allocations, consumed reservation atomically posts all allocations. Existing checkout/cancel/fulfill use same reservation APIs; ordinary behavior retained. Tracked full sellable return requires explicit confirmation of original allocations and refuses expired or duplicate serial admission; no partial/damaged returns. Available balance excludes expired units. UTC expiry and immediate full handover provisional. Allocation max 1000 per reservation, physical verification external, no production upgrade or load test. Dedicated tracked serial race and full lock review pending.
+
+## Tracked serial concurrency
+Dedicated CI suite verifies competing receipt across warehouses, double reservation and reserve versus transfer, with observed lock waits and ledger conservation. Synthetic only; no schema changes.

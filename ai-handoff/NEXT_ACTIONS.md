@@ -321,3 +321,7 @@
 ## TEST-027 — current
 - [x] Verify 0024 with FIX-004/FIX-005; 34 suites PASS. FEFO and tracked sale/return lifecycle enabled in synthetic tests.
 - [ ] Add actual competing tracked serial reservation and receipt/transfer races; align total order allocation limit with return normalization cap (1000 total vs per-reservation), cover expiry/permissions/rollback. Then implement cost layers and valuation FIFO/weighted average, journal COGS and reversal, without duplicate stock. Partial/damaged/expired returns, historical migration, transit, additional D-016 domains and unique migration IDs, production review remain pending. No operational access or real data.
+
+## TEST-028 candidate — current
+- [x] Author three tracked serial contention tests.
+- [ ] Verify CI and fix failures; align total checkout allocation cap with return normalization (1000), then cost valuation and journal COGS; no duplicate inventory. Partial/damaged returns and production review pending.
