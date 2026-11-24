@@ -60,3 +60,7 @@
 - [x] Verify committed SQL and CI trigger, observe both unsuccessful runs.
 - [ ] Inspect GitHub Actions run 45404619911 summary, fix confirmed issue, verify isolated PostgreSQL tests. No additional retry without evidence; no legacy or production access.
 - [ ] After foundation passes, continue BUILD-001 domain checklist.
+
+## TEST-002 — current
+- [x] Retry after owner changed visibility; GitHub runner initialized.
+- [ ] Read final run 45404619911 attempt 3 and job logs; fix demonstrated failures or proceed with foundation hardening and IAM on PASS.

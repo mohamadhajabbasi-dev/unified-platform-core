@@ -66,3 +66,6 @@
 
 ## TEST-001 — latest checkpoint
 - BUILD-001 committed at `605e42f116bf5cf4adf99cdd218283289b712ae2`. CI run 45404619911 attempts 1 and 2: failure, steps/logs unavailable. SQL tests not verified. No external system changes. First next action: diagnose GitHub Actions initialization and obtain actual test evidence.
+
+## TEST-002 — latest checkpoint
+- Public visibility confirmed; run 45404619911 attempt 3 now in progress, job 138489581659, setup successful, container initialization started. Tested code SHA 605e42f116bf5cf4adf99cdd218283289b712ae2. SQL results pending. No production changes.

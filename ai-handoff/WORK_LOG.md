@@ -92,3 +92,6 @@
 
 ## TEST-001 / 2026-11-24
 - BUILD-001 commit verified. Actions run 45404619911, attempts 1 and 2, both concluded failure. Retry accepted; neither attempt exposed job steps or logs; log retrieval returned 404. SQL execution and cause unverified. No external database access or changes. Prior attempt to save this checkpoint was blocked; branch HEAD unchanged on read-back. Next: inspect run summary and resolve verified CI blocker before extending foundation.
+
+## TEST-002 / 2026-11-24 — public runner retry
+- Precheck: mandatory documents, tree, current main and visibility verified. Owner made repository public; no visibility change performed by agent. Retried run 45404619911 after changed visibility. Attempt 3 job 138489581659 reached in_progress; setup succeeded, container initialization started. SQL result pending at this checkpoint. Only handoff files changed; no production access. Next: verify final run and logs, then continue only on PASS.
