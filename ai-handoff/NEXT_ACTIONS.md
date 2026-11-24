@@ -198,3 +198,7 @@
 - [x] Verify 13 migrations/16 suites, including 0012 and 0013; PASS.
 - [ ] Read docs/APP_ANALYTICS_MULTI_PRICE_FA.md and migrate/generalize 0013 tables into shared analytics.sessions/events. Separate app paid entitlement plus approval, scoped registry/releases, installs/first_open and distribution reports; synthetic tests. No parallel masters.
 - [ ] Verified customer/order attribution, consent and retention; extend existing catalog price lists/entries with audience/channel/quantity resolution and server checkout enforcement. No second price master. Then remaining CRM/catalog/content/ops/backup/API and security/performance. No real data or legacy access.
+
+## BUILD-014 — current
+- [x] Implement shared analytics and app installation/registry foundation, tests.
+- [ ] Verify CI and actual logs; then official distribution reports with independent source metrics and idempotency; verified customer/order attribution and price resolver using existing price lists. Shared apps, privacy, quality metrics and load tests remain pending. No real data or legacy access.

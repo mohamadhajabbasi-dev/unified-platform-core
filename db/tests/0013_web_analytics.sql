@@ -62,17 +62,17 @@ BEGIN
  BEGIN
  PERFORM web.record_event(e,s,'page_view','catalog'); RAISE EXCEPTION 'FAIL event payload conflict';
  EXCEPTION WHEN unique_violation THEN NULL; END;
- IF (SELECT count(*) FROM web.visitor_sessions)<>1 OR (SELECT count(*) FROM web.visit_events)<>1
+ IF (SELECT count(*) FROM analytics.sessions)<>1 OR (SELECT count(*) FROM analytics.events)<>1
  OR NOT EXISTS(SELECT 1 FROM web.daily_sources WHERE sessions=1 AND events=1 AND source_type='organic')
  THEN RAISE EXCEPTION 'FAIL visit counts'; END IF;
  BEGIN
- DELETE FROM web.visit_events; RAISE EXCEPTION 'FAIL direct event mutation';
+ DELETE FROM analytics.events; RAISE EXCEPTION 'FAIL direct event mutation';
  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
 END $$;
 RESET SESSION AUTHORIZATION;
 SET SESSION AUTHORIZATION upc_bill_b;
 DO $$ BEGIN
- IF EXISTS(SELECT 1 FROM web.visitor_sessions) OR EXISTS(SELECT 1 FROM web.visit_events) THEN RAISE EXCEPTION 'FAIL tenant leakage'; END IF;
+ IF EXISTS(SELECT 1 FROM analytics.sessions) OR EXISTS(SELECT 1 FROM analytics.events) THEN RAISE EXCEPTION 'FAIL tenant leakage'; END IF;
  BEGIN
  PERFORM web.start_session(gen_random_uuid(),true,false,'v1','direct',NULL,NULL,NULL,'home'); RAISE EXCEPTION 'FAIL unpaid collection';
  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
@@ -84,7 +84,7 @@ END $$;
 SET SESSION AUTHORIZATION upc_bill_a;
 SELECT web.withdraw_session('c0000000-0000-0000-0000-000000000001');
 DO $$ BEGIN
- IF EXISTS(SELECT 1 FROM web.visitor_sessions) OR EXISTS(SELECT 1 FROM web.visit_events) THEN RAISE EXCEPTION 'FAIL withdrawal visibility'; END IF;
+ IF EXISTS(SELECT 1 FROM analytics.sessions) OR EXISTS(SELECT 1 FROM analytics.events) THEN RAISE EXCEPTION 'FAIL withdrawal visibility'; END IF;
  BEGIN
  PERFORM web.start_session('c0000000-0000-0000-0000-000000000001',true,false,'v1','organic','search','organic','synthetic','home');
  RAISE EXCEPTION 'FAIL withdrawn retry';
@@ -92,7 +92,7 @@ DO $$ BEGIN
 END $$;
 RESET SESSION AUTHORIZATION;
 -- Bootstrap-only synthetic expiry simulation.
-UPDATE web.visitor_sessions SET started_at=clock_timestamp()-interval '32 days',
+UPDATE analytics.sessions SET started_at=clock_timestamp()-interval '32 days',
  collection_until=clock_timestamp()-interval '31 days',retain_until=clock_timestamp()-interval '2 days'
  WHERE session_id='c0000000-0000-0000-0000-000000000001';
 SET SESSION AUTHORIZATION upc_bill_admin;
@@ -106,7 +106,7 @@ DO $$ BEGIN
  IF web.purge_expired(100)<>1 THEN RAISE EXCEPTION 'FAIL retention purge after revocation'; END IF;
 END $$;
 RESET SESSION AUTHORIZATION;
-DO $$ BEGIN IF EXISTS(SELECT 1 FROM web.visitor_sessions) OR EXISTS(SELECT 1 FROM web.visit_events)
+DO $$ BEGIN IF EXISTS(SELECT 1 FROM analytics.sessions) OR EXISTS(SELECT 1 FROM analytics.events)
  THEN RAISE EXCEPTION 'FAIL physical purge'; END IF; END $$;
 ROLLBACK;
 \echo PASS web analytics: paid approval gate, consent, bot rejection, session and event idempotency, isolation, withdrawal and retention

@@ -41,3 +41,5 @@
 
 
 - 2026-11-24 REQ-016: Added tenant-scoped app download/first-open/activity/attribution/quality reporting and unified web/app analytics design; validated existing multi-price price lists and documented missing channel/quantity/customer price resolution. D-015/AGENTS/MASTER_PLAN/ERD/handoff updated. No SQL or production changes for requested features.
+
+- BUILD-014: move web sessions/events into shared analytics, app eligibility/registry/releases/first-open; CI pending.

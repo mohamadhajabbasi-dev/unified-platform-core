@@ -172,3 +172,6 @@
 
 ## TEST-015 — verified latest checkpoint (updates REQ-016 stale CI status)
 - 44 prototype tables, 13 migrations, 16 suites PASS, 5 views. Run 45416207835 job 138522973195, tested SHA 9afb677dcfb50ea16262fe750ab8e80a254c0bba. TEST-014 Commerce also PASS. Subsequent docs-only D-015/REQ-016 preserved. Web tables exist; next migrate/generalize them to shared analytics.sessions/events, not duplicate tables. App telemetry and automatic price resolution not yet implemented. No operational changes.
+
+## BUILD-014 — latest
+- Shared analytics migration 0014 authored; 47 prototype tables if applied, 7 views. Existing web tables moved, not duplicated. Separate app eligibility and registry/releases/install first open. CI pending. No production changes.
