@@ -56,3 +56,11 @@
 
 ### Scope clarification — D-016 supersedes only the source-read part of D-013
 Owner's latest request **explicitly permits read-only inspection of GitHub source files in ERPPlus and CommerceAI** to inventory their data models. This **does not** permit altering either source repository, accessing either operational database, running migrations there, connecting to the original server, or requesting Desktop Commander. All new code and documentation writes remain confined to `unified-platform-core`.
+
+
+## D-017 — چهار قیمت استاندارد محصول (دستور صریح مالک)
+- انواع پایه **دقیقاً**: `original` (اصلی)، `discounted` (تخفیف‌خورده)، `colleague` (همکار)، `wholesale` (عمده). VIP/قراردادی/کانال فقط توسعه اختیاری، نه جایگزین چهار مورد.
+- برای تمام قیمت‌ها از **همان** `catalog.price_lists` و `catalog.price_entries` موجود استفاده کن؛ برای پله عمده از جدول وابسته `catalog.price_quantity_tiers`. **قیمت‌های جدا در Products/Variants یا Price Master دوم ممنوع.**
+- قیمت تخفیف‌خورده فقط با تاریخ معتبر، هم‌ارز و حداکثر برابر با قیمت اصلی؛ نمایش اصلی خط‌خورده در صورت اعمال تخفیف. قیمت همکار/عمده فقط برای طرف دارای مجوز معتبر؛ فهرست قیمت را از کلاینت بدون بررسی مجوز قبول نکن.
+- `catalog.price_at` و `price_for_quantity` موجود **هنوز انتخاب امن مشتری/قیمت عمومی و حقوق دسترسی را انجام نمی‌دهند**؛ قبل از API فروش باید کنترل نمایش قیمت خصوصی و محاسبه نهایی checkout رفع و تست شود.
+- متن دقیق و سناریوهای پذیرش در `docs/FOUR_PRODUCT_PRICE_TYPES_FA.md`. پس از تأیید CI فعلی migration و تست افزایشی ایجاد شود، نه کپی schema قدیم.
