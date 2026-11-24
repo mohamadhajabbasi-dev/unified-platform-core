@@ -347,3 +347,8 @@
 ## TEST-030 / BUILD-026B — current
 - [x] Verify 0026 all 37 suites; author immutable experimental policy and tests.
 - [ ] Verify 0027 CI and repair. Then implement immutable cost allocations with canonical movement FKs, actual opt-in lifecycle guards, transfer/return and balanced COGS. No production access.
+
+
+## TEST-031 / BUILD-026C — current
+- [x] Verify 0027 and 38 suites; author canonical movement cost capture and tests.
+- [ ] Verify 0028 CI, repair failures. Next FIFO receipt-level allocation provenance and COGS journal/reversal with matched inventory accounts, lifecycle guards and concurrent capture tests. No production access.
