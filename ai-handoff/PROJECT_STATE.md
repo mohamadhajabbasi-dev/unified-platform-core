@@ -281,3 +281,7 @@
 
 ## TEST-029 — latest verified checkpoint
 - 82 tables, 28 migrations, 36 suites PASS at 981dc341f0542c9f167bb2127cb347eb4393d40d, run 45438333111 job 138602166135. Checkout total allocation cap and historical receipt cost evidence verified. Valuation/COGS design only; no deployment.
+
+
+## BUILD-026A — valuation preview candidate
+- 82 tables unchanged; 29 migration files if applied. Read-only, invoker-RLS FIFO/moving-average replay of ordinary purchase receipts and reservation consumption, no new tables or journal writes. Explicitly rejects tracked stock, adjustments, transfers and returns in the selected history; agreed uninvoiced receipts flagged provisional. Per warehouse/variant, four-decimal rounding, deterministic recorded_at/movement_id ordering are experimental. No persistent policy, immutable allocations, COGS journal, transfer/return or concurrency certification. CI pending; no operational access.

@@ -79,3 +79,6 @@
 - TEST-028 candidate: serial receipt, reservation and transfer race test; CI pending.
 
 - BUILD-025: checkout total tracked allocation cap and receipt cost evidence view; CI pending. Valuation design proposed.
+
+
+- BUILD-026A: added restricted valuation preview and test; CI pending, no schema tables or posting.

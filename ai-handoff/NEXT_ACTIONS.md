@@ -337,3 +337,8 @@
 ## TEST-029 — current
 - [x] Verify allocation boundary and receipt cost evidence; all 36 suites PASS.
 - [ ] Implement opt-in FIFO and moving weighted average using canonical stock movements and immutable cost provenance, staged synthetic tests. Address transfers, returns, invoice timing and balanced journal COGS, rounding and unknown cost; no duplicate inventory. Accounting policy provisional pending approval. Remaining lifecycle and D-016 domains, migration IDs and production security review pending. No real data or deployment.
+
+
+## BUILD-026A — current
+- [x] Author restricted valuation preview and synthetic acceptance test.
+- [ ] Verify exact GitHub CI run; fix failures. Next persist opt-in policy and immutable cost allocations, integrate lifecycle and balanced COGS/reversal. Preview must not be treated as accounting truth. No production access.

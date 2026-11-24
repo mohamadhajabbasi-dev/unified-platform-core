@@ -332,3 +332,7 @@
 
 ## TEST-029 / 2026-11-24 — allocation boundary and cost evidence PASS
 - Run 45438333111 job 138602166135 completed success at 981dc341f0542c9f167bb2127cb347eb4393d40d. Verified 28 migrations, 36 suites PASS (28 SQL, eight concurrency). 1001 traced allocations rejected with complete rollback, 1000 checkout/fulfillment/full return and exact retries passed. Existing supplier finance test verifies receipt cost evidence before and after matched invoice; cross-tenant visibility checked. 82 tables unchanged; one invoker view added. No production or legacy access. Receipt cost basis is historical evidence only, not inventory value/COGS. Proposed FIFO/moving weighted average design stored; accounting scope, method, rounding, opening/adjustment policy and journal integration not yet approved or implemented.
+
+
+## BUILD-026A — valuation preview candidate / 2026-11-24
+- Precheck HEAD 2ec3f1fec0a359bb0889ebff028a15bccf1d0d09, TEST-029 and migration/test tree inspected. Read-only, invoker-RLS FIFO/moving-average replay of ordinary purchase receipts and reservation consumption, no new tables or journal writes. Explicitly rejects tracked stock, adjustments, transfers and returns in the selected history; agreed uninvoiced receipts flagged provisional. Per warehouse/variant, four-decimal rounding, deterministic recorded_at/movement_id ordering are experimental. No persistent policy, immutable allocations, COGS journal, transfer/return or concurrency certification. CI pending; no operational access.
