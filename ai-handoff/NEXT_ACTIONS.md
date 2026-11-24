@@ -437,3 +437,8 @@
 ## TEST-043 / BUILD-026M — current
 - [x] Verify five concurrency races; author 0041 explicit read-only inventory-cost readiness guard.
 - [ ] Verify exact new CI SHA (41 SQL + nine concurrency, four guard tests), repair. Next broaden reconciliation and lifecycle enforcement only under approved design; moving-average races, complex transfer chains and tracked valuation pending. No production access.
+
+
+## FIX-011 — current
+- [x] Diagnose 0041 test syntax failure and repair literal delimiters, preserving assertions.
+- [ ] Verify exact new CI SHA (41 SQL + nine concurrency, four guard tests); fix remaining failures before 0042 reconciliation of replay and posted journal amounts. No production access.

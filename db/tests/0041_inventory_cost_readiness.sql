@@ -189,7 +189,7 @@ BEGIN
  THEN RAISE EXCEPTION 'FAIL unsupported movement issue'; END IF;
  BEGIN PERFORM finance.assert_inventory_cost_ready(w,v); RAISE EXCEPTION 'FAIL unsupported movement ready'; EXCEPTION WHEN check_violation THEN NULL; END;
  BEGIN PERFORM finance.assert_inventory_cost_ready(w,'93000000-0000-0000-0000-000000000004'); RAISE EXCEPTION 'FAIL missing policy ready'; EXCEPTION WHEN foreign_key_violation THEN NULL; END;
-END $;
+END $$;
 RESET SESSION AUTHORIZATION;
 SET SESSION AUTHORIZATION upc_inv_reader;
 DO $$ BEGIN
@@ -198,9 +198,9 @@ DO $$ BEGIN
 END $$;
 RESET SESSION AUTHORIZATION;
 SET SESSION AUTHORIZATION upc_inv_b;
-DO $ BEGIN
+DO $$ BEGIN
  BEGIN PERFORM finance.assert_inventory_cost_ready('94000000-0000-0000-0000-000000000001','93000000-0000-0000-0000-000000000001'); RAISE EXCEPTION 'FAIL cross tenant readiness'; EXCEPTION WHEN foreign_key_violation THEN NULL; END;
-END $;
+END $$;
 RESET SESSION AUTHORIZATION;
 ROLLBACK;
 \echo PASS inventory cost lifecycle issues and explicit readiness gate, pending invoices, sale, return, transfer, unsupported movement and tenant isolation
