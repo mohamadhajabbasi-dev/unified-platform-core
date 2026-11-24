@@ -402,3 +402,8 @@
 ## FIX-010 — current
 - [x] Diagnose failed combined assertion and separate capture, retry and read statements with precise failure diagnostics.
 - [ ] Verify exact CI SHA (35 SQL, nine concurrency, four guard tests). If still failing inspect specific assertion/count; fix before next migration. Next canonical 0036 moving-average COGS/return, transfer and lifecycle guards. No production access.
+
+
+## TEST-037 / BUILD-026H — current
+- [x] Verify FIX-010 and return replay; author 0036 shared moving-average COGS and tests.
+- [ ] Verify exact new CI SHA (36 SQL + nine concurrency, four guard tests), fix failures. Next 0037 moving-average historical return, transfer cost, lifecycle and concurrency. No production access.

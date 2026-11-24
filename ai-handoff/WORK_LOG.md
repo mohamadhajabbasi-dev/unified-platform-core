@@ -405,3 +405,10 @@
 
 ## FIX-010 / 2026-11-24
 - FIX-010 — run 45444927977 job 138625943750 at 25cc668fb1b17b689033fbde44a0f58f1d6629aa failed in 0034 regression with FAIL confirmed return capture after all 35 migrations and ID guard applied; 33 SQL suites passed, remaining suites skipped. The assertion combined two volatile capture calls and a read of their writes in one SQL expression; order and snapshot visibility are not guaranteed. Split write, exact retry and persisted row assertions into separate statements in 0034 and 0035, with explicit actual counts and separate error labels. Also separated two resale capture calls. No assertions removed, no migration/runtime semantics changed. This is a suspected fixture issue, not yet a verified root cause; new CI must confirm. Last full verified TEST-036: 85 tables, 34 migrations, 43 suites, four guard tests. No operational access.
+
+
+## TEST-037 / 2026-11-24
+- TEST-037: run 45446005665 job 138629833448 at 44c83fff7fcd630b4e099bbef2e1515c20a41b7f completed success, 35 migrations, 44 SQL/concurrency suites (35 SQL + nine concurrency), four migration guard unit tests. FIX-010 and FIFO resale provenance verified. 85 tables unchanged.
+
+## BUILD-026H
+- BUILD-026H: canonical 0036 introduces one shared explicit COGS posting implementation for FIFO and moving_average, retains existing strict FIFO wrapper without duplicate posting logic; existing journal source FK, idempotency, period and permission gates reused. Moving-average positive confirmed sale cost from captured immutable facts; every preceding positive pool movement must be an invoiced purchase receipt debited to the same inventory account, including depleted receipts (conservative restriction pending accounting approval). Mixed account pool rejected, exact retry, no fabricated FIFO allocations. Synthetic tests verify 1320 COGS and 880 asset balance, wrong account/method and closed period. No table, no production access or policy approval. Moving-average return, transfer, zero-cost handling, lifecycle and concurrent moving-average tests pending. New CI pending.
