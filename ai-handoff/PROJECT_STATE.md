@@ -200,3 +200,12 @@
 
 ## TEST-018 / BUILD-016 — reconciled baseline
 - Run 45421101715 job 138540527723 at 8bb8e9d554f832afc77e1498f34690fcade741c4: 18 migrations/21 suites PASS, 66 prototype tables. New 0016 attribution authored (68 if applied), CI pending. Preserve D-016 and parallel changes. No deployment. Existing tier table not duplicate; audience/checkout authorization pending.
+
+
+## Checkpoint PRICE-017 — 2026-11-24 (LATEST)
+- Owner has now specified **four core price categories** per tenant product/variant: `original` (اصلی), `discounted` (تخفیف‌خورده), `colleague` (همکار), `wholesale` (عمده). See `docs/FOUR_PRODUCT_PRICE_TYPES_FA.md`, D-017.
+- Current SQL `0004` supports multiple price lists/validity per variant; `0014` adds a draft quantity-tier relation. **Four named standard lists are NOT bootstrapped/validated; price role/eligibility resolution, discount consistency and checkout authorization NOT implemented**.
+- No duplicate price table or four mutable product price columns created.
+- New doc/AGENTS/DECISIONS/MASTER_PLAN/ERD all committed on GitHub. Existing 0013–0015 authored migrations and synthetic tests still CI UNVERIFIED in this response; do not misstate success.
+- Critical blocker before production: protect private colleague/wholesale prices from direct querying by readers with catalog.read; never trust client-supplied price_list_id.
+- NEXT: verify latest GitHub Actions regression for 0012–0015; then create incremental secure four-role pricing rules and tests against existing price lists without touching ERPPlus/CommerceAI/production server.
