@@ -209,3 +209,6 @@
 - New doc/AGENTS/DECISIONS/MASTER_PLAN/ERD all committed on GitHub. Existing 0013–0015 authored migrations and synthetic tests still CI UNVERIFIED in this response; do not misstate success.
 - Critical blocker before production: protect private colleague/wholesale prices from direct querying by readers with catalog.read; never trust client-supplied price_list_id.
 - NEXT: verify latest GitHub Actions regression for 0012–0015; then create incremental secure four-role pricing rules and tests against existing price lists without touching ERPPlus/CommerceAI/production server.
+
+## TEST-019 — latest verified checkpoint (supersedes PRICE-017 stale CI status, preserves D-017 requirements)
+- 68 prototype tables, 19 migration files, 22 test suites PASS at 32eae6b47fa929fddb74739fa8d267d8097397fe, run 45422397870 job 138545155769. Attribution with current consent/privacy erasure tested; no operational changes. Parallel catalog/HR verified. Subsequent docs-only PRICE-017/D-017 preserved. Four price categories specified, not implemented; protect colleague/wholesale from ordinary catalog readers and never trust supplied list ID. Next authorized resolver and checkout using existing price lists/entries/tiers. Positive app attribution, real consent/checkout integration pending.

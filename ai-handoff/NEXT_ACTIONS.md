@@ -241,3 +241,8 @@
 - [ ] Next incremental implementation: bootstrap 4 standard tenant price lists, validate discount <= original with identical currency/variant/validity, implement wholesale quantity threshold, colleague entitlement, deny public reading private price lists and prevent client-controlled list id escalation. Use only existing `catalog.price_lists`, `catalog.price_entries`, `catalog.price_quantity_tiers`.
 - [ ] Test ordinary guest view (original struck-through when discount), colleague and wholesale authorization, expired discounts, invalid price, tenant isolation, quantity thresholds, concurrency and checkout server-side price recalculation + immutable order price snapshot.
 - [ ] No Desktop Commander, old DB, old repos writes or production server changes; record actual tests/commits after every action.
+
+## TEST-019 — current (D-017/PRICE-017)
+- [x] Verify latest 19 migration files/22 suites including attribution, HR and catalog; PASS.
+- [ ] Read docs/FOUR_PRODUCT_PRICE_TYPES_FA.md, D-017, and current pricing and checkout SQL; implement original, discounted, colleague, wholesale categories in existing price lists, authorization, discount consistency, deterministic quantity selection and server checkout snapshot; prevent direct private-price exposure. No duplicate price master. Recheck main before edits.
+- [ ] Positive app attribution and end-to-end checkout, authenticated messenger sources, consent revocation when CRM disabled, privacy scheduler, anonymized aggregates; then remaining D-016 procurement, transfers, costing, fiscal invoices, banking, AI/integrations/ops. Coordinate duplicate migration prefixes before deployment. No production access or real data.
