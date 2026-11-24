@@ -38,3 +38,8 @@
 - [ ] **NEXT ACTION**: create **new greenfield conceptual target ERD** from the approved business invariants, then draft table dictionary/tenant scope/PK-FK/RLS/uniqueness and ask owner to approve. Do NOT copy current EF tables by default.
 - [ ] Legacy source audits may proceed as parallel **migration mapping**, not as gate for defining the proposed target. Live database inventory is required later for safe migration, not to start architecture design.
 - [ ] Keep reports/decisions logged after every step. No actual DDL or production changes.
+
+## Checkpoint DESIGN-002 — newest
+- [x] Create **new requirements-first** proposed conceptual ERD: `docs/TARGET_ERD_V0_FA.md`.
+- [ ] **NEXT:** review draft with owner; amend proposed schema and record choices. No legacy-schema cloning and no server dependency for this stage.
+- [ ] Once approved, create precise PK/FK/unique/RLS table dictionary and first versioned staging migration code; legacy mapping, reconciliation and live metadata verification only as migration gates.
