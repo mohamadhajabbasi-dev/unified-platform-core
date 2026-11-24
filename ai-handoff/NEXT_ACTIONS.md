@@ -295,3 +295,7 @@
 
 ## FIX-003 — current
 - [ ] Verify rerun including inventory/transfer races; do not mark BUILD-022 passed until logs confirm. Trace-aware receipt/reservation/fulfillment/return/transfer still pending.
+
+## TEST-025 — current
+- [x] Verify 0022, FIX-003 and full regression; 32 suites PASS including competing transfer/reserve and reverse transfers.
+- [ ] Next implement trace-aware purchase receipts and atomic transfers with exact lot/serial ledger provenance, then trace allocations in reservations/checkout/fulfillment and returns. Test expired stock, duplicate serial contention, rollback and lock order across variants. FEFO and costing/COGS follow; no parallel inventory master. Review tenant scoping, privileged bootstrap, transit, partial receiving and all remaining D-016 domains. No operational access, real data or deployment.

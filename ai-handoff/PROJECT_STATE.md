@@ -248,3 +248,6 @@
 
 ## FIX-003 — current
 - First BUILD-022 CI failed in old inventory concurrency readiness check after trace lock added; SQL tests passed. Fixture corrected, full CI pending.
+
+## TEST-025 — latest verified checkpoint
+- 81 prototype tables, 25 migration files, 32 suites PASS at 9e62c03eaca9f202e486a3a3ccbddb9dd2e989b5, run 45433354373 job 138584395213. Trace foundation and seven concurrency suites verified after FIX-003. Tracked stock is blocked from unadapted workflows; no full tracked sale/purchase/transfer lifecycle yet. No production changes.
