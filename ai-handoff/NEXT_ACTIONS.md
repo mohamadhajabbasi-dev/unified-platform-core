@@ -16,3 +16,11 @@
 - [ ] Optional archive: deferred; not a prerequisite for read-only inventory.
 - [x] Owner authorizes read-only discovery in current request; actual secure access still unverified.
 - [ ] First exact action: discover authorized ERPPlus/CommerceAI source repositories and available read-only DB connection or sanitized metadata exports. Confirm target engines/databases and scope before querying; no production changes, no secrets/PII. Then proceed with items 4–8 in order. Do not create tables/code or finalize mappings without evidence and owner approval.
+
+## Current checkpoint INV-002 (latest)
+- [x] Repository verification and read-only authorization.
+- [x] Source repo discovery and preliminary inventory/data/sync map at pinned source commits; docs under docs/CURRENT_*.md and OPEN_QUESTIONS.md.
+- [ ] BLOCKED — both authorized remote devices offline. First exact next action: connect an authorized device with access or receive sanitized metadata exports; verify actual ERPPlus engine (code SQL Server, initial statement MySQL), Commerce engine/version and target DB; prefer existing replica/backup or existing read-only account. Do not change server/DB access settings without approval.
+- [ ] Collect metadata only: table/column/type, PK/FK, unique/index, views/triggers/jobs, RLS/grants and estimated volume, no secrets or business rows; timeouts and load limits. Compare live evidence with pinned code and map source ownership, tenant/store and field semantics, then identify actual duplicate risk. Complete maps with evidence.
+- [ ] Inventory remaining producers/consumers and active sync. Propose ADR/ERD for owner approval after inventory; staging/migration only after gates. Never disable sync or modify live systems in this phase.
+- [ ] Original binary archive optional, deferred.
