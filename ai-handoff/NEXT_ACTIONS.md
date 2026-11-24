@@ -121,3 +121,7 @@
 ## FIX-002 — current
 - [x] Fix observed duplicate synthetic role grants in sales race setup.
 - [ ] Verify full CI and actual checkout/capture contention; then finance journal.
+
+## TEST-009 — current
+- [x] Verify all seven migrations and ten test suites; actual sales concurrency PASS.
+- [ ] Next: implement tenant chart of accounts, balanced immutable journals and verified capture/refund posting links. Preserve separation from platform billing. Then remaining finance workflows, reconciliation, content, ops and backup; no legacy access.

@@ -143,3 +143,6 @@
 
 ## FIX-002 / 2026-11-24 — sales concurrency fixture isolation
 - Run 45411682401 job 138506869813: seven migrations and nine suites passed (including returns and both previous concurrency suites); new sales concurrency setup failed with duplicate role_grants_pkey before contention. Existing inventory concurrency leaves synthetic fixtures in disposable container, so shared role_key selected earlier roles as well. Changed sales fixture role keys to distinct sales-race-editor/reader. No migration or production change. Full rerun pending.
+
+## TEST-009 / 2026-11-24 — returns and sales concurrency PASS
+- Run 45411865940 job 138507510205 completed success, tested SHA b2fa7580ddf353fb21f14f2d32d629379c8e8938. Logs confirm 0001–0007 applied and ten suites PASS including full returns/refunds, late capture review, actual competing checkout/capture locks, exactly one order/hold/payment. FIX-002 isolated synthetic role keys after first test setup failure. No production/legacy or real gateway operations. 28 prototype tables. Next tenant finance journal with verified capture/refund linkage, balanced immutable postings and tenant isolation.

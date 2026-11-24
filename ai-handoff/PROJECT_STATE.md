@@ -111,3 +111,6 @@
 
 ## FIX-002 — latest
 - BUILD-007 migrations and nine suites passed; sales concurrency fixture setup failed on duplicate role grants. Isolated role keys; rerun pending. No production changes.
+
+## TEST-009 — latest checkpoint
+- 28 prototype tables, 7 migrations, 10 suites PASS, 2 derived views. Run 45411865940 job 138507510205, tested SHA b2fa7580ddf353fb21f14f2d32d629379c8e8938. Full-only returns/refunds and late full capture review; concurrency proven. No production changes. Partial/damaged returns, multiple capture and durable reconciliation inbox remain pending. Next: finance.
