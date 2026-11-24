@@ -196,3 +196,20 @@
 
 ## BUILD-013 / 2026-11-24 — consented visitor analytics
 - Precheck TEST-014 46fc32b8379c7086da58372e82af1971133d18ae; required docs, tree, entitlement and test fixtures reviewed. Added 0013 migration/test and handoff. Two scoped tables, source aggregate view, paid and approved collection gate, trusted collector, consent/bot gate, idempotency, withdrawal, bounded retention purge, negative tests. CI pending. 24h/30d and bounded source codes provisional; actual consent verification, sanitization, bot classifier, scheduler, partition/load and acquisition/order attribution pending. No real visitor data or operational access. Next verify CI.
+
+
+## REQ-016 / 2026-11-24 — application visitors, downloads and multi-price
+- Phase: 03 isolated new PostgreSQL / greenfield requirements-extension. Actor: ChatGPT.
+- Owner request: track app visitors, app-store downloads, app engagement and all app-related metrics per tenant; ensure multiple price types per product.
+- Pre-check: read latest PROJECT_STATE/NEXT_ACTIONS/AGENTS, `db/README.md`, SQL `0004_catalog_pricing.sql`, `0011_tenant_dossier.sql`, `0012_commerce_entitlement.sql` and previous web/tenant analytics design. Existing price_lists+price_entries+price_at are **already implemented**, so no duplicate pricing master was proposed. No existing app download/session implementation verified. Prior TEST-013: 41 tables / 11 migrations / 14 suites PASS; BUILD-012: 42 if applied, runtime verification pending.
+- Changes committed:
+  - `docs/APP_ANALYTICS_MULTI_PRICE_FA.md`: full app distribution, first-open, sessions, conversion, crash, UTM, privacy, non-duplicating analytics and pricing rules. Commit `475337172903c4efa55d123bbc978ef136734c5c`.
+  - `AGENTS.md`: enforced D-015 and no duplicate product price/app visit tables. Commit `564b8a9faeccb33a1b973606a60dfb5b1c853b32`.
+  - `docs/MASTER_PLAN_FA.md`: scoped app analytics/multi-price. Commit `419c48f00fcbc2d2b0a5e0cb51fe947c1d0b7bcd`.
+  - `docs/TARGET_ERD_V0_FA.md`: integrated canonical multi-price and unified analytics. Commit `d8b01ccfbeb33bca814867c7642b9b6f0aa9730b`.
+  - `docs/TENANT_IDENTITY_VISITOR_ATTRIBUTION_FA.md`: superseded proposed web-only session master by unified cross-channel analytics. Commit `07ae5afad1811bb8349186b2e2e1cb9c46acfafa`.
+  - `ai-handoff/DECISIONS.md`: D-015. Commit `79044e7a77ecc39d6e7537ee19c9667e0f8e2522`.
+- Status: REQUIREMENTS + TARGET DESIGN RECORDED, **NOT APP ANALYTICS SQL IMPLEMENTED**, **NOT MULTI-PRICE RESOLUTION IMPLEMENTED**. Only pre-existing multi-list temporal price prototype exists.
+- Verification: re-read GitHub source files and recorded commit SHAs; no SQL/runtime tests initiated in this action; 0012 CI status not yet independently verified.
+- Repository public; only synthetic docs, no real customer/install/tenant/partner records, PII or secrets committed. ERPPlus/CommerceAI, their databases, production server and local devices: UNTOUCHED.
+- Next exact action: verify BUILD-012 CI then develop one shared analytics sessions/events source with tenant app distributions and verified acquisition, plus separate incremental pricing resolver/quantity rules with synthetic RLS + checkout tests. Preserve per-action checkpoints.
