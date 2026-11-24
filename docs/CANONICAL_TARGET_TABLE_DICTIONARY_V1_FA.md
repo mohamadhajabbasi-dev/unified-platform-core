@@ -29,9 +29,9 @@ Use with [complete 234-DbSet inventory](LEGACY_DBSET_COVERAGE_2026-11-24.md) and
 | crm / party / support | `service_queues, sla_policies, support_feedback` | **DESIGN_REQUIRED** | ERP CRM service queues/SLA/feedback; Linked to existing support_tickets |
 | catalog / pricing | `products, variants, categories, product_categories` | **EXISTING 0004** | ERP/Commerce products, variants, categories; Only tenant product master |
 | catalog / pricing | `price_lists, price_entries` | **EXISTING 0004** | ERP Sale/Wholesale/Colleague/Promo prices; Commerce store prices; Single price source; multi-list and effective periods |
-| catalog / pricing | `price_assignments, quantity_tiers, pricing_rules` | **DESIGN_REQUIRED** | ERP wholesale min qty; tenant VIP/colleague; app/site pricing; Rules refer to existing price entries not new pricing master |
-| catalog / pricing | `brands, units, product_media, warranties` | **DESIGN_REQUIRED** | ERP product images/warranties/units/brands; Commerce product media; Product FK; object storage for large binaries |
-| catalog / pricing | `product_reviews, product_favorites, stock_alert_subscriptions` | **DESIGN_REQUIRED** | Commerce ProductReviews, CustomerFavorites, ProductStockAlerts; Customer/product composite tenant FKs |
+| catalog / pricing | `price_assignments, quantity_tiers, pricing_rules` | **PARTIAL: quantity tiers AUTHORED 0014 (TEST PENDING)** | ERP wholesale min qty; tenant VIP/colleague; app/site pricing; Rules refer to existing price entries not new pricing master |
+| catalog / pricing | `brands, units, product_media, warranties` | **AUTHORED 0014 / TEST PENDING** | ERP product images/warranties/units/brands; Commerce product media; Product FK; object storage for large binaries |
+| catalog / pricing | `product_reviews, product_favorites, stock_alert_subscriptions` | **PARTIAL: reviews AUTHORED 0014 / TEST PENDING** | Commerce ProductReviews, CustomerFavorites, ProductStockAlerts; Customer/product composite tenant FKs |
 | catalog / pricing | `category_hierarchy, item_attributes, barcodes/labels` | **DESIGN_REQUIRED** | ERP product barcodes/prints/templates; Localized labels and derived code, no second product master |
 | inventory / procurement | `warehouses, stock_ledger, reservations` | **EXISTING 0005** | ERP StockTransactions, Commerce InventoryMovements; Ledger source; balance view derived |
 | inventory / procurement | `warehouse_transfers, transfer_lines, stock_adjustments` | **DESIGN_REQUIRED** | ERP WarehouseTransfer, InventoryAdjustment; Stock effects via stock_ledger only |
@@ -48,8 +48,8 @@ Use with [complete 234-DbSet inventory](LEGACY_DBSET_COVERAGE_2026-11-24.md) and
 | sales / shipping / tax / payments | `bank_accounts, cheques, bank_transactions, bank_reconciliations` | **DESIGN_REQUIRED** | ERP cash/cheque/bank accounting; Protected bank identifiers, derived balances |
 | finance / payroll | `accounts, journal_entries, journal_lines, fiscal_periods` | **EXISTING 0008–0009** | ERP Account, AccountingDocuments and items, FiscalYear; Tenant double-entry ledger |
 | finance / payroll | `receivables, payables, credit_limits, settlements` | **DESIGN_REQUIRED** | ERP customer debt, invoices, bills, employee advances; Financial obligations separated from balances |
-| finance / payroll | `employees, employment_contracts, payroll_periods, payroll_lines` | **DESIGN_REQUIRED** | ERP Employees/EmployeeContracts/PayrollItems; Tenant HR with optional user FK, encrypted PII |
-| finance / payroll | `employee_loans, advances, commission_plans, commission_entries` | **DESIGN_REQUIRED** | ERP loan, advance, commissions; Link to one employee and journal, not duplicated balances |
+| finance / payroll | `employees, employment_contracts, payroll_periods, payroll_lines` | **AUTHORED 0015 / TEST PENDING** | ERP Employees/EmployeeContracts/PayrollItems; Tenant HR with optional user FK, encrypted PII |
+| finance / payroll | `employee_loans, advances, commission_plans, commission_entries` | **PARTIAL: unified obligations + commission AUTHORED 0015 / TEST PENDING** | ERP loan, advance, commissions; Link to one employee and journal, not duplicated balances |
 | finance / payroll | `tax_filing_jobs, e_invoice_submissions` | **DESIGN_REQUIRED** | ERP e-invoice, tax returns; External gateway submissions with audit |
 | content / messaging / ai | `articles` | **AUTHORED 0013 / TEST PENDING** | Commerce Articles, ERP knowledge articles; One tenant article/content identity; separate KB type if needed |
 | content / messaging / ai | `article_revisions, editorial_workflows, seo_settings` | **DESIGN_REQUIRED** | Commerce SeoAgentSetting/ArticleAutomationSettings; Version history and scheduling; not duplicate article master |
@@ -86,3 +86,10 @@ There are **57 canonical table groups** above; each group may represent one or m
 5. Handoff: append WORK_LOG and update PROJECT_STATE/NEXT_ACTIONS and commit actual SHA.
 
 **Limit:** exact field-level parity for all 234 source DbSets is still a multi-pass task; the complete names and proposed domains are inventoried, not all class properties or deployed physical DB metadata checked. Don't claim otherwise.
+
+## Source coverage implementation checkpoint — 2026-11-24
+- `db/migrations/0013_content_crm_engagement.sql`: 5 necessary tenant-scoped tables authored + synthetic tests. Includes content.articles and CRM conversations/messages/support/consent. **CI pending, not production.**
+- `db/migrations/0014_catalog_details_price_tiers.sql`: 6 dependent tables authored + synthetic tests; brand, unit, media, warranty, review, quantity price tiers linked to existing Product/Price. **CI pending, not production.**
+- `db/migrations/0015_hr_payroll_commissions.sql`: 7 HR/payroll/commission tables authored + synthetic tests. **CI pending, not production.**
+- Total **18 additional table definitions** in three candidate migrations. Together with baseline **42 tables if 0012 applied**, there would be up to **60 prototype tables if migrations 0013–0015 pass**; this is NOT a count of proven applied/deployed tables.
+- Other normalized groups above remain DESIGN_REQUIRED. Source property mapping remains incomplete beyond verified representative classes. Follow phase gates and don't create copy-one-to-one tables for 234 legacy DbSets.
