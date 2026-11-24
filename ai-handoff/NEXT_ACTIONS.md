@@ -215,3 +215,16 @@
 - [x] Verify distribution and integrated regression, including 0013_content_crm_engagement and all 3 concurrency suites; 19 suites PASS at af330fdd8dbc2b07175bea1e68ae1cb70a8e10f2.
 - [ ] Reconcile unique migration identifiers with parallel work before production migration tracking; do not overwrite or delete other contributor changes.
 - [ ] Implement verified customer acquisition and order attribution from shared analytics sessions, canonical CRM and sales, with consent/retention and no duplicate master; inspect current tree for overlapping parallel work first. Then existing price list audience/channel/quantity resolution and checkout enforcement. Provider adapters and ownership verification, coverage matrix, shared apps, quality metrics, privacy scheduling and load/security review remain pending. No real data or legacy access.
+
+
+## Checkpoint SOURCE-004 / BUILD-013..015 — MOST RECENT (supersedes prior outdated TODOs)
+- [x] GitHub-only read of source models from both legacy repos; **182 ERPPlus, 52 CommerceAI EF DbSets** inventoried. No old DB reads or writes.
+- [x] Add full source declaration register, pinned sample field evidence and **57 canonical target table groups** in `docs/LEGACY_DBSET_COVERAGE_2026-11-24.md`, `docs/SOURCE_FIELD_EVIDENCE_FA.md`, `docs/CANONICAL_TARGET_TABLE_DICTIONARY_V1_FA.md`.
+- [x] Author 0013 (content/CRM, 5 tables + tests), 0014 (catalog/media/volume pricing, 6 tables + tests), 0015 (HR/payroll/commission, 7 tables + tests). **No test PASS claim yet**.
+- [ ] **IMMEDIATE ACTION:** read latest GitHub main/CI Actions results for **0012–0015**, obtain exact run/job/SHA evidence. Fix any observed migration/test failures before writing more overlapping SQL; don't assume public repo => Actions quota available. If CI inaccessible, label UNVERIFIED, not PASS.
+- [ ] Verify security/tenant isolation, module authorization, FK, encrypted CRM messages, HR privacy, price-tier quote vs actual checkout. Check existing 0014 quantities selection does not implicitly authorize VIP/wholesale price list.
+- [ ] Complete remaining source field/relationship inventory (the 234 DbSet enumeration is name coverage, not field completeness) and raw-SQL/file/job storage discovery from GitHub code only, no live database.
+- [ ] Next independent canonical business domains (in order, not parallel duplications): supplier/purchasing & warehouse transfers/lot/serial/cost; shipping/promotion/tax/invoices; receivables/bank/cheques/installments; CRM knowledge/articles/SEO/notifications; AI jobs/usage credits; integration market price observations/workflow; app/web analytics, tenant backup/restore and admin metrics.
+- [ ] After each domain, write versioned migration + synthetic acceptance/negative/concurrent tests, update mapping; preserve prior tables and do not copy legacy EF models blindly.
+- [ ] Require final owner approval, migration/rollback and staging isolation/load/recovery tests before any transfer of old data. Don't touch existing servers or databases or request Desktop Commander.
+- [ ] Update WORK_LOG, PROJECT_STATE, NEXT_ACTIONS, CHANGELOG after each action and verify GitHub commit SHAs.
