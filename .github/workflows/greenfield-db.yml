@@ -68,3 +68,8 @@ jobs:
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}
         run: bash db/tests/concurrency/procurement.sh
+
+      - name: Run concurrent supplier settlement acceptance test
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/tests/concurrency/supplier_settlement.sh

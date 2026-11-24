@@ -100,6 +100,7 @@ BEGIN
  BEGIN PERFORM finance.record_supplier_invoice(po,'INV-1',d,d+7,2000,'IRR',digest,asset,other); RAISE EXCEPTION 'FAIL invoice account conflict'; EXCEPTION WHEN unique_violation THEN NULL; END;
  IF NOT EXISTS(SELECT 1 FROM finance.supplier_payables WHERE invoice_id=iid AND outstanding=2000 AND state='unpaid') THEN RAISE EXCEPTION 'FAIL initial payable'; END IF;
  now_at:=clock_timestamp();
+ BEGIN PERFORM finance.record_supplier_settlement(iid,'bank','synthetic-bank','BAD-ASSET',1,'IRR',now_at,digest,asset); RAISE EXCEPTION 'FAIL inventory as cash'; EXCEPTION WHEN check_violation THEN NULL; END;
  sid:=finance.record_supplier_settlement(iid,'bank','synthetic-bank','PAY-1',800,'IRR',now_at,digest,cash);
  IF finance.record_supplier_settlement(iid,'bank','synthetic-bank','PAY-1',800,'IRR',now_at,digest,cash)<>sid THEN RAISE EXCEPTION 'FAIL settlement retry'; END IF;
  BEGIN PERFORM finance.record_supplier_settlement(iid,'bank','synthetic-bank','PAY-1',801,'IRR',now_at,digest,cash); RAISE EXCEPTION 'FAIL settlement conflict'; EXCEPTION WHEN unique_violation THEN NULL; END;
@@ -115,9 +116,17 @@ BEGIN
  po2:=procurement.issue_purchase('invoice-po-2',s,w,'IRR',ln);
  PERFORM procurement.receive_purchase(po2,'invoice-receipt-2','delivery2');
  BEGIN PERFORM finance.record_supplier_invoice(po2,'INV-1',d,d+7,2000,'IRR',digest,asset,ap); RAISE EXCEPTION 'FAIL duplicate supplier invoice ref'; EXCEPTION WHEN unique_violation THEN NULL; END;
+ DECLARE second_invoice uuid; BEGIN
+ second_invoice:=finance.record_supplier_invoice(po2,'INV-2',d,d+7,2000,'IRR',digest,asset,ap);
  PERFORM finance.close_period(per);
- BEGIN PERFORM finance.record_supplier_invoice(po2,'INV-2',d,d+7,2000,'IRR',digest,asset,ap); RAISE EXCEPTION 'FAIL closed period'; EXCEPTION WHEN check_violation THEN NULL; END;
- IF (SELECT count(*) FROM finance.supplier_invoices)<>1 OR (SELECT count(*) FROM finance.supplier_settlements)<>2 THEN RAISE EXCEPTION 'FAIL atomic failure'; END IF;
+ BEGIN PERFORM finance.record_supplier_settlement(second_invoice,'bank','synthetic-bank','CLOSED',1,'IRR',now_at,digest,cash); RAISE EXCEPTION 'FAIL closed period settlement'; EXCEPTION WHEN check_violation THEN NULL; END;
+ IF NOT EXISTS(SELECT 1 FROM finance.supplier_payables WHERE invoice_id=second_invoice AND outstanding=2000) THEN RAISE EXCEPTION 'FAIL closed settlement rollback'; END IF;
+ END;
+ -- Third purchase remains uninvoiced to test closed-period invoice rollback.
+ po2:=procurement.issue_purchase('invoice-po-3',s,w,'IRR',ln);
+ PERFORM procurement.receive_purchase(po2,'invoice-receipt-3','delivery3');
+ BEGIN PERFORM finance.record_supplier_invoice(po2,'INV-3',d,d+7,2000,'IRR',digest,asset,ap); RAISE EXCEPTION 'FAIL closed period'; EXCEPTION WHEN check_violation THEN NULL; END;
+ IF (SELECT count(*) FROM finance.supplier_invoices)<>2 OR (SELECT count(*) FROM finance.supplier_settlements)<>2 THEN RAISE EXCEPTION 'FAIL atomic failure'; END IF;
  IF finance.record_supplier_invoice(po,'INV-1',d,d+7,2000,'IRR',digest,asset,ap)<>iid THEN RAISE EXCEPTION 'FAIL closed period retry'; END IF;
  BEGIN UPDATE finance.supplier_invoices SET amount=1; RAISE EXCEPTION 'FAIL invoice mutation'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
 END $$;

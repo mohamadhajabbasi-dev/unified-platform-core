@@ -280,3 +280,7 @@
 ## TEST-023 — current
 - [x] Verify 0020 and all prior regressions: 28 suites PASS, including five previous concurrency suites.
 - [ ] Add actual competing supplier settlement race (distinct refs, overpay denial, exact retry), closed-period settlement rollback and account mapping review. No actual disbursement. Then implement interwarehouse transfers through existing stock ledger, traceability and valuation, partial receipt/returns. Continue tax/shipping, banking/cheques/installments, AI/ops/backups/API and coordinated migration IDs, service authentication, security/performance and rollback review. No production access or real data.
+
+## BUILD-021 — current
+- [x] Author atomic interwarehouse transfer and supplier settlement hardening, tests.
+- [ ] Verify all CI; then actual concurrent transfer vs reserve/transfer, cost valuation and lot/serial/expiry integration with all existing stock mutation paths. Transit/approval and bank account mapping remain pending. No deployment.

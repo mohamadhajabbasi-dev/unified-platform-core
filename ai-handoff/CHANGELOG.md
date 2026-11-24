@@ -61,3 +61,5 @@
 - BUILD-019: counterparties, purchase orders/items, full receipts and canonical stock ledger provenance; CI pending.
 
 - BUILD-020: supplier invoices, partial settlements, existing journal/fiscal gate and derived payables; CI pending.
+
+- BUILD-021: atomic warehouse transfers and supplier settlement race/period guard; CI pending.
