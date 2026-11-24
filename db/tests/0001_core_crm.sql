@@ -32,7 +32,7 @@ INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by
  SELECT t.tenant_id,m.module_id,true,'10000000-0000-0000-0000-000000000001','Synthetic test setup'
  FROM core.tenants t CROSS JOIN platform.modules m WHERE t.tenant_key IN ('tenant-a','tenant-b') AND m.module_key='crm';
 SET SESSION AUTHORIZATION upc_test_a;
-DO $
+DO $$
 DECLARE first_id uuid; second_id uuid;
 BEGIN
   first_id := crm.resolve_verified_customer('phone','','+15550000001','Synthetic customer A');

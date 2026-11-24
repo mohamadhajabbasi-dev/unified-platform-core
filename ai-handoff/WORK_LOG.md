@@ -110,3 +110,6 @@
 ## BUILD-003 / 2026-11-24 — CRM access gates and identity linkage
 - Precheck: TEST-004 HEAD 897ecdd852c7799ab6147c831d9cc8492282991d; mandatory docs and existing migrations/tests reviewed. No duplicate master tables.
 - Changes: migration 0003, regression fixtures 0001/0002, test 0003, concurrency shell test, existing CI workflow, db README and handoff. Restrictive RLS on CRM and resolver write gate; verified link with conflict rejection and shared advisory lock; two-session concurrency test. No legacy or production access. SQL/CI results pending. Provisional choices: CRM module required for CRM access, separate read/write permissions and trusted verifier; no automatic merge. Next: inspect CI logs and fix any failure.
+
+## FIX-001 / 2026-11-24
+- Run 45407722953 job 138492831903: all three migrations applied; foundation test failed with syntax error at DO $ (one missing dollar delimiter in modified test fixture). Remaining tests skipped. Verified exact log and file; corrected delimiter to DO $$ in db/tests/0001_core_crm.sql only. No production or legacy changes. Next: rerun full CI and inspect results. Regression status pending.

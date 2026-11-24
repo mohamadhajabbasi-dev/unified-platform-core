@@ -81,3 +81,6 @@
 
 ## BUILD-003 — latest
 - CRM permissions/module enforcement and verified identity linking authored; no new tables; concurrency and negative tests added. Runtime verification pending. Next: check CI then catalog/price; no production changes.
+
+## FIX-001 — latest
+- BUILD-003 migrations applied; CI failed on test fixture syntax (run 45407722953). Corrected delimiter; all acceptance and concurrency checks pending rerun. No production changes.

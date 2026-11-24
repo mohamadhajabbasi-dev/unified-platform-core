@@ -81,3 +81,7 @@
 ## BUILD-003 — current
 - [x] Implement CRM read/write module/permission gates and verified link; add two-session test.
 - [ ] Verify all regression and concurrency tests in CI; fix demonstrated failures. Then catalog/product variants/price entries with tenant constraints and permissions. Audit, verification workflow and final security review remain open.
+
+## FIX-001 — current
+- [x] Correct observed test delimiter error.
+- [ ] Verify new full CI run; do not claim PASS until logs confirmed. Then catalog as BUILD-003 checklist.

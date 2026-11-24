@@ -14,3 +14,5 @@
 - 2026-11-24 BUILD-002: prototype IAM roles, grants, module decisions and function-owner hardening; regression CI pending.
 
 - 2026-11-24 BUILD-003: CRM access enforcement, conflict-safe verified identity linkage and concurrent test; CI pending.
+
+- FIX-001: correct foundation regression test delimiter after BUILD-003; rerun pending.
