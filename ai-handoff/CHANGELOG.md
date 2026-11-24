@@ -67,3 +67,5 @@
 - BUILD-022: lot/serial/expiry metadata and guarded trace adjustments, canonical ledger, transfer concurrency tests; CI pending.
 
 - FIX-003: update old inventory race readiness for added trace advisory lock, preserve assertions.
+
+- BUILD-023: split trace-aware receipt and transfer allocations, existing ledger, variant-first locks; CI pending.

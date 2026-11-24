@@ -299,3 +299,7 @@
 ## TEST-025 — current
 - [x] Verify 0022, FIX-003 and full regression; 32 suites PASS including competing transfer/reserve and reverse transfers.
 - [ ] Next implement trace-aware purchase receipts and atomic transfers with exact lot/serial ledger provenance, then trace allocations in reservations/checkout/fulfillment and returns. Test expired stock, duplicate serial contention, rollback and lock order across variants. FEFO and costing/COGS follow; no parallel inventory master. Review tenant scoping, privileged bootstrap, transit, partial receiving and all remaining D-016 domains. No operational access, real data or deployment.
+
+## BUILD-023 — current
+- [x] Author trace-aware receipt and transfer allocation in existing relations.
+- [ ] Verify full CI; then dedicated concurrent serial receipt/transfer and trace reservations, fulfillment/returns, FEFO and cost. No production changes.

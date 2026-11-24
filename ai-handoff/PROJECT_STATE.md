@@ -251,3 +251,6 @@
 
 ## TEST-025 — latest verified checkpoint
 - 81 prototype tables, 25 migration files, 32 suites PASS at 9e62c03eaca9f202e486a3a3ccbddb9dd2e989b5, run 45433354373 job 138584395213. Trace foundation and seven concurrency suites verified after FIX-003. Tracked stock is blocked from unadapted workflows; no full tracked sale/purchase/transfer lifecycle yet. No production changes.
+
+## BUILD-023 — latest
+- 81 prototype tables, 26 migration files if applied; allocated receipt and transfer authored, no duplicate ledger. CI pending. Tracked reservation/sale/return not enabled.
