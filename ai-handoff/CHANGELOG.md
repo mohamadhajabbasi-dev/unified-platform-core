@@ -22,3 +22,5 @@
 - 2026-11-24 BUILD-005: inventory ledger, reservations and derived balances; concurrent oversell CI pending.
 
 - 2026-11-24 BUILD-006: atomic checkout, order snapshots, verified payment capture and fulfillment; regression CI pending.
+
+- 2026-11-24 BUILD-007: full returns, verified full refunds, late capture review and concurrent checkout/capture; CI pending.

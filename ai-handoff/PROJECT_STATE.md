@@ -105,3 +105,6 @@
 
 ## TEST-008 — latest checkpoint
 - Phase 03: 26 prototype tables, 6 migrations, 8 test suites PASS and two derived views. Run 45411022860 job 138504507103, tested SHA 85303d2f3ab108435ac0a63c45839c4a4225f568. Sales physical checkout, verified capture recording and full fulfillment/cancellation tested. Concurrent sales-specific tests, refunds, late capture, taxes, discount, shipping, partial payments and digital/service lifecycle remain pending. No operational changes. Next concurrent sales tests.
+
+## BUILD-007 — latest
+- Returns/refunds migration 0007 and concurrent checkout/capture tests authored. 28 prototype tables if applied. CI pending; no actual funds or production access. Next verify CI and finance journal.

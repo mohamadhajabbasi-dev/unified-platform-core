@@ -113,3 +113,7 @@
 ## TEST-008 — current
 - [x] Verify six migrations and eight regression suites; all PASS.
 - [ ] Next: add concurrent checkout and capture duplicate tests; then design refund/late payment reconciliation and tenant finance journal; digital/service checkout, payment verification service and remaining domains pending. No legacy access or deployment.
+
+## BUILD-007 — current
+- [x] Author full return/refund, late full capture review and concurrent sales tests.
+- [ ] Verify CI including actual sales contention. Fix demonstrated errors. Next tenant double-entry finance journal with canonical capture/refund source linkage; partial returns/refunds, reconciliation inbox and remaining domains pending.
