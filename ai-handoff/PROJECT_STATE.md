@@ -39,3 +39,10 @@
 - Next exact action: inspect customer entities, upsert paths and migrations in source GitHub; produce field-level customer audit. No desktop connector required for this action.
 - Live DB inspected: **NO**. Production changes, migrations or schema creation: **NONE**.
 - Blocked work only: physical schema/row data/deployment validation, to be scheduled later with suitable access. Do not block code review on this.
+
+## Checkpoint DESIGN-001 — 2026-11-24 (latest; supersedes source-audit-first ordering)
+- Phase: **02 — GREENFIELD_TARGET_DESIGN / DOCUMENTATION_ONLY**.
+- Owner clarification: copy of legacy databases is explicitly rejected; create a **new normalized PostgreSQL target** from requirements. Source inspection for migration compatibility only.
+- New target brief committed: `docs/TARGET_ARCHITECTURE_REQUIREMENTS_FIRST_FA.md` at `c5aee0b55f9efbb12af23855eb97507e31a32474`.
+- First next action: draft independent target conceptual ERD and table responsibility dictionary for owner's review; no Desktop Commander necessary for design.
+- Actual database creation/migration: NOT_STARTED. Production repos/server: UNCHANGED.
