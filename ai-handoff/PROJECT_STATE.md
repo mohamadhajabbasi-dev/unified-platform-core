@@ -126,3 +126,6 @@
 
 ## TEST-011 — latest checkpoint
 - 32 tables, 9 migrations, 12 suites PASS and 3 derived views. Run 45413678605 job 138513980630, tested SHA 4cc134d8f2758d3caa121cc16b3b47d6b35a808c. Fiscal periods and recognition tested. No operational changes. Next platform subscription billing.
+
+## BUILD-010 — latest
+- Platform subscription billing authored: three tables, 35 total if applied, fourth derived view. CI pending. Independent of tenant sales/finance and entitlements; no production changes or money operations.

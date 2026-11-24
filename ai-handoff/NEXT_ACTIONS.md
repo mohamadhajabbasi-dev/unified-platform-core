@@ -141,3 +141,7 @@
 ## TEST-011 — current
 - [x] Verify nine migrations and twelve suites; all PASS.
 - [ ] Next: platform subscription terms, non-overlapping invoice service periods, verified payment and isolated billing permissions, tenant own read-only visibility. No automatic grant of modules; approved module decisions remain sole entitlement. Then remaining content/ops/backup/API domains. Accounting policies remain provisional.
+
+## BUILD-010 — current
+- [x] Implement separate subscription terms, invoices and verified billing receipts; tests.
+- [ ] Verify full CI then complete CRM interactions, catalog media/category hierarchy and tenant content, before ops/outbox/backup/API. Platform billing lifecycle and accounting policy remain provisional.

@@ -30,3 +30,5 @@
 - 2026-11-24 BUILD-008: tenant double-entry finance, capture/refund journal and derived trial balance; CI pending.
 
 - BUILD-009: fiscal periods, posting gate and fulfillment-based revenue recognition; CI pending.
+
+- BUILD-010: independent platform subscriptions, invoices and verified billing receipts; CI pending.

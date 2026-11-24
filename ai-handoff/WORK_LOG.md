@@ -159,3 +159,6 @@
 
 ## TEST-011 / 2026-11-24 — fiscal lifecycle and full regression PASS
 - Run 45413678605, job 138513980630, tested SHA 4cc134d8f2758d3caa121cc16b3b47d6b35a808c, completed success. Logs confirm 9 migrations and 12 suites PASS, including period gate, non-overlap, recognition after fulfillment, full refund reversal, closed-period rejection, tenant isolation and prior concurrency suites. 32 prototype tables. No operational changes. Next: separate platform subscription billing. Period UTC and recognition model provisional; annual closing entries, accounting policy, tax/COGS and historical upgrade path pending.
+
+## BUILD-010 / 2026-11-24 — separate platform billing
+- Precheck TEST-011 b1fdb0b8c43c5e79e8ba75377c4233cb6eba7fff; mandatory docs, current tree and IAM model reviewed. Added migration/test 0010, db README and handoff. Three normalized platform billing tables, derived status, nonoverlapping priced terms, invoice and verified receipt idempotency, private billing executor, active superadmin checks and separate recorder, own-tenant read-only access. No effects on tenant sales/finance or module approvals. CI pending. Provisional full-payment one-term policy, no refund/proration/tax, delegated staff, real gateway or platform accounting. No legacy/production access. Next verify CI then remaining CRM/catalog/content/ops.
