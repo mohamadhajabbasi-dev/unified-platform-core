@@ -39,7 +39,7 @@ CREATE FUNCTION finance.reverse_fifo_cogs(p_sale_movement uuid) RETURNS uuid
 LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog AS $$
 DECLARE t uuid:=finance.require_access('finance.post.cogs_return'); fact finance.movement_cost_facts%ROWTYPE;
  sale_item sales.order_items%ROWTYPE; original finance.journal_entries%ROWTYPE; ret sales.returns%ROWTYPE;
- movement inventory.stock_ledger%ROWTYPE; order_state text; reversal jsonb; amount numeric; n bigint;
+ movement inventory.stock_ledger%ROWTYPE; order_state text; reversal jsonb; v_original_cost numeric; n bigint;
 BEGIN
  IF NOT iam.has_permission('finance.read') OR NOT iam.has_permission('inventory.read') OR NOT platform.module_enabled('inventory')
  OR NOT iam.has_permission('procurement.read') OR NOT platform.module_enabled('procurement')
@@ -66,13 +66,13 @@ BEGIN
  AND warehouse_id=fact.warehouse_id AND variant_id=fact.variant_id AND quantity_delta=-fact.quantity_delta
  AND reason='full order return' AND lot_id IS NULL AND serial_id IS NULL AND reservation_id IS NULL;
  IF NOT FOUND THEN RAISE EXCEPTION 'Exact sellable return movement required' USING ERRCODE='23514'; END IF;
- amount:=-fact.value_delta;
+ v_original_cost:=-fact.value_delta;
  SELECT count(*),jsonb_agg(jsonb_build_object('account_id',l.account_id,'amount',-l.amount) ORDER BY l.account_id)
  INTO n,reversal FROM finance.journal_lines l WHERE l.tenant_id=t AND l.entry_id=original.entry_id;
  IF n<>2 OR NOT EXISTS(SELECT 1 FROM finance.journal_lines l JOIN finance.accounts a USING(tenant_id,account_id,currency)
- WHERE l.tenant_id=t AND l.entry_id=original.entry_id AND l.amount=amount AND a.account_type='expense')
+ WHERE l.tenant_id=t AND l.entry_id=original.entry_id AND l.amount=v_original_cost AND a.account_type='expense')
  OR NOT EXISTS(SELECT 1 FROM finance.journal_lines l JOIN finance.accounts a USING(tenant_id,account_id,currency)
- WHERE l.tenant_id=t AND l.entry_id=original.entry_id AND l.amount=-amount AND a.account_type='asset')
+ WHERE l.tenant_id=t AND l.entry_id=original.entry_id AND l.amount=-v_original_cost AND a.account_type='asset')
  THEN RAISE EXCEPTION 'Original COGS lines do not match captured cost' USING ERRCODE='23514'; END IF;
  RETURN finance.write_entry(t,'cogs-return:'||movement.movement_id::text,original.currency,'Confirmed FIFO full return reversal',reversal,NULL,NULL);
 END $$;

@@ -390,3 +390,7 @@
 
 ## BUILD-026F
 - BUILD-026F: canonical 0034 adds explicit full ordinary sellable FIFO return reversal using existing journal, unique tenant return movement FK, exact sale/return relation and original expense/asset accounts and amount. No new table. Order and variant locks; existing fiscal period and immutable balanced journal. Tests include pre-return rejection, exact retry, closed-period reversal and conservation. No automatic posting. Does not yet reintegrate returned stock into cost replay or enable valuation of resale; capture remains fail closed after returns. Return-layer provenance, moving-average posting, zero-cost policy, transfers, further concurrency and approved accounting policy remain pending. CI pending; no operational access.
+
+
+## FIX-009 / 2026-11-24
+- FIX-009 — run 45443813770 job 138621932950 at 0c84496d2238d44065e5ccb2fac34c7a4012db2a failed in 0034 acceptance test after guard and all 34 migrations passed; 33 SQL suites passed, concurrency skipped. Error 42702 ambiguous column reference amount in finance.reverse_fifo_cogs line 34. Renamed local amount to v_original_cost and updated both original journal line comparisons, preserving qualified l.amount and all existing assertions. No table, permission, accounting semantics or test change. Last fully verified TEST-035: 85 tables, 33 migrations, 42 suites and four guard unit tests. New CI pending, prototype only; no operational access.

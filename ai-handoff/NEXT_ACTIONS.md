@@ -387,3 +387,8 @@
 ## TEST-035 / BUILD-026F — current
 - [x] Verify concurrent cost capture/COGS; author canonical 0034 full return reversal and tests.
 - [ ] Verify exact new CI (34 SQL, nine concurrency, four guard unit tests), fix failures. Next integrate returned stock cost into replay with original receipt provenance, moving average, transfers and lifecycle guards. No production access.
+
+
+## FIX-009 — current
+- [x] Diagnose failed return reversal test and remove ambiguous PL/pgSQL variable without weakening tests.
+- [ ] Verify exact new CI SHA (34 SQL + nine concurrency, four guard tests). Then canonical 0035: integrate returned stock into replay with original cost provenance; moving average, transfer, lifecycle and policy approval remain pending. No production access.
