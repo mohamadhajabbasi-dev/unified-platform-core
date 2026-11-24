@@ -266,3 +266,6 @@
 
 ## FIX-005 — current
 - 27 migrations applied in second run; SQL regression stopped at prior return alias conflict. Corrected alias, full CI pending.
+
+## TEST-027 — latest verified checkpoint
+- 82 prototype tables, 27 migration files, 34 suites PASS at 1174ad86892bff6d984eeb9fd91e8089a40dce01, run 45436355581 job 138595123350. FEFO reservations, tracked fulfillment and explicit full sellable return verified; two defects fixed in CI. Seven previous concurrency suites pass. Dedicated tracked serial race, total allocation limit alignment, partial/damaged/expired returns, external proof and production security/lock review pending. No operational changes.

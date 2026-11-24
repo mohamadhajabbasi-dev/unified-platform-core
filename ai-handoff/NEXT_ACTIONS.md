@@ -317,3 +317,7 @@
 
 ## FIX-005 — current
 - [ ] Verify third full CI attempt including 0024 and previous return/refund tests. No production changes.
+
+## TEST-027 — current
+- [x] Verify 0024 with FIX-004/FIX-005; 34 suites PASS. FEFO and tracked sale/return lifecycle enabled in synthetic tests.
+- [ ] Add actual competing tracked serial reservation and receipt/transfer races; align total order allocation limit with return normalization cap (1000 total vs per-reservation), cover expiry/permissions/rollback. Then implement cost layers and valuation FIFO/weighted average, journal COGS and reversal, without duplicate stock. Partial/damaged/expired returns, historical migration, transit, additional D-016 domains and unique migration IDs, production review remain pending. No operational access or real data.
