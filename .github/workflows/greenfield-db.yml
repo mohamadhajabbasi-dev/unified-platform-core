@@ -87,3 +87,8 @@ jobs:
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}
         run: bash db/tests/concurrency/serial.sh
+
+      - name: Run concurrent COGS acceptance test
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/tests/concurrency/cogs.sh

@@ -325,3 +325,10 @@
 
 ## FIX-008 — latest
 - FIX-008 — GitHub read-back of MIG-ID-001 d01c00257a648010e8aa1de787444060f40e7318 confirmed 33 contiguous migration/test IDs, exact original ordering and unchanged blobs, but exposed that JavaScript replacement-string dollar escaping left the original delimiter unchanged. Corrected with literal callback replacement and asserted the invalid delimiter is absent. Run 45442789337 for the prior SHA was still in progress at read-back; no PASS claim. All renumbered SQL/test contents unchanged except the intended one-character correction in canonical 0033. Full CI on this new SHA required; no operational access.
+
+
+## TEST-034 — verified
+- TEST-034: run 45442881158 job 138618565410 at 0fea83bb72e798901ba622da99127dc9361fc499 completed success. 33 migrations, 41 SQL/concurrency suites (33 SQL, eight concurrency) PASS, plus four guard unit tests. Previous renumber-only run 45442789337 passed all four guard tests and 33 unique ID validation but failed COGS delimiter; FIX-008 verified. 85 prototype tables unchanged. All 33 SQL migrations inspected for table declarations; original sequence unchanged; no new table or operational access.
+
+## TEST-035 candidate — latest
+- TEST-035 candidate: added two actual competing-session scenarios for cost capture and COGS posting, with observed advisory lock waits, exact retries, immutable allocation reconciliation, one balanced journal and denied conflicting account, unauthorized/cross-tenant posting. Independent synthetic fixture; no new tables or SQL migration. CI pending. Explicit FIFO COGS is experimental, not approved accounting; return reversal, moving-average posting, transfer valuation and lifecycle enforcement remain pending.

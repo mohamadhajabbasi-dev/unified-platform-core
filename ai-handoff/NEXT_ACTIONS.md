@@ -377,3 +377,8 @@
 ## FIX-008 — current
 - [x] Verify renumbered tree and repair actual delimiter after read-back detected replacement escaping.
 - [ ] Check CI for latest exact SHA (33 SQL, eight concurrency, four guard tests). Record outcome. Next 0034 only after full PASS.
+
+
+## TEST-034 / TEST-035 candidate — current
+- [x] Verify FIX-008, renumbering guard and all 41 SQL/concurrency suites; add dedicated concurrent cost capture/COGS posting tests.
+- [ ] Verify exact new CI SHA (33 migrations, 33 SQL + nine concurrency suites, four guard unit tests); fix failures. Next canonical 0034: return cost and journal reversal, then moving-average posting, transfer valuation and lifecycle guard. No production access.

@@ -33,7 +33,7 @@
 
 ## وضعیت کد موجود و نکته امنیتی
 - `0004_catalog_pricing.sql`: جداول چندلیستی، بازه زمانی و `catalog.price_at` موجودند؛ اما به تنهایی «۴ نقش تعریف‌شده با انتخاب خودکار و کنترل سطح مشتری» را تضمین نمی‌کنند.
-- `0014_catalog_details_price_tiers.sql`: قیمت پلکانی به قیمت قبلی متصل شده؛ `price_for_quantity` لیست قیمتی را که فراخوان داده، می‌خواند و **اعتبار حق دسترسی به colleague/wholesale را اثبات نمی‌کند**.
+- `0015_catalog_details_price_tiers.sql`: قیمت پلکانی به قیمت قبلی متصل شده؛ `price_for_quantity` لیست قیمتی را که فراخوان داده، می‌خواند و **اعتبار حق دسترسی به colleague/wholesale را اثبات نمی‌کند**.
 - مهم: در مدل فعلی `catalog.price_at` و RLS `catalog.read` ممکن است به یک کاربر خواننده کاتالوگ اجازه درخواست مستقیم لیست محرمانه را بدهد. قبل از هر API/استقرار باید دسترسی اطلاعات قیمت خصوصی را در DB و سرویس محدود و تست کرد؛ فقط پنهان‌کردن فیلد در UI کافی نیست.
 - **در حال حاضر تعریف پیش‌فرض چهار لیست، محدودیت تخفیف نسبت به اصلی، صلاحیت همکار/عمده و price resolver نهایی هنوز در SQL اجرا/تست نشده‌اند.** این سند به معنی اجرای آن‌ها نیست.
 
@@ -51,3 +51,6 @@
 ۲. سپس یک Migration افزایشی جدید برای bootstrap چهار لیست استاندارد، قاعده تخفیف، قیمت عمده برحسب تعداد و eligibility غیرقابل جعل بنویس (بدون جدول اصلی قیمت جدید) و تست امنیت/RLS/همزمانی بساز.
 ۳. سپس با موتور quote و checkout یکپارچه کن و نتیجه را در WORK_LOG/PROJECT_STATE/NEXT_ACTIONS ثبت کن.
 ۴. دیتابیس‌های عملیاتی ERPPlus و CommerceAI و سرور اصلی را به هیچ عنوان تغییر نده؛ فقط GitHub و محیط مستقل greenfield.
+
+
+> Canonical migration numbers: [ID mapping](../db/MIGRATION_ID_MAP.md). Historical implementation statuses refer to the original design checkpoint.

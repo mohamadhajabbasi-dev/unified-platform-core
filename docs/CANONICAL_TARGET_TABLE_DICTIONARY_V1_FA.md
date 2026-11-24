@@ -89,7 +89,10 @@ There are **57 canonical table groups** above; each group may represent one or m
 
 ## Source coverage implementation checkpoint — 2026-11-24
 - `db/migrations/0013_content_crm_engagement.sql`: 5 necessary tenant-scoped tables authored + synthetic tests. Includes content.articles and CRM conversations/messages/support/consent. **CI pending, not production.**
-- `db/migrations/0014_catalog_details_price_tiers.sql`: 6 dependent tables authored + synthetic tests; brand, unit, media, warranty, review, quantity price tiers linked to existing Product/Price. **CI pending, not production.**
-- `db/migrations/0015_hr_payroll_commissions.sql`: 7 HR/payroll/commission tables authored + synthetic tests. **CI pending, not production.**
+- `db/migrations/0015_catalog_details_price_tiers.sql`: 6 dependent tables authored + synthetic tests; brand, unit, media, warranty, review, quantity price tiers linked to existing Product/Price. **CI pending, not production.**
+- `db/migrations/0018_hr_payroll_commissions.sql`: 7 HR/payroll/commission tables authored + synthetic tests. **CI pending, not production.**
 - Total **18 additional table definitions** in three candidate migrations. Together with baseline **42 tables if 0012 applied**, there would be up to **60 prototype tables if migrations 0013–0015 pass**; this is NOT a count of proven applied/deployed tables.
 - Other normalized groups above remain DESIGN_REQUIRED. Source property mapping remains incomplete beyond verified representative classes. Follow phase gates and don't create copy-one-to-one tables for 234 legacy DbSets.
+
+
+> Migration numbers standardized; see [canonical ID mapping](../db/MIGRATION_ID_MAP.md). Historical statuses in this document are snapshots; current verification in ai-handoff/PROJECT_STATE.md.
