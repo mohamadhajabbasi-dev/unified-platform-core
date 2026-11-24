@@ -75,3 +75,6 @@
 
 ## BUILD-002 — latest checkpoint
 - Phase 03: IAM/module prototype authored in migration 0002 and tests. Seven distinct new tables; function ownership hardened; no production changes. CI result pending. Existing CRM grants not yet IAM-gated; scope model provisional. Next: verify CI for BUILD-002, then integrate IAM/module enforcement, concurrent identity tests and catalog.
+
+## TEST-004 — latest checkpoint
+- Phase 03: 0001/0002 migration and regression tests PASS. Run 45407145508 job 138490807758, tested SHA 8921f7e7b90fa9b778699115c8767444aa546f5e. 14 prototype tables across core/iam/crm/platform. Module and IAM check functions tested; existing CRM access not yet wired to them. No production changes. Next: enforce permission+module gates on CRM and test.

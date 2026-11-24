@@ -73,3 +73,7 @@
 - [x] Author incremental IAM/module approval SQL and tests; harden function owners.
 - [ ] First: verify BUILD-002 CI logs for all migrations/tests; fix any failure and document result.
 - [ ] Enforce IAM/module checks on CRM reads/writes and subsequent domains; add verified identity linking/concurrency and RLS write tests. Then catalog/price and remaining domains. Approval request workflow, delegated access and audited superadmin access remain open.
+
+## TEST-004 — current
+- [x] BUILD-002 CI confirmed PASS for both migrations and both test suites.
+- [ ] Next: enforce permission and module gates on CRM and test allowed/denied calls, revocation, cross-tenant write; strengthen identity linking/concurrency. Then catalog/price and other domains. No legacy access.
