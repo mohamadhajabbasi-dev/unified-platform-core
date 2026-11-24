@@ -109,3 +109,7 @@
 ## BUILD-006 — current
 - [x] Author canonical physical checkout, order lines, capture records, derived totals and lifecycle tests.
 - [ ] Verify full regression CI; fix demonstrated failures. Then concurrent checkout/capture tests, refund/late-capture recovery and finance; digital/service delivery, tax/shipping/discount and audit remain open. No legacy access.
+
+## TEST-008 — current
+- [x] Verify six migrations and eight regression suites; all PASS.
+- [ ] Next: add concurrent checkout and capture duplicate tests; then design refund/late payment reconciliation and tenant finance journal; digital/service checkout, payment verification service and remaining domains pending. No legacy access or deployment.
