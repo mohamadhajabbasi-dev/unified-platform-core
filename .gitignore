@@ -1,0 +1,20 @@
+# Never commit secrets or production data
+.env
+.env.*
+!.env.example
+*.pem
+*.pfx
+*.key
+*.p12
+*.sql.gz
+*.dump
+*.backup
+*.bak
+*.mdf
+*.ldf
+secrets/
+backups/
+production-data/
+node_modules/
+__pycache__/
+.DS_Store
