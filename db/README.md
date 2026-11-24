@@ -95,3 +95,7 @@ Dedicated CI suite verifies competing receipt across warehouses, double reservat
 
 ## 0025 — order allocation cap and receipt cost evidence
 Enforce total traced allocations <=1000 per checkout, matching full return payload limit; exact retries unchanged. New finance.receipt_cost_basis invoker view derives purchase receipt movement cost and invoice match from existing relations; requires all three read/module gates. It is not valuation or COGS. Boundary test 1001 rejected atomically, 1000 checkout/fulfill/return. See docs/INVENTORY_VALUATION_DESIGN_FA.md for provisional next design. No new table or production migration.
+
+
+## Current migration naming (supersedes historical section numbers)
+See [migration ID mapping](MIGRATION_ID_MAP.md). CI checks unique contiguous four-digit IDs and exact migration/test ID pairs before applying SQL. Historical sections above are snapshots, not current implementation status; see ai-handoff/PROJECT_STATE.md. All financial logic is experimental pending policy approval.

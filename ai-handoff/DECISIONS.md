@@ -62,3 +62,7 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ## D-017 — چهار نوع قیمت اصلی کالا (2026-11-24)
 مالک چهار نوع قیمت پایه برای هر محصول/تنوع در تننت مشخص کرد: ۱) اصلی، ۲) تخفیف‌خورده، ۳) همکار، ۴) عمده. چند فهرست قیمت در `catalog.price_lists`/`catalog.price_entries` فعلی امکان ذخیره هر چهار مقدار را دارد؛ `price_quantity_tiers` به قیمت موجود وابسته است. انتخاب قیمت/تخفیف معتبر/صلاحیت همکار و عمده نیازمند تکمیل SQL، API و تست است؛ نقش‌ها و تخفیف نباید به‌صورت خودکار برای مشتری عمومی افشا شوند. متن تصمیم و تست‌ها: `docs/FOUR_PRODUCT_PRICE_TYPES_FA.md`.
+
+
+## D-018 — migration identity normalization (owner-directed)
+- Canonical unique contiguous four-digit numeric prefix plus snake_case suffix; corresponding SQL acceptance test shares numeric ID. Historical sequence preserved by one-to-one filename mapping in db/MIGRATION_ID_MAP.md. Do not rewrite SQL solely to change historical comments. CI preflight mandatory. Disposable greenfield only; production migration tracking/checksums require separate review. Accounting policy remains unapproved for production.

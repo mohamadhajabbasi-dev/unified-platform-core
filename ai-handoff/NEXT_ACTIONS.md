@@ -367,3 +367,8 @@
 ## TEST-033 / BUILD-026E — current
 - [x] Verify FIX-006 and 40 suites; author FIFO COGS posting and tests.
 - [ ] Verify 0030 CI, repair. Then full sellable return reversal (no unbalanced asset), moving average, transfer and concurrent posting; no production access.
+
+
+## FIX-007 / MIG-ID-001 — current (canonical IDs supersede historical numbering)
+- [x] Diagnose failed COGS migration, correct delimiter, normalize migration/test IDs and add CI guard.
+- [ ] Verify exact new CI SHA: guard (4 unit tests), 33 SQL suites and 8 concurrency suites. Fix any failure first. COGS now 0033; next new migration 0034. Then continue return reversal, moving-average posting, transfer valuation and lifecycle/concurrency. No production access.

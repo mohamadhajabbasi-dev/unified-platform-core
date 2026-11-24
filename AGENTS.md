@@ -64,3 +64,7 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 - قیمت تخفیف‌خورده فقط با تاریخ معتبر، هم‌ارز و حداکثر برابر با قیمت اصلی؛ نمایش اصلی خط‌خورده در صورت اعمال تخفیف. قیمت همکار/عمده فقط برای طرف دارای مجوز معتبر؛ فهرست قیمت را از کلاینت بدون بررسی مجوز قبول نکن.
 - `catalog.price_at` و `price_for_quantity` موجود **هنوز انتخاب امن مشتری/قیمت عمومی و حقوق دسترسی را انجام نمی‌دهند**؛ قبل از API فروش باید کنترل نمایش قیمت خصوصی و محاسبه نهایی checkout رفع و تست شود.
 - متن دقیق و سناریوهای پذیرش در `docs/FOUR_PRODUCT_PRICE_TYPES_FA.md`. پس از تأیید CI فعلی migration و تست افزایشی ایجاد شود، نه کپی schema قدیم.
+
+
+## D-018 — canonical migration numbering
+- Current filenames and `db/MIGRATION_ID_MAP.md` override historical numeric references. Next ID 0034 as of normalization; always inspect current tree first. Run `python3 db/check_migrations.py` (CI mandatory). Never reuse a numeric prefix, skip a sequence number, change applied SQL or create a duplicate entity. Historical SQL comments/logs retain old identifiers. Prototype only; no production activation or approved financial policy.

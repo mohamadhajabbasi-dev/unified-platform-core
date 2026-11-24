@@ -317,3 +317,7 @@
 
 ## BUILD-026E — latest
 - 85 tables unchanged; 33 migrations if applied. BUILD-026E: added explicit positive ordinary FIFO sale COGS posting to existing journal with unique movement FK/source, matched source invoice inventory debit, expense account, order/variant locks, period gate and exact retry. No new table. Experimental, explicit posting only; zero cost, moving-average posting, returns/reversal, transfer, full account semantic mapping and dedicated races remain pending. No operational changes. CI pending.
+
+
+## FIX-007 / MIG-ID-001 — latest
+- FIX-007 / MIG-ID-001: run 45442387058 job 138616779663 at 86deadf3f95edda175168eda605774546300e4ee failed applying old 0030 (syntax error near DECLARE caused by assign_period ending END $; rather than END $$;); corrected exactly that delimiter. Pre-write validation initially rejected mismatched suffix of 0025 migration vs test; no mutation occurred, corrected check to compare numeric IDs, retaining original test name suffix. Renumbered all 33 migration/test pairs to contiguous 0001–0033, preserving previous lexical execution order and blob contents except single COGS delimiter fix. Historical IDs mapped in db/MIGRATION_ID_MAP.md. Added CI preflight and four guard unit tests. No tables, functions, grants or data semantics added/removed by renumbering. Last full verified TEST-033: 85 tables, 32 migrations, 40 suites at 6a5c074ab31ad720bb3e58990cd66babff982130; new CI pending. No persistent database migration or production access.
