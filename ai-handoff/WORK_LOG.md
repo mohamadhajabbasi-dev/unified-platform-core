@@ -53,3 +53,12 @@
 - Paths: docs/CURRENT_INVENTORY.md, CURRENT_DATA_MAP.md, CURRENT_SYNC_MAP.md, OPEN_QUESTIONS.md; ai-handoff/WORK_LOG.md, PROJECT_STATE.md, NEXT_ACTIONS.md, CHANGELOG.md. Source repos and servers unmodified. No approved architecture decision changed.
 - Tests/evidence: GitHub source read at pinned SHAs with linked lines in docs; device list read; no DB/CI/runtime tests. Risk: schema drift, store-vs-tenant identity, false dedupe, stale snapshots. Rollback: docs-only revert if required.
 - Blocker: both devices offline and no actual DB metadata available. Next exact action: obtain authorized metadata-only access via connected device or sanitized export; verify engines and database identity before metadata queries, then complete inventories and mapping before any ERD/ADR approval. Checkpoint SHA in Git history.
+
+
+## INV-003 / 2026-11-24 — GitHub-only continuation, no desktop dependency
+- Phase: 01 — source audit, actor: ChatGPT.
+- Pre-check: INV-002 and prior docs reviewed; duplicate analysis avoided; Commerce CustomerConfiguration and ERP AppDbContext re-read directly from GitHub.
+- Operation: registered `docs/GITHUB_ONLY_DISCOVERY_PLAN.md` with confirmed code evidence, scope boundaries, and ordered GitHub-only source-review tasks.
+- Outcome: DONE for planning and verified source inspection. Commit `05bff1977c2a8b61c18a1b8978fd80a8ef29fd90`.
+- Production/database/source-app changes: NONE. Live database status remains UNVERIFIED. No Remote Desktop Commander needed for code review.
+- Next: source-level customer identity/migration audit on GitHub, report field-level findings with refs and SHAs; continue logs on each action.
