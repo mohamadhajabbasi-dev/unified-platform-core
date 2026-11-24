@@ -10,3 +10,5 @@
 - 2026-11-24 DESIGN-003: D-013 — greenfield GitHub-only development/test authorized; legacy access deferred, final approval retained.
 
 - 2026-11-24 BUILD-001: first isolated core/CRM SQL migration and acceptance tests; CI definition; runtime verification pending.
+
+- 2026-11-24 BUILD-002: prototype IAM roles, grants, module decisions and function-owner hardening; regression CI pending.

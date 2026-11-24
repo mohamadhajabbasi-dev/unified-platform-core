@@ -72,3 +72,6 @@
 
 ## TEST-003 — latest checkpoint
 - Phase 03: foundation runtime PASS on PostgreSQL 16.16. Run 45404619911 attempt 3, job 138489581659, tested code SHA 605e42f116bf5cf4adf99cdd218283289b712ae2. All migration and synthetic test steps succeeded; logs verified. No final security approval; identity linkage/concurrency, function ownership, IAM/modules and remaining domains pending. No production changes.
+
+## BUILD-002 — latest checkpoint
+- Phase 03: IAM/module prototype authored in migration 0002 and tests. Seven distinct new tables; function ownership hardened; no production changes. CI result pending. Existing CRM grants not yet IAM-gated; scope model provisional. Next: verify CI for BUILD-002, then integrate IAM/module enforcement, concurrent identity tests and catalog.

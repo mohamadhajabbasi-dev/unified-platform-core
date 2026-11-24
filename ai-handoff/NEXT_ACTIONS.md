@@ -68,3 +68,8 @@
 ## TEST-003 — current
 - [x] Foundation CI passed; logs and code SHA verified.
 - [ ] Next: harden SECURITY DEFINER ownership, add tenant IAM and module approvals with negative tests and rerun all migrations and tests. Then remaining domains as BUILD-001 checklist. Keep all data synthetic and CI isolated.
+
+## BUILD-002 — current
+- [x] Author incremental IAM/module approval SQL and tests; harden function owners.
+- [ ] First: verify BUILD-002 CI logs for all migrations/tests; fix any failure and document result.
+- [ ] Enforce IAM/module checks on CRM reads/writes and subsequent domains; add verified identity linking/concurrency and RLS write tests. Then catalog/price and remaining domains. Approval request workflow, delegated access and audited superadmin access remain open.
