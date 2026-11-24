@@ -314,3 +314,6 @@
 
 ## FIX-004 — current
 - [ ] Verify 0024 rerun, including tracked sales and prior regressions. First run failed before tests; not yet certified.
+
+## FIX-005 — current
+- [ ] Verify third full CI attempt including 0024 and previous return/refund tests. No production changes.

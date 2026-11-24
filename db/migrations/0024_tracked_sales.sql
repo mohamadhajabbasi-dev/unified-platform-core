@@ -201,8 +201,8 @@ BEGIN
  PERFORM pg_advisory_xact_lock(hashtextextended(jsonb_build_array('sales-return-key',t,p_key)::text,0));
  PERFORM sales.lock_order(t,p_order);
  SELECT inventory.normalize_allocations(jsonb_agg(jsonb_build_object('variant_id',a.variant_id,'lot_id',a.lot_id,'serial_id',a.serial_id,'quantity',a.quantity))) INTO expected
- FROM sales.order_items i JOIN inventory.reservation_allocations a USING(tenant_id,reservation_id)
- WHERE i.tenant_id=t AND i.order_id=p_order HAVING count(*)>0;
+ FROM sales.order_items oi JOIN inventory.reservation_allocations a USING(tenant_id,reservation_id)
+ WHERE oi.tenant_id=t AND oi.order_id=p_order HAVING count(*)>0;
  IF expected IS NOT NULL THEN
  IF p_allocations IS NULL THEN RAISE EXCEPTION 'Return must confirm original traced units' USING ERRCODE='23514'; END IF;
  norm:=inventory.normalize_allocations(p_allocations);

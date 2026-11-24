@@ -263,3 +263,6 @@
 
 ## FIX-004 — current
 - First 0024 migration failed SQL syntax; corrected guard function delimiter. Full CI pending.
+
+## FIX-005 — current
+- 27 migrations applied in second run; SQL regression stopped at prior return alias conflict. Corrected alias, full CI pending.

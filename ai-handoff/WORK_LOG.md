@@ -314,3 +314,6 @@
 
 ## FIX-004 / 2026-11-24 — migration delimiter
 - Run 45435844245 job 138593302453 failed applying 0024 at 839c7e99ba9dc37b7b5ab03e99e3600882761c26: guard_trace_movement closing dollar quote had one dollar rather than two, from text transformation. Corrected delimiter; no SQL tests ran on first attempt. Rerun required. No production access.
+
+## FIX-005 / 2026-11-24 — return SQL alias
+- Run 45436109146 job 138594220960 at 011724641aae39e2413428835ed4d4158d68e3bf applied all 27 migrations, first six suites PASS, then failed prior full return test with unassigned PL/pgSQL record i shadowing SQL alias i in new expected-allocation query. Renamed SQL alias oi; no test assertions removed. Re-run CI. No operational access.
