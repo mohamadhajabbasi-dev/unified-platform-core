@@ -129,3 +129,7 @@
 ## BUILD-008 — current
 - [x] Author chart of accounts, double-entry journals, source postings and negative tests.
 - [ ] Verify full regression and finance test logs, fix demonstrated failures. Then fiscal period/recognition policy, platform subscription billing separate, remaining catalog/CRM/content/ops/backup/API domains. No legacy access.
+
+## TEST-010 — current
+- [x] Verify all eight migrations, eleven test suites and cleanup; all PASS.
+- [ ] Next: extend accounting lifecycle with fiscal periods/closing and recognition policy as provisional, then independent platform subscription/invoice/payment billing; no posting tenant sales into platform revenue. Add relevant negative/concurrency tests. Then remaining CRM/catalog/content/ops/backup/API and production readiness gates. No legacy access or deployment.

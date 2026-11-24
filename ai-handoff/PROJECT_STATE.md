@@ -117,3 +117,6 @@
 
 ## BUILD-008 — latest
 - Finance migration 0008 authored, 3 new tables (31 if applied) and derived trial balance view. Balanced immutable journal, manual and verified capture/refund postings. CI pending. No production or real money operations. Next verify finance CI.
+
+## TEST-010 — latest checkpoint
+- Phase 03: 31 prototype tables, 8 migrations, 11 test suites PASS and 3 derived views. Run 45412335881 job 138509182694, tested SHA 0300fd92b31767be1a6d92e84ed115c3de406898. Tenant double-entry accounting and verified capture/refund posting tested. No operational changes. Fiscal period, revenue recognition, automatic posting, tax/FX/settlement and separate platform subscription billing remain open. Next: accounting lifecycle and platform billing.
