@@ -181,3 +181,15 @@
 ## BUILD-013 — current
 - [x] Author paid/approved consented visitor sessions/events and derived source reports.
 - [ ] Verify CI then verified customer acquisition and order attribution; design privacy-safe retention and consent evidence, multi-site and load tests. No actual visitor tracking, legacy access or deployment.
+
+
+## Checkpoint REQ-016 — most recent action list (supersedes earlier scope and old web-only plan)
+- [x] Verify existing product pricing and app-model status in GitHub. Price lists/temporal entries exist; automatic multi-price customer/quantity/channel resolver not implemented. No app analytics SQL found in migrations reviewed.
+- [x] Add complete app install/distribution/first-open/visitor/attribution/quality and cross-channel reporting requirements, plus multi-price scenarios in `docs/APP_ANALYTICS_MULTI_PRICE_FA.md`, with appendages to AGENTS, TARGET_ERD, MASTER_PLAN, WEB ATTRIBUTION design and D-015.
+- [ ] **NEXT EXACT ACTION**: verify 0012 Commerce entitlement SQL tests and GitHub Actions evidence (do not claim PASS without it).
+- [ ] Check for any newly added migrations before writing next numbered SQL; avoid duplicate schema under concurrent work.
+- [ ] Implement unified `analytics.sessions` and `analytics.events` for web and apps, tenant/app eligibility, consent, first-open/install references, official marketplace aggregates and customer-source linkage (same CRM customer, no duplicate Users/Customers/Orders). Incremental migrations + synthetic tests and meaningful privacy limits.
+- [ ] Add `platform.applications`/`app_releases` only after verifying no equivalent registry; consider multi-tenant application ownership with explicit scope.
+- [ ] Build price selection from **existing** `catalog.price_lists` and `catalog.price_entries`: client groups, wholesale/VIP/retail, contract, channel/app/site, quantity tiers, valid periods, currency and checkout consistency. New rules/child relations only where necessary, no parallel price master.
+- [ ] Report app/download/active user/conversion per tenant to superadmin and authorized tenant admin; downloads from stores as externally sourced aggregate, not inferred from app opens. Test cross-tenant denial, consent/retention, dedupe, pricing conflict and concurrent checkout. No real data, legacy access or deployment.
+- [ ] Commit WORK_LOG, PROJECT_STATE and NEXT_ACTIONS after each action and verify SHA.
