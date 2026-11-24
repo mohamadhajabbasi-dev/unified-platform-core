@@ -52,3 +52,7 @@
 - Migrations `0013` content/CRM, `0014` catalog multi-price/details, `0015` HR/payroll/commission are **authored but runtime UNVERIFIED**; check GitHub CI and fix failures before claiming PASS or adding an intersecting table.
 - Preserve primary Tenants/Users/Customers/Products/Orders/Prices and existing finance/stock ledgers. Separate legal/accounting event facts are not duplicate business masters. Every new table needs tenant-aware FK, RLS, permission/module authorization, privacy limits, uniqueness/idempotency and synthetic tests.
 - No Desktop Commander and no touching ERPPlus/CommerceAI databases, servers or source trees. Existing source inspection in this session used GitHub read-only; all edits restricted to unified-platform-core.
+
+
+### Scope clarification — D-016 supersedes only the source-read part of D-013
+Owner's latest request **explicitly permits read-only inspection of GitHub source files in ERPPlus and CommerceAI** to inventory their data models. This **does not** permit altering either source repository, accessing either operational database, running migrations there, connecting to the original server, or requesting Desktop Commander. All new code and documentation writes remain confined to `unified-platform-core`.
