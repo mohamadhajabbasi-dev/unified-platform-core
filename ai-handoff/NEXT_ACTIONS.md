@@ -267,3 +267,8 @@
 ## BUILD-019 — current
 - [x] Author counterparty/purchase commitment/full receipt, stock movement integration and actual receipt race test.
 - [ ] Verify full CI, fix failures; then supplier invoice, payable/settlement accounting via existing journal, cost valuation and partial receipt lifecycle. No deployment, real data or legacy access.
+
+## TEST-022 — current
+- [x] Verify 0019 and full regression; 27 suites PASS, actual concurrent receipt lock and exactly one movement observed.
+- [ ] Next inspect latest tree and D-016 dictionary/evidence. Implement verified supplier invoice linked to canonical received purchase, no duplicate party/product/stock master; unique invoice ref, derived payable balance and balanced journal recognition, idempotent settlement and period/account checks. Separate physical receipt from invoice/financial liability. Provisional single full invoice/payment if appropriate, no actual money or production access.
+- [ ] Extend partial receipts/returns, cost valuation, transfers/lot/serial/expiry, shipping/promotions/tax/invoicing, bank/cheques/installments, AI/ops/backup/API. Coordinate migration IDs, authenticated service and full security/performance/rollback review.

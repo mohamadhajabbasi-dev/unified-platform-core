@@ -227,3 +227,6 @@
 
 ## BUILD-019 — latest
 - Procurement foundation authored, 74 prototype tables if applied, 22 migration files. Full receipt and stock movement links; CI pending. No invoice/payable or finance posting yet. No operational changes.
+
+## TEST-022 — latest verified checkpoint
+- 74 prototype tables, 22 migration files, 27 suites PASS at 990d6df716acd4ee8a942019dab63a4019000932, run 45426509033 job 138559865461. Counterparty, purchase and full receipt integrated with canonical inventory ledger; actual duplicate receipt race passed. No production changes. Supplier invoices/payables/settlement and valuation not implemented. Next verified supplier invoice and finance integration; partial receiving/returns and legal party verification pending.
