@@ -342,3 +342,8 @@
 ## BUILD-026A — current
 - [x] Author restricted valuation preview and synthetic acceptance test.
 - [ ] Verify exact GitHub CI run; fix failures. Next persist opt-in policy and immutable cost allocations, integrate lifecycle and balanced COGS/reversal. Preview must not be treated as accounting truth. No production access.
+
+
+## TEST-030 / BUILD-026B — current
+- [x] Verify 0026 all 37 suites; author immutable experimental policy and tests.
+- [ ] Verify 0027 CI and repair. Then implement immutable cost allocations with canonical movement FKs, actual opt-in lifecycle guards, transfer/return and balanced COGS. No production access.

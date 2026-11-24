@@ -336,3 +336,10 @@
 
 ## BUILD-026A — valuation preview candidate / 2026-11-24
 - Precheck HEAD 2ec3f1fec0a359bb0889ebff028a15bccf1d0d09, TEST-029 and migration/test tree inspected. Read-only, invoker-RLS FIFO/moving-average replay of ordinary purchase receipts and reservation consumption, no new tables or journal writes. Explicitly rejects tracked stock, adjustments, transfers and returns in the selected history; agreed uninvoiced receipts flagged provisional. Per warehouse/variant, four-decimal rounding, deterministic recorded_at/movement_id ordering are experimental. No persistent policy, immutable allocations, COGS journal, transfer/return or concurrency certification. CI pending; no operational access.
+
+
+## TEST-030 / 2026-11-24
+- TEST-030: run 45439836678 job 138607567327 at 0fcc7b0f56b4c2c360254e23fdac494debc7de5b completed success; actual logs show 29 migrations, 37 PASS suites (29 SQL + eight concurrency), 82 tables unchanged. Restricted valuation preview verified.
+
+## BUILD-026B / 2026-11-24
+- BUILD-026B: one new tenant-scoped finance.valuation_policies relation, immutable method/currency, enrollment of unused ordinary physical variants under existing trace lock, permission and RLS gates, configured preview wrapper and synthetic tests. Experimental preview policy only, no operational enforcement, immutable movement allocations, journal COGS, transfer/return, or production access. CI pending.
