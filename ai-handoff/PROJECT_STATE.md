@@ -310,3 +310,10 @@
 
 ## FIX-006 — latest
 - FIX-006 / 2026-11-24 — run 45441720623 job 138614372664 at 8ef451d9d7d52f088d402a932290d62a7ae6aa37 failed after 32 migrations applied and 31 SQL suites passed. SQLSTATE undefined_column from PL/pgSQL record b shadowing receipt alias b in 0029 test (record b has no field tenant_id). Renamed both SQL aliases a/b to fa/rb in both receipt provenance assertions; quantities, costs and all assertions preserved. No production SQL change; all concurrency suites skipped by failed job. Full CI rerun required. Last fully verified baseline TEST-032: 84 tables, 31 migrations, 39 suites PASS. Candidate: 85 tables, 32 migrations. No legacy/operational access.
+
+
+## TEST-033 — verified
+- TEST-033: run 45441927719 job 138615123346 at 6a5c074ab31ad720bb3e58990cd66babff982130 completed success, 32 migrations, 40 suites PASS (32 SQL, eight concurrency). FIX-006 verified. 85 prototype tables.
+
+## BUILD-026E — latest
+- 85 tables unchanged; 33 migrations if applied. BUILD-026E: added explicit positive ordinary FIFO sale COGS posting to existing journal with unique movement FK/source, matched source invoice inventory debit, expense account, order/variant locks, period gate and exact retry. No new table. Experimental, explicit posting only; zero cost, moving-average posting, returns/reversal, transfer, full account semantic mapping and dedicated races remain pending. No operational changes. CI pending.

@@ -362,3 +362,8 @@
 ## FIX-006 — current
 - [x] Diagnose CI failure and correct conflicting fixture aliases without weakening assertions.
 - [ ] Verify new CI SHA, all 32 SQL + eight concurrency suites; repair any failure before COGS migration. No operational access.
+
+
+## TEST-033 / BUILD-026E — current
+- [x] Verify FIX-006 and 40 suites; author FIFO COGS posting and tests.
+- [ ] Verify 0030 CI, repair. Then full sellable return reversal (no unbalanced asset), moving average, transfer and concurrent posting; no production access.
