@@ -89,3 +89,6 @@
 - Result: authored versioned prototype with canonical tenant customer, composite FK, verified identity unique constraint, trusted session login binding and RLS; synthetic acceptance suite. Runtime tests not yet observed; CI status pending verification. No real user or credential data.
 - Provisional choices: PostgreSQL 16, dedicated trusted backend login mapping, verifier function, test-only bootstrap owner. No final architectural approval; distinct identity linking, least-privilege owner, IAM/modules, other domains, audit and concurrency tests pending. Rollback: disposable CI container removal; repo revert if necessary.
 - Next: inspect GitHub Actions run for this commit and log actual results, then next domain. SHA in Git history.
+
+## TEST-001 / 2026-11-24
+- BUILD-001 commit verified. Actions run 45404619911, attempts 1 and 2, both concluded failure. Retry accepted; neither attempt exposed job steps or logs; log retrieval returned 404. SQL execution and cause unverified. No external database access or changes. Prior attempt to save this checkpoint was blocked; branch HEAD unchanged on read-back. Next: inspect run summary and resolve verified CI blocker before extending foundation.

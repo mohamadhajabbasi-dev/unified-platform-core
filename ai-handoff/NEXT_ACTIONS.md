@@ -55,3 +55,8 @@
 - [ ] First: verify actual GitHub Actions run and job logs for BUILD-001, record exact run/SHA and pass/fail; no PASS claim until evidence. Fix failures without touching legacy.
 - [ ] Harden non-superuser function ownership, verified identity linking/ambiguity and concurrency, RLS write/permissions/audit; add IAM roles and approved module grants; then catalog/price, stock, order/payment/finance, content/outbox/backup and integration/recovery/load tests.
 - [ ] Final review and owner approval only after isolated tests and migration/rollback plan; legacy remains entirely outside current scope.
+
+## TEST-001 — current
+- [x] Verify committed SQL and CI trigger, observe both unsuccessful runs.
+- [ ] Inspect GitHub Actions run 45404619911 summary, fix confirmed issue, verify isolated PostgreSQL tests. No additional retry without evidence; no legacy or production access.
+- [ ] After foundation passes, continue BUILD-001 domain checklist.
