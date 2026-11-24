@@ -62,3 +62,10 @@
 - Outcome: DONE for planning and verified source inspection. Commit `05bff1977c2a8b61c18a1b8978fd80a8ef29fd90`.
 - Production/database/source-app changes: NONE. Live database status remains UNVERIFIED. No Remote Desktop Commander needed for code review.
 - Next: source-level customer identity/migration audit on GitHub, report field-level findings with refs and SHAs; continue logs on each action.
+
+## DESIGN-001 / 2026-11-24 — architecture direction corrected per owner
+- Precheck: read AGENTS, MASTER_PLAN, DECISIONS, PROJECT_STATE, NEXT_ACTIONS and recent records in GitHub; source audit had become falsely treated as source of target design.
+- Owner clarification: new canonical schema must be designed from requirements, never copy or reproduce old ERPPlus/Commerce schemas.
+- Operation: commit new `docs/TARGET_ARCHITECTURE_REQUIREMENTS_FIRST_FA.md` (SHA `c5aee0b55f9efbb12af23855eb97507e31a32474`); update governance and continuity files to prioritize greenfield target design.
+- Result: DOCUMENTATION ONLY. No physical database created; no app or production changes.
+- Next: conceptual target ERD and table responsibility / relationship matrix, owner review before any implementation.
