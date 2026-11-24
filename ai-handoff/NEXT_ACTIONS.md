@@ -397,3 +397,8 @@
 ## TEST-036 / BUILD-026G — current
 - [x] Verify FIX-009, author 0035 FIFO return replay and resale tests.
 - [ ] Verify exact new CI SHA (35 SQL + nine concurrency, four guard tests), repair. Next moving-average confirmed COGS and returns, transfer value, lifecycle guards and return concurrency. No production access.
+
+
+## FIX-010 — current
+- [x] Diagnose failed combined assertion and separate capture, retry and read statements with precise failure diagnostics.
+- [ ] Verify exact CI SHA (35 SQL, nine concurrency, four guard tests). If still failing inspect specific assertion/count; fix before next migration. Next canonical 0036 moving-average COGS/return, transfer and lifecycle guards. No production access.

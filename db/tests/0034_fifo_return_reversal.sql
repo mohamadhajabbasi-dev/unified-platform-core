@@ -82,7 +82,7 @@ DO $$
 DECLARE w uuid:='94000000-0000-0000-0000-000000000001'; v uuid:='93000000-0000-0000-0000-000000000001';
  c uuid:='95000000-0000-0000-0000-000000000001'; pl uuid:='96000000-0000-0000-0000-000000000001';
  s uuid; po uuid; po1 uuid; oid uuid; a record; b record;
- mid uuid; mid2 uuid; eid uuid; period uuid; oid2 uuid; rev uuid; rid uuid; return_mid uuid; expense uuid:=gen_random_uuid(); other_asset uuid:=gen_random_uuid();
+ mid uuid; mid2 uuid; eid uuid; period uuid; oid2 uuid; rev uuid; rid uuid; return_mid uuid; captured_count bigint; expense uuid:=gen_random_uuid(); other_asset uuid:=gen_random_uuid();
  t uuid:=iam.current_tenant_id(); asset uuid:=gen_random_uuid(); ap uuid:=gen_random_uuid(); d date:=(clock_timestamp() AT TIME ZONE 'UTC')::date; digest bytea:=decode(repeat('ab',32),'hex');
 BEGIN
  IF finance.configure_valuation_preview(v,'fifo','IRR')<>v OR finance.configure_valuation_preview(v,'fifo','IRR')<>v THEN RAISE EXCEPTION 'FAIL policy retry'; END IF;
@@ -152,9 +152,13 @@ BEGIN
  OR (SELECT net_debit FROM finance.trial_balance WHERE account_id=expense)<>120
  OR (SELECT sum(quantity_delta) FROM inventory.stock_ledger WHERE variant_id=v)<>19
  THEN RAISE EXCEPTION 'FAIL historical return reversal and conservation'; END IF;
- IF finance.capture_movement_costs(w,v)<>1 OR finance.capture_movement_costs(w,v)<>0
- OR NOT EXISTS(SELECT 1 FROM finance.movement_cost_facts WHERE movement_id=return_mid AND quantity_delta=12 AND value_delta=1240)
- THEN RAISE EXCEPTION 'FAIL confirmed return capture'; END IF;
+ -- Separate write, exact retry and read into separate statements (fresh command snapshots).
+ captured_count:=finance.capture_movement_costs(w,v);
+ IF captured_count IS DISTINCT FROM 1 THEN RAISE EXCEPTION 'FAIL confirmed return capture count: %',captured_count; END IF;
+ captured_count:=finance.capture_movement_costs(w,v);
+ IF captured_count IS DISTINCT FROM 0 THEN RAISE EXCEPTION 'FAIL confirmed return retry count: %',captured_count; END IF;
+ IF NOT EXISTS(SELECT 1 FROM finance.movement_cost_facts WHERE movement_id=return_mid AND quantity_delta=12 AND value_delta=1240)
+ THEN RAISE EXCEPTION 'FAIL confirmed return cost fact'; END IF;
  SELECT * INTO a FROM finance.configured_inventory_preview(w,v);
  IF a.on_hand<>19 OR a.remaining_value<>2080 OR a.consumed_cost<>120 THEN RAISE EXCEPTION 'FAIL restored value'; END IF;
  PERFORM finance.close_period(period);
