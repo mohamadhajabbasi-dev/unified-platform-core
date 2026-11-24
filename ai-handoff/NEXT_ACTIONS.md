@@ -352,3 +352,8 @@
 ## TEST-031 / BUILD-026C — current
 - [x] Verify 0027 and 38 suites; author canonical movement cost capture and tests.
 - [ ] Verify 0028 CI, repair failures. Next FIFO receipt-level allocation provenance and COGS journal/reversal with matched inventory accounts, lifecycle guards and concurrent capture tests. No production access.
+
+
+## TEST-032 / BUILD-026D — current
+- [x] Verify 0028 and 39 suites; author FIFO receipt provenance and tests.
+- [ ] Verify 0029 CI, repair. Next explicit COGS journal with source FK, matched inventory account and fiscal gate, then reversal, transfers and concurrency. No production access.

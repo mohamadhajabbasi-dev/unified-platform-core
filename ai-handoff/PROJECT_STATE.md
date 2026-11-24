@@ -299,3 +299,10 @@
 
 ## BUILD-026C — latest
 - 84 tables if applied, 31 migrations. BUILD-026C: refactored existing replay algorithm into one per-movement calculation source; one new append-only finance.movement_cost_facts relation with exact canonical movement and policy FKs, tenant RLS, explicit finance capture permission and existing variant lock. Requires matched invoices for all replayed receipts, rejects unknown/unsupported history, compares prior cost and sequence for exact retry. Does not post COGS or enforce costing at stock mutation; per-receipt FIFO allocation links, transfer/returns, mixed currency and concurrent capture tests remain pending. Policy/rounding and explicit post-invoice capture are provisional; CI pending. No operational access.
+
+
+## TEST-032 — verified
+- TEST-032: run 45441258538 job 138612684702 at 90fb17ca07b8ecae0fc453f89e2131b00134dd5a completed success. Actual logs: 31 migrations, 39 suites PASS (31 SQL, eight concurrency), 84 prototype tables.
+
+## BUILD-026D — latest
+- 85 tables if applied, 32 migrations. BUILD-026D: one new normalized finance.fifo_cost_allocations child relation for exact outgoing-to-receipt cost provenance, same tenant/warehouse/variant composite FKs to existing movement cost facts. Single replay algorithm now emits FIFO source allocation detail; existing preview/replay signatures preserved. Capture checks allocation quantity and cost reconcile to outgoing cost and immutable retry. Moving average still uses aggregate cost facts, no artificial FIFO provenance. CI pending. No automatic costing enforcement, COGS posting, transfers/returns, or production access.
