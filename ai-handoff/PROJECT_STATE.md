@@ -46,3 +46,8 @@
 - New target brief committed: `docs/TARGET_ARCHITECTURE_REQUIREMENTS_FIRST_FA.md` at `c5aee0b55f9efbb12af23855eb97507e31a32474`.
 - First next action: draft independent target conceptual ERD and table responsibility dictionary for owner's review; no Desktop Commander necessary for design.
 - Actual database creation/migration: NOT_STARTED. Production repos/server: UNCHANGED.
+
+## Checkpoint DESIGN-002 — 2026-11-24 (latest)
+- Result: `docs/TARGET_ERD_V0_FA.md` created and committed (`2c8e51fca4db3e77ef1c4b770b642363fe9840c3`); it is a **new requirements-first proposed design**, not a copy of ERPPlus/Commerce tables.
+- Status: **PROPOSED / AWAITING OWNER REVIEW**. DB and server unchanged; no physical tables created.
+- Next: confirm target design with owner, refine table/PK/FK/RLS model; treat legacy mapping solely as migration concern.
