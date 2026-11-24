@@ -27,3 +27,13 @@
 - خطر و rollback:
 - موانع:
 - گام دقیق بعدی:
+
+## DOC-005 / 2026-11-24 — verified GitHub repository bootstrap
+- Phase: 00 — documentation / GitHub repository bootstrap
+- Pre-check: repository inspected; initial README only; private visibility and push permission verified.
+- Paths created: AGENTS.md, .gitignore, docs/MASTER_PLAN_FA.md, docs/ARCHITECTURE_CHART.md, ai-handoff/DECISIONS.md, PROJECT_STATE.md, NEXT_ACTIONS.md, WORK_LOG.md, CHANGELOG.md, CONTINUITY_PROTOCOL_FA.md. README updated.
+- Result: DONE — 11 text files initialized/updated remotely; GitHub read-back confirmed 9 essential files and their blob SHAs.
+- Evidence: README commit `fb7fcbdc49ee52cd6a083f54f7a1805f324e2ac6`; protocol commit `b7f3ad2e490bea4215d8462be5ace7cce9edeb1a`; chart commit `0d7015f8f9ee83ca4e486893ae599b11cf626525`.
+- Scope limitation: full original 20-file ZIP was **not** completely uploaded; binary PDF, PNG, HTML and several auxiliary texts **remain pending**. The new Markdown master is a concise maintained version, not byte-identical to prior PDF.
+- Production/database changes: NONE. Read-only schema discovery: NOT_STARTED.
+- Next exact action: verify GitHub state, decide whether to archive complete original ZIP/PDF in repository via authorized upload method, then request approved read-only inventory.
