@@ -152,3 +152,6 @@
 
 ## BUILD-012 — latest
 - Explicit purchased module relation and Commerce eligibility authored, 42 tables if applied. CI pending. No operational changes. Next traffic and attribution after PASS.
+
+## TEST-014 — latest checkpoint
+- 42 prototype tables, 12 migrations, 15 suites PASS and 4 derived views. Run 45415742246 job 138521322391, tested SHA 74a0ae3dda33002da17fb4dd91139bd54f70e590. Paid Commerce entitlement and separate approval tested. No production changes. Next visitor sessions/events and verified acquisition.

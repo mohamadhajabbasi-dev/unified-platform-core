@@ -173,3 +173,7 @@
 ## BUILD-012 — current
 - [x] Author explicit paid Commerce entitlement and approval gate, tests.
 - [ ] Verify CI then add consent-aware visitor sessions/events and verified acquisition attribution using canonical CRM customer. No real tracking or legacy access.
+
+## TEST-014 — current
+- [x] Verify all 12 migrations and 15 suites; PASS.
+- [ ] Next migration 0013: consent-aware visitor sessions/events with Commerce eligibility, trusted collector, tenant isolation, idempotency, retention and synthetic tests. Then verified customer acquisition and order attribution, no duplicate customers. No real data, legacy access or deployment.

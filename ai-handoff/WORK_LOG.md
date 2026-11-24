@@ -190,3 +190,6 @@
 
 ## BUILD-012 / 2026-11-24 — explicit Commerce entitlement
 - Precheck TEST-013 d646782f516bf0f808d676205405b32b70d72aeb; required docs, D-014 and billing/IAM reviewed. Added 0012 migration and test, one subscription-module relation, pre-invoice scope lock, derived paid entitlement and separate approval check. Negative tests unpaid/generic-paid/unapproved/expired/cross-tenant. CI pending; no real data, legacy or production access. Provisional paid full term UTC; chargebacks/refunds and per-module pricing pending. Next verify then traffic/attribution.
+
+## TEST-014 / 2026-11-24 — purchased Commerce entitlement PASS
+- Run 45415742246 job 138521322391 completed success at SHA 74a0ae3dda33002da17fb4dd91139bd54f70e590. Logs verify 12 migrations and 15 suites PASS: explicit purchased scope, paid term, independent approval, expiry and isolation; all previous acceptance and concurrency suites passed. 42 prototype tables and 4 derived views. No operational access. Next privacy-aware visitor sessions/events and verified acquisition; platform chargeback/refund/pricing policy remains provisional.
