@@ -82,3 +82,7 @@
 - تکمیل قیمت‌گذاری از **همان `catalog.price_lists` و `catalog.price_entries`**: قاعده انتخاب لیست/تعداد، عدم همپوشانی، quote/checkout و audit. SQL/test جداگانه، نه بازنویسی کاتالوگ فعلی.
 - هر اقدام در `WORK_LOG.md` append و `PROJECT_STATE.md`, `NEXT_ACTIONS.md` به‌روز و واقعاً commit شود.
 - هیچ اتصال به Desktop Commander، ERPPlus، CommerceAI، دیتابیس‌های قبلی یا سرور عملیاتی نداشته باش. فقط data synthetic و محیط مستقل greenfield.
+
+
+## الحاقیه PRICE-017 — اولویت واقعی چهار قیمت مورد نظر مالک
+پایه قطعی قیمت‌گذاری: **original/اصلی، discounted/تخفیف‌خورده، colleague/همکار و wholesale/عمده**. هر نوع اضافی مثل VIP/نمایندگی یک توسعه اختیاری است. مدل پیشنهادی، قیمت را در `price_lists` و `price_entries` موجود نگه می‌دارد؛ discount فعال و معتبر باید حداکثر قیمت اصلی باشد و قیمت خصوصی نباید برای مشتری عمومی قابل Query باشد. شرح معیارهای پذیرش و قواعد مجوز: [FOUR_PRODUCT_PRICE_TYPES_FA.md](FOUR_PRODUCT_PRICE_TYPES_FA.md).
