@@ -250,3 +250,8 @@
 ## BUILD-017 — current
 - [x] Author four-price controls, resolver and line checkout snapshot, tests.
 - [ ] Verify CI; add actual concurrency price/eligibility and mixed standard cart/paid channels tests, inspect private price bypasses and remove legacy retail compatibility before production. Then remaining D-016 domains.
+
+## TEST-020 — current
+- [x] Verify four-price migration and all 23 suites; PASS.
+- [ ] Harden 0017: mixed-list carts, paid web/app checkout, discount and eligibility expiration/currency tests, direct private list/entry/tier access and service capability boundary, concurrent price/eligibility mutation vs checkout with lock-order review. Replace legacy retail fixtures and remove legacy fallback; validate bootstrap/upgrade constraints without relying on unmapped superuser. No customer-facing API until trusted authentication and row access review.
+- [ ] Then suppliers and purchasing, warehouse transfers/lot/serial/cost, shipping/promotion/tax/invoicing, banking/installments, AI/ops/backup/API. Coordinate duplicate migration identifiers. No operational access or deployment.
