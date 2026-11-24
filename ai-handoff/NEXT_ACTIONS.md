@@ -85,3 +85,7 @@
 ## FIX-001 — current
 - [x] Correct observed test delimiter error.
 - [ ] Verify new full CI run; do not claim PASS until logs confirmed. Then catalog as BUILD-003 checklist.
+
+## TEST-005 — current
+- [x] Verify full regression and concurrent resolution; all PASS.
+- [ ] Next: implement catalog product, variants, categories, product-category and price model; test isolation, uniqueness, temporal non-overlap and IAM/module enforcement. Then inventory/sales and other domains; no legacy access.

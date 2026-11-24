@@ -113,3 +113,6 @@
 
 ## FIX-001 / 2026-11-24
 - Run 45407722953 job 138492831903: all three migrations applied; foundation test failed with syntax error at DO $ (one missing dollar delimiter in modified test fixture). Remaining tests skipped. Verified exact log and file; corrected delimiter to DO $$ in db/tests/0001_core_crm.sql only. No production or legacy changes. Next: rerun full CI and inspect results. Regression status pending.
+
+## TEST-005 / 2026-11-24 — CRM enforcement and concurrency PASS
+- Run 45407886388 job 138493418952 completed success at SHA 0fc37d44cb9b9b7a99f0d83b2ca61a6a95438464. Verified logs: migrations 0001–0003 applied, PASS foundation, IAM, CRM authorization and concurrency. Two concurrent sessions contended on advisory lock and returned one customer ID; one customer and one identifier remained in synthetic fixture. Prior test syntax failure corrected in FIX-001. All container steps successful; no production or legacy interaction. Next: catalog and price tables with tenant-aware FK, SKU uniqueness, price non-overlap and permission/module tests.

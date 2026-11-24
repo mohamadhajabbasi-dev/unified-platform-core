@@ -84,3 +84,6 @@
 
 ## FIX-001 — latest
 - BUILD-003 migrations applied; CI failed on test fixture syntax (run 45407722953). Corrected delimiter; all acceptance and concurrency checks pending rerun. No production changes.
+
+## TEST-005 — latest checkpoint
+- 14 prototype tables; 3 migrations and 4 test suites PASS. Run 45407886388, job 138493418952, tested SHA 0fc37d44cb9b9b7a99f0d83b2ca61a6a95438464. CRM read/write permissions, active module, verified link conflict and simultaneous resolution tested. Trusted external identity verification, detailed audit and final auth architecture remain open. No production changes. Next catalog/pricing.
