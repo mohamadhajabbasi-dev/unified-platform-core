@@ -155,3 +155,6 @@
 
 ## TEST-014 — latest checkpoint
 - 42 prototype tables, 12 migrations, 15 suites PASS and 4 derived views. Run 45415742246 job 138521322391, tested SHA 74a0ae3dda33002da17fb4dd91139bd54f70e590. Paid Commerce entitlement and separate approval tested. No production changes. Next visitor sessions/events and verified acquisition.
+
+## BUILD-013 — latest
+- Visitor analytics migration and tests authored, 44 prototype tables and 5 derived views if applied. CI pending. No real collection or deployment. Customer acquisition/order linkage pending.

@@ -177,3 +177,7 @@
 ## TEST-014 — current
 - [x] Verify all 12 migrations and 15 suites; PASS.
 - [ ] Next migration 0013: consent-aware visitor sessions/events with Commerce eligibility, trusted collector, tenant isolation, idempotency, retention and synthetic tests. Then verified customer acquisition and order attribution, no duplicate customers. No real data, legacy access or deployment.
+
+## BUILD-013 — current
+- [x] Author paid/approved consented visitor sessions/events and derived source reports.
+- [ ] Verify CI then verified customer acquisition and order attribution; design privacy-safe retention and consent evidence, multi-site and load tests. No actual visitor tracking, legacy access or deployment.

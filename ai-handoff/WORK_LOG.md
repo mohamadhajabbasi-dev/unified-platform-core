@@ -193,3 +193,6 @@
 
 ## TEST-014 / 2026-11-24 — purchased Commerce entitlement PASS
 - Run 45415742246 job 138521322391 completed success at SHA 74a0ae3dda33002da17fb4dd91139bd54f70e590. Logs verify 12 migrations and 15 suites PASS: explicit purchased scope, paid term, independent approval, expiry and isolation; all previous acceptance and concurrency suites passed. 42 prototype tables and 4 derived views. No operational access. Next privacy-aware visitor sessions/events and verified acquisition; platform chargeback/refund/pricing policy remains provisional.
+
+## BUILD-013 / 2026-11-24 — consented visitor analytics
+- Precheck TEST-014 46fc32b8379c7086da58372e82af1971133d18ae; required docs, tree, entitlement and test fixtures reviewed. Added 0013 migration/test and handoff. Two scoped tables, source aggregate view, paid and approved collection gate, trusted collector, consent/bot gate, idempotency, withdrawal, bounded retention purge, negative tests. CI pending. 24h/30d and bounded source codes provisional; actual consent verification, sanitization, bot classifier, scheduler, partition/load and acquisition/order attribution pending. No real visitor data or operational access. Next verify CI.

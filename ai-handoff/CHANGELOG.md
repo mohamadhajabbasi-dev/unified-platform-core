@@ -36,3 +36,5 @@
 - BUILD-011: legal dossier, stakeholders, addresses, typed tenant/member settings, shared audit metadata; CI pending.
 
 - BUILD-012: explicit purchased Commerce scope, paid term and approval gate; CI pending.
+
+- BUILD-013: consented visitor sessions/events, source reporting, withdrawal and bounded retention purge; CI pending.
