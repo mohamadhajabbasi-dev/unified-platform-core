@@ -246,3 +246,7 @@
 - [x] Verify latest 19 migration files/22 suites including attribution, HR and catalog; PASS.
 - [ ] Read docs/FOUR_PRODUCT_PRICE_TYPES_FA.md, D-017, and current pricing and checkout SQL; implement original, discounted, colleague, wholesale categories in existing price lists, authorization, discount consistency, deterministic quantity selection and server checkout snapshot; prevent direct private-price exposure. No duplicate price master. Recheck main before edits.
 - [ ] Positive app attribution and end-to-end checkout, authenticated messenger sources, consent revocation when CRM disabled, privacy scheduler, anonymized aggregates; then remaining D-016 procurement, transfers, costing, fiscal invoices, banking, AI/integrations/ops. Coordinate duplicate migration prefixes before deployment. No production access or real data.
+
+## BUILD-017 — current
+- [x] Author four-price controls, resolver and line checkout snapshot, tests.
+- [ ] Verify CI; add actual concurrency price/eligibility and mixed standard cart/paid channels tests, inspect private price bypasses and remove legacy retail compatibility before production. Then remaining D-016 domains.

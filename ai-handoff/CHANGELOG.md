@@ -53,3 +53,5 @@
 
 
 - 2026-11-24 PRICE-017: Confirmed four tenant product price categories (original, discounted, colleague, wholesale). Existing catalog price lists reused, private price-list access and checkout resolver flagged as security gap. Added docs/FOUR_PRODUCT_PRICE_TYPES_FA.md and D-017 governance and handoff. Documentation only; no new SQL/production changes.
+
+- BUILD-017: four standard prices, eligibility, discount guard, private RLS and checkout snapshots; CI pending.

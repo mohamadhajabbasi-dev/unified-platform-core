@@ -212,3 +212,6 @@
 
 ## TEST-019 — latest verified checkpoint (supersedes PRICE-017 stale CI status, preserves D-017 requirements)
 - 68 prototype tables, 19 migration files, 22 test suites PASS at 32eae6b47fa929fddb74739fa8d267d8097397fe, run 45422397870 job 138545155769. Attribution with current consent/privacy erasure tested; no operational changes. Parallel catalog/HR verified. Subsequent docs-only PRICE-017/D-017 preserved. Four price categories specified, not implemented; protect colleague/wholesale from ordinary catalog readers and never trust supplied list ID. Next authorized resolver and checkout using existing price lists/entries/tiers. Positive app attribution, real consent/checkout integration pending.
+
+## BUILD-017 — latest
+- Four price roles and checkout implementation authored, 69 prototype tables if applied. CI pending. No production changes. Verify exact runtime and correct failures before next domain.
