@@ -76,6 +76,9 @@ INSERT INTO finance.accounts(tenant_id,account_id,account_code,name,account_type
  ('90000000-0000-0000-0000-000000000001','97000000-0000-0000-0000-000000000002','advance','Customer advances','liability','IRR'),
  ('90000000-0000-0000-0000-000000000001','97000000-0000-0000-0000-000000000003','usd','USD clearing','asset','USD'),
  ('90000000-0000-0000-0000-000000000002','97000000-0000-0000-0000-000000000004','clearing','Foreign tenant','asset','IRR');
+INSERT INTO finance.fiscal_periods(tenant_id,period_name,dates,opened_by)
+ SELECT tenant_id,'Synthetic current',daterange((clock_timestamp() AT TIME ZONE 'UTC')::date-1,(clock_timestamp() AT TIME ZONE 'UTC')::date+2,'[)'),
+ '91000000-0000-0000-0000-000000000001' FROM core.tenants WHERE tenant_key IN ('inv-a','inv-b');
 SET SESSION AUTHORIZATION upc_inv_a;
 DO $$
 DECLARE w uuid:='94000000-0000-0000-0000-000000000001'; v uuid:='93000000-0000-0000-0000-000000000001';

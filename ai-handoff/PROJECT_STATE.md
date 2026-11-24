@@ -120,3 +120,6 @@
 
 ## TEST-010 — latest checkpoint
 - Phase 03: 31 prototype tables, 8 migrations, 11 test suites PASS and 3 derived views. Run 45412335881 job 138509182694, tested SHA 0300fd92b31767be1a6d92e84ed115c3de406898. Tenant double-entry accounting and verified capture/refund posting tested. No operational changes. Fiscal period, revenue recognition, automatic posting, tax/FX/settlement and separate platform subscription billing remain open. Next: accounting lifecycle and platform billing.
+
+## BUILD-009 — latest
+- 32 prototype tables if applied; fiscal periods and recognition authored; CI pending. No production changes. Next verify tests then independent platform billing.

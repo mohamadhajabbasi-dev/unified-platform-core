@@ -133,3 +133,7 @@
 ## TEST-010 — current
 - [x] Verify all eight migrations, eleven test suites and cleanup; all PASS.
 - [ ] Next: extend accounting lifecycle with fiscal periods/closing and recognition policy as provisional, then independent platform subscription/invoice/payment billing; no posting tenant sales into platform revenue. Add relevant negative/concurrency tests. Then remaining CRM/catalog/content/ops/backup/API and production readiness gates. No legacy access or deployment.
+
+## BUILD-009 — current
+- [x] Implement period gate and recognition/refund lifecycle, tests.
+- [ ] Verify CI then separate subscription billing. Fiscal policy and period closing workflow remain provisional.
