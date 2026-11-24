@@ -383,3 +383,10 @@
 
 ## TEST-035 candidate
 - TEST-035 candidate: added two actual competing-session scenarios for cost capture and COGS posting, with observed advisory lock waits, exact retries, immutable allocation reconciliation, one balanced journal and denied conflicting account, unauthorized/cross-tenant posting. Independent synthetic fixture; no new tables or SQL migration. CI pending. Explicit FIFO COGS is experimental, not approved accounting; return reversal, moving-average posting, transfer valuation and lifecycle enforcement remain pending.
+
+
+## TEST-035 / 2026-11-24
+- TEST-035: run 45443295044 job 138620081848 at 0db9805c054545b939b05f7fd1355e050a976060 completed success. 33 migrations, 42 suites PASS (33 SQL + nine concurrency), four migration guard unit tests. Actual competing cost capture and COGS locks, idempotency and tenant gates confirmed. 85 tables.
+
+## BUILD-026F
+- BUILD-026F: canonical 0034 adds explicit full ordinary sellable FIFO return reversal using existing journal, unique tenant return movement FK, exact sale/return relation and original expense/asset accounts and amount. No new table. Order and variant locks; existing fiscal period and immutable balanced journal. Tests include pre-return rejection, exact retry, closed-period reversal and conservation. No automatic posting. Does not yet reintegrate returned stock into cost replay or enable valuation of resale; capture remains fail closed after returns. Return-layer provenance, moving-average posting, zero-cost policy, transfers, further concurrency and approved accounting policy remain pending. CI pending; no operational access.

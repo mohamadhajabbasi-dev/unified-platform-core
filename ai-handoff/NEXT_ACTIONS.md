@@ -382,3 +382,8 @@
 ## TEST-034 / TEST-035 candidate — current
 - [x] Verify FIX-008, renumbering guard and all 41 SQL/concurrency suites; add dedicated concurrent cost capture/COGS posting tests.
 - [ ] Verify exact new CI SHA (33 migrations, 33 SQL + nine concurrency suites, four guard unit tests); fix failures. Next canonical 0034: return cost and journal reversal, then moving-average posting, transfer valuation and lifecycle guard. No production access.
+
+
+## TEST-035 / BUILD-026F — current
+- [x] Verify concurrent cost capture/COGS; author canonical 0034 full return reversal and tests.
+- [ ] Verify exact new CI (34 SQL, nine concurrency, four guard unit tests), fix failures. Next integrate returned stock cost into replay with original receipt provenance, moving average, transfers and lifecycle guards. No production access.
