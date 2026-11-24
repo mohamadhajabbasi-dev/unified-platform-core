@@ -323,3 +323,6 @@
 
 ## TEST-028 candidate — serial contention
 - TEST-027 independently verified from run 45436355581 job 138595123350 (34 suites). Concurrent checkpoint commit preserved; prior attempted write stopped on changed HEAD before mutation. Added dedicated synthetic CI scenarios: competing receipts of same serial into different warehouses, competing holds, reserve vs transfer. Assert actual waiting locks, SQLSTATE 23514 and canonical ledger conservation. No schema changes. CI pending. No operational access.
+
+## TEST-028 / 2026-11-24 — serial contention PASS
+- Run 45437056776 job 138597607794 completed success at 7da09a17941764823da56f43b14fa2a7c5ef3b24. Verified 27 migration files and 35 suites PASS (27 SQL, eight concurrency). Three dedicated serial races observed advisory lock wait: competing cross-warehouse receipt rejected duplicate serial (23514), competing reservation rejected insufficient stock, reservation versus transfer rejected insufficient stock. Exactly one admitted serial/receipt, one active reservation, no duplicate stock or unauthorized transfer. All prior regressions and cleanup successful. 82 prototype tables unchanged. No operational access. Total checkout allocation cap versus return normalization limit still requires alignment, and partial/damaged/expired returns, costing/COGS, historical migration and security review pending.

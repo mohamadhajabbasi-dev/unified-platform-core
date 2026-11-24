@@ -272,3 +272,6 @@
 
 ## TEST-028 candidate — latest
 - 82 tables, 27 migrations; last verified 34 suites at TEST-027. Added serial race suite, CI pending. No deployment.
+
+## TEST-028 — latest verified checkpoint
+- 82 prototype tables, 27 migration files, 35 suites PASS at 7da09a17941764823da56f43b14fa2a7c5ef3b24, run 45437056776 job 138597607794. Eight concurrency suites, including three competing tracked serial cases. No operational changes. Allocation cap alignment, valuation/COGS and remaining lifecycle limits pending.

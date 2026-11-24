@@ -325,3 +325,7 @@
 ## TEST-028 candidate — current
 - [x] Author three tracked serial contention tests.
 - [ ] Verify CI and fix failures; align total checkout allocation cap with return normalization (1000), then cost valuation and journal COGS; no duplicate inventory. Partial/damaged returns and production review pending.
+
+## TEST-028 — current
+- [x] Verify dedicated serial concurrency and full regression; 35 suites PASS.
+- [ ] Align total tracked checkout allocation cap with return normalization cap (1000), with boundary regression. Then cost valuation using existing stock ledger and journal: explicit FIFO/weighted average policy, cost provenance, COGS and reversals. No duplicate inventory master. Partial/damaged/expired returns, historical migration, transit, remaining D-016 domains, unique migration IDs and production review pending. No real data or deployment.
