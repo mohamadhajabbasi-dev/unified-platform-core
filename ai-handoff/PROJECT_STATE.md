@@ -129,3 +129,14 @@
 
 ## BUILD-010 — latest
 - Platform subscription billing authored: three tables, 35 total if applied, fourth derived view. CI pending. Independent of tenant sales/finance and entitlements; no production changes or money operations.
+
+
+## Checkpoint REQ-015 — 2026-11-24 (latest; supersedes earlier progress/visibility notes)
+- Phase: **03 — isolated greenfield PostgreSQL prototype**.
+- GitHub visibility **PUBLIC** per live repository metadata; initial PRIVATE header is historical and now inaccurate. Never commit actual tenant/customer/legal/visitor data or secrets.
+- Last **verified PASS**: TEST-010, migrations **0001–0008**, **31 provisional tables**, 11 test suites, synthetic PostgreSQL only (run 45412335881, SHA `0300fd92b31767be1a6d92e84ed115c3de406898`).
+- **BUILD-009** at `4cc134d8f2758d3caa121cc16b3b47d6b35a808c` added migration 0009 (fiscal periods/revenue recognition), estimated **32 provisional tables if applied**, but 0009 runtime result **NOT_VERIFIED** in this check. Do not claim 0009 PASS.
+- REQ-015: Added documented requirements for complete tenant legal/personal organization dossier, partners/representation/ownership, scoped settings, and Commerce-conditional visitors/source attribution with CRM customer reference. See `docs/TENANT_IDENTITY_VISITOR_ATTRIBUTION_FA.md` and D-014.
+- These **new features are design/requirements only**; no migrations, tests, application endpoints or UI implemented for them yet.
+- Source code of original ERPPlus/CommerceAI, old DBs and server: **UNTOUCHED**. Deployment: **NONE**.
+- First next action: verify latest 0009 CI evidence and fix if needed, then implement targeted tenant-profile/settings and visitor attribution migrations in separate incremental steps with RLS and synthetic tests. Never duplicate Tenants, Users or Customers.
