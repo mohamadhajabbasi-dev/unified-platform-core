@@ -13,21 +13,21 @@ Domain classification is an **initial semantic proposal based on name**, not a c
 | Canonical domain | ERPPlus DbSets | CommerceAI DbSets | Reuse/build decision (requirements-first) |
 |---|---:|---:|---|
 | Tenant / Organization | 9 | 3 | core.tenants, core.tenant_profiles, core.tenant_stakeholders, core.tenant_settings; ADD branches/stores/legal entities only as distinct relationships |
-| Identity / Access | 14 | 2 | core.users, iam.memberships, iam.roles/permissions; ADD secure sessions, OAuth client grants, device posture (not duplicate users) |
+| Identity / Access | 15 | 2 | core.users, iam.memberships, iam.roles/permissions; ADD secure sessions, OAuth client grants, device posture (not duplicate users) |
 | Modules / Licenses / Billing | 17 | 7 | platform.modules, module grants, subscription billing, purchased modules; ADD licenses, packages, AI wallet/credits, resale/channel contracts |
 | CRM / Customers / Support | 20 | 3 | crm.customers + identifiers + addresses; ADD partner roles, CRM tickets/conversations/consents/communications without new Customer master |
 | Catalog / Merchandise | 11 | 8 | catalog.products + variants/categories/price_lists/entries; ADD media/reviews/warranties/brand/unit/price rules using child FK |
 | Inventory / Procurement | 16 | 1 | inventory.warehouses, stock_ledger, reservations; ADD purchase requests/invoices, transfers, valuation/lot/serial as necessary |
-| Orders / Fulfillment / Promotion | 4 | 10 | sales.orders + order_items + returns/refunds; ADD fulfillment, shipping, coupons/discount rules, delivery/fulfillment events |
+| Orders / Fulfillment / Promotion | 5 | 10 | sales.orders + order_items + returns/refunds; ADD fulfillment, shipping, coupons/discount rules, delivery/fulfillment events |
 | Payments / Accounting / Tax | 17 | 7 | finance.accounts/journals, sales verified payments, platform billing; ADD tax/invoicing/reconciliation/installments/banking with separate legally distinct records |
 | HR / Payroll / Commissions | 10 | 0 | NEW hr.employees/contracts/payroll/loans/commission plans as relations to core.users when login exists |
 | Content / SEO / Theme | 4 | 4 | NEW content.articles/assets/revisions/seo settings; map themes/files to asset registry, not copied binary |
 | Messaging / Notifications | 3 | 4 | NEW comm.channels/conversations/messages/inbox/notifications; CRM customer referenced when verified |
 | AI / Automation | 6 | 3 | NEW ai.operations/jobs/usage/credits; provider config secrets external vault, distinct from customer/order/tenant masters |
-| Integrations / Marketplace | 21 | 0 | NEW integration.connections/external_identity_mapping/jobs/events; legacy sync queues NOT new master records |
+| Integrations / Marketplace | 22 | 0 | NEW integration.connections/external_identity_mapping/jobs/events; legacy sync queues NOT new master records |
 | Operations / Security | 23 | 0 | ops.audit_events and optional scoped monitoring, restore jobs; large logs/time series external storage or retention |
 | Workflow / Rules | 4 | 0 | NEW workflow.definitions/steps/runs/actions; any entity reference links canonical table |
-| REVIEW_OTHER | 3 | 0 | Needs entity-specific code verification; never auto-create mirrored table |
+| REVIEW_OTHER | 0 | 0 | All DbSet names assigned a preliminary domain; field-level semantics still require review |
 
 ## Exact DbSet register (complete)
 The `Legacy Entity Type` is the EF model and `Set` is the C# DbSet property, **not a promise of SQL table name**.
@@ -62,9 +62,9 @@ The `Legacy Entity Type` is the EF model and `Set` is the C# DbSet property, **n
 | 23 | `OAuthClients` | `OAuthClient` | Identity / Access |
 | 24 | `BlacklistedDevices` | `BlacklistedDevice` | Identity / Access |
 | 25 | `OAuthTokens` | `OAuthToken` | Identity / Access |
-| 26 | `WebhookEndpoints` | `WebhookEndpoint` | REVIEW_OTHER |
+| 26 | `WebhookEndpoints` | `WebhookEndpoint` | Integrations / Marketplace |
 | 27 | `AiConversations` | `AiConversation` | AI / Automation |
-| 28 | `DeveloperApplications` | `DeveloperApplication` | REVIEW_OTHER |
+| 28 | `DeveloperApplications` | `DeveloperApplication` | Identity / Access |
 | 29 | `AiMessages` | `AiMessage` | AI / Automation |
 | 30 | `WhiteLabelBrands` | `WhiteLabelBrand` | Tenant / Organization |
 | 31 | `PluginInstalls` | `PluginInstall` | Modules / Licenses / Billing |
@@ -143,7 +143,7 @@ The `Legacy Entity Type` is the EF model and `Set` is the C# DbSet property, **n
 | 104 | `Customers` | `Customer` | CRM / Customers / Support |
 | 105 | `Suppliers` | `Supplier` | CRM / Customers / Support |
 | 106 | `SaleInvoices` | `SaleInvoice` | Orders / Fulfillment / Promotion |
-| 107 | `SalesOrigins` | `SaleOrigin` | REVIEW_OTHER |
+| 107 | `SalesOrigins` | `SaleOrigin` | Orders / Fulfillment / Promotion |
 | 108 | `SaleInvoiceItems` | `SaleInvoiceItem` | Orders / Fulfillment / Promotion |
 | 109 | `InstallmentContracts` | `InstallmentContract` | Payments / Accounting / Tax |
 | 110 | `SaleInstallments` | `SaleInstallment` | Payments / Accounting / Tax |
