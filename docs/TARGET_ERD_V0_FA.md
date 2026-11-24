@@ -98,3 +98,7 @@ erDiagram
 - به جای `web.visitor_sessions` و `mobile.app_sessions` مستقل، **یک `analytics.sessions` و `analytics.events`** با tenant/channel/application/site و consent/referrer/attribution، و منابع مستقل «دانلود رسمی تجمیعی مارکت» و «نصب/اولین اجرا» ایجاد شوند. هنوز فقط طرح است.
 - مرجع‌های موجود `crm.customers`, `core.users`, `sales.orders`, `catalog.products` و `platform.modules` دست نخورده/یکتا بمانند؛ ردیابی اپ مجوز تننتی و داده واقعی خصوصی لازم دارد.
 - مشخصات کامل، حد مرز حریم خصوصی، آزمون‌ها و ترتیب اجرا: [APP_ANALYTICS_MULTI_PRICE_FA.md](APP_ANALYTICS_MULTI_PRICE_FA.md).
+
+
+## الحاقیه قیمت D-017 — چهار حالت اصلی
+لیست‌های تجاری `original`, `discounted`, `colleague`, `wholesale` از **همان** `catalog.price_lists` استفاده می‌کنند و مبالغ با اعتبار زمانی در `catalog.price_entries` نگهداری می‌شوند. در `0014` برای قواعد مقدار خرید `price_quantity_tiers` نوشته شده ولی CI آن تأیید نشده است. هیچ چهارستون قیمتِ تکراری به `catalog.products` اضافه نکن. محدودیت تخفیف، تشخیص مشتری همکار و عمده، و حفاظت از قیمت خصوصی هنوز نیازمند کد اجرایی و تست هستند. مرجع: [FOUR_PRODUCT_PRICE_TYPES_FA.md](FOUR_PRODUCT_PRICE_TYPES_FA.md).
