@@ -885,7 +885,125 @@ SQL
 [[ "$(psql_ci -c "SELECT closed_at FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_id='$history_period'")" == "$history_closed" ]]
 [[ "$(psql_ci -c "SELECT (SELECT count(*) FROM inventory.stock_ledger WHERE tenant_id='$tenant_b')=1 AND (SELECT count(*) FROM finance.movement_cost_facts WHERE tenant_id='$tenant_b')=1 AND (SELECT count(*) FROM finance.journal_entries WHERE tenant_id='$tenant_b')=1")" == t ]]
 psql_ci < db/tests/concurrency/period_temporal_fixture.sql
-echo 'PASS COGS concurrency: twenty-four competing lock races, barrier exclusion and actual atomic close contention, finance-only tenant, historical rejection, exact retry and actual platform module decision contention and positive reconciled nonempty historical close, temporal guards, committed late-cost rejection and protected-role audit'
+# REVIEW-027A: characterize two remaining temporal boundaries, NOT policy.
+# Tenant B of the standalone fixture has no inventory history.
+time_tenant=e5500000-0000-0000-0000-000000000002
+time_wh=e5540000-0000-0000-0000-000000000002
+time_variant=e5530000-0000-0000-0000-000000000002
+[[ "$(psql_ci -c "SELECT count(*)=0 FROM inventory.stock_ledger WHERE tenant_id='$time_tenant'")" == t ]]
+commit_period=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_time_b;
+SELECT finance.open_period('Synthetic commit expiry',(clock_timestamp() AT TIME ZONE 'UTC')::date-12,(clock_timestamp() AT TIME ZONE 'UTC')::date-10);
+SQL
+)
+[[ "$commit_period" =~ ^[0-9a-f-]{36}$ ]]
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_approver;
+SELECT platform.record_module_decision('$time_tenant','finance',true,clock_timestamp()+interval '12 seconds','Synthetic commit expiry observation');
+RESET SESSION AUTHORIZATION;
+SET SESSION AUTHORIZATION upc_time_b;
+BEGIN;
+SET LOCAL statement_timeout='25s';
+SELECT finance.close_period('$commit_period');
+DO \$\$ BEGIN
+ IF NOT platform.module_enabled('finance') OR NOT EXISTS(SELECT 1 FROM finance.fiscal_periods WHERE period_id='$commit_period' AND closed_at IS NOT NULL)
+ THEN RAISE EXCEPTION 'FAIL commit expiry fixture: close must precede expiry'; END IF;
+END \$\$;
+SELECT pg_sleep(13);
+DO \$\$ BEGIN
+ IF platform.module_enabled('finance') THEN RAISE EXCEPTION 'FAIL commit expiry fixture: grant still active'; END IF;
+END \$\$;
+COMMIT;
+RESET SESSION AUTHORIZATION;
+DO \$\$ BEGIN
+ IF NOT EXISTS(SELECT 1 FROM finance.fiscal_periods p JOIN platform.tenant_module_grants g ON g.tenant_id=p.tenant_id
+ JOIN platform.modules m ON m.module_id=g.module_id
+ WHERE p.tenant_id='$time_tenant' AND p.period_id='$commit_period' AND m.module_key='finance'
+ AND g.reason='Synthetic commit expiry observation' AND p.closed_at<g.expires_at AND g.expires_at<clock_timestamp())
+ THEN RAISE EXCEPTION 'FAIL commit expiry observation not persisted'; END IF;
+ RAISE NOTICE 'TEMPORAL_OBSERVATION close persists when finance expires after successful function return before COMMIT';
+END \$\$;
+SET SESSION AUTHORIZATION upc_cogs_approver;
+SELECT platform.record_module_decision('$time_tenant','finance',true,NULL,'Synthetic restore after commit expiry observation');
+RESET SESSION AUTHORIZATION;
+SQL
+# Actual DEFAULT clock ordering: suspend the writer before the production
+# row barrier with a private test-only lock. Never rewrite NEW.recorded_at.
+# This is NOT a midnight/cutoff crossing test.
+clock_period=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_time_b;
+SELECT finance.open_period('Synthetic pre-barrier clock',(clock_timestamp() AT TIME ZONE 'UTC')::date-8,(clock_timestamp() AT TIME ZONE 'UTC')::date-6);
+SQL
+)
+[[ "$clock_period" =~ ^[0-9a-f-]{36}$ ]]
+psql_ci <<SQL
+CREATE FUNCTION public.upc_test_prebarrier_clock() RETURNS trigger LANGUAGE plpgsql SET search_path=pg_catalog AS \$\$
+BEGIN
+ IF current_database()<>'upc_greenfield_test' OR NEW.tenant_id<>'$time_tenant'::uuid OR NEW.adjustment_key IS DISTINCT FROM 'synthetic-prebarrier-clock'
+ THEN RAISE EXCEPTION 'Unexpected clock fixture scope'; END IF;
+ PERFORM pg_advisory_xact_lock(58256,55);
+ RETURN NEW;
+END \$\$;
+REVOKE ALL ON FUNCTION public.upc_test_prebarrier_clock() FROM PUBLIC;
+CREATE TRIGGER aa_upc_test_prebarrier_clock BEFORE INSERT ON inventory.stock_ledger FOR EACH ROW EXECUTE FUNCTION public.upc_test_prebarrier_clock();
+SQL
+# Match the exact test advisory lock; two-integer namespace is distinct
+# from the production bigint tenant barrier. Verify actual blocking.
+await_clock_lock() {
+ local app=$1 granted=$2 i
+ for i in {1..60}; do
+  if [[ "$(psql_ci -c "SELECT count(*) FROM pg_locks l JOIN pg_stat_activity a USING(pid) WHERE a.application_name='$app' AND l.locktype='advisory' AND l.classid=58256::oid AND l.objid=55::oid AND l.objsubid=2 AND l.granted=$granted")" == 1 ]]; then return 0; fi
+  sleep 0.1
+ done
+ return 1
+}
+psql_ci >"$tmp/clock_holder" 2>&1 <<SQL &
+SET application_name='upc_test_clock_holder';
+SET statement_timeout='35s';
+SELECT pg_advisory_lock(58256,55);
+SELECT pg_sleep(20);
+SELECT pg_advisory_unlock(58256,55);
+SQL
+clock_holder=$!
+await_clock_lock upc_test_clock_holder true
+psql_ci >"$tmp/clock_writer" 2>&1 <<SQL &
+SET application_name='upc_test_clock_writer';
+SET statement_timeout='35s';
+SET SESSION AUTHORIZATION upc_time_b;
+SELECT inventory.adjust_stock('$time_wh','$time_variant',1,'synthetic-prebarrier-clock','Synthetic timestamp observation');
+SQL
+clock_writer=$!
+await_clock_lock upc_test_clock_writer false
+[[ "$(psql_ci -c "SELECT count(*)=0 FROM pg_locks l JOIN pg_stat_activity a USING(pid) WHERE a.application_name='upc_test_clock_writer' AND l.locktype='advisory' AND l.granted AND l.mode='ShareLock' AND l.classid=((hashtextextended(jsonb_build_array('inventory-period-barrier','$time_tenant'::uuid)::text,0)>>32)&4294967295)::oid AND l.objid=(hashtextextended(jsonb_build_array('inventory-period-barrier','$time_tenant'::uuid)::text,0)&4294967295)::oid AND l.objsubid=1")" == t ]]
+[[ "$(psql_ci -c "SELECT count(*)=0 FROM inventory.stock_ledger WHERE tenant_id='$time_tenant'")" == t ]]
+[[ "$(psql_ci <<SQL
+SET statement_timeout='5s';
+SET SESSION AUTHORIZATION upc_time_b;
+SELECT finance.close_period('$clock_period');
+SQL
+)" == "$clock_period" ]]
+# Close has committed, but the writer must still be blocked before its barrier.
+[[ "$(psql_ci -c "SELECT count(*)=1 FROM pg_locks l JOIN pg_stat_activity a USING(pid) WHERE a.application_name='upc_test_clock_writer' AND l.locktype='advisory' AND l.classid=58256::oid AND l.objid=55::oid AND l.objsubid=2 AND NOT l.granted")" == t ]]
+[[ "$(psql_ci -c "SELECT count(*)=0 FROM inventory.stock_ledger WHERE tenant_id='$time_tenant'")" == t ]]
+wait "$clock_holder" || { cat "$tmp/clock_holder"; exit 1; }
+wait "$clock_writer" || { cat "$tmp/clock_writer"; exit 1; }
+psql_ci <<SQL
+DROP TRIGGER aa_upc_test_prebarrier_clock ON inventory.stock_ledger;
+DROP FUNCTION public.upc_test_prebarrier_clock();
+DO \$\$ BEGIN
+ IF NOT EXISTS(SELECT 1 FROM inventory.stock_ledger l JOIN finance.fiscal_periods p USING(tenant_id)
+ WHERE l.tenant_id='$time_tenant' AND l.adjustment_key='synthetic-prebarrier-clock' AND p.period_id='$clock_period'
+ AND l.recorded_at<p.closed_at AND l.quantity_delta=1)
+ THEN RAISE EXCEPTION 'FAIL pre-barrier timestamp observation'; END IF;
+ RAISE NOTICE 'TEMPORAL_OBSERVATION stock DEFAULT timestamp precedes close although writer committed afterward; no cutoff crossing proven';
+END \$\$;
+SET SESSION AUTHORIZATION upc_time_b;
+SELECT inventory.adjust_stock('$time_wh','$time_variant',1,'synthetic-prebarrier-clock','Synthetic timestamp observation');
+SELECT finance.close_period('$clock_period');
+RESET SESSION AUTHORIZATION;
+SQL
+[[ "$(psql_ci -c "SELECT count(*)=1 AND sum(quantity_delta)=1 FROM inventory.stock_ledger WHERE tenant_id='$time_tenant'")" == t ]]
+echo 'PASS COGS concurrency: twenty-four competing lock races, barrier exclusion and actual atomic close contention, finance-only tenant, historical rejection, exact retry and actual platform module decision contention and positive reconciled nonempty historical close, temporal guards, committed late-cost rejection, protected-role audit and commit/pre-barrier observations'
 
 
 

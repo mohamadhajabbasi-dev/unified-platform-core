@@ -270,3 +270,9 @@
 
 ## REVIEW-027B — 2026-11-25
 - REVIEW-027B: audited all 55 migration files at 0f0614a49dd5ce236e88528d43afddde42b62c59 for table declarations/return-refund references and reviewed active 0007,0009,0027,0050,0054 contracts. No equivalent independent return receipt/disposition line relation found; documented necessity, candidate composite FK design, full-return/replay/refund caller matrix, and barrier scope (returns covered, payment/refund not listed; journals covered). No executable changes while run 45618642657 in progress. Next verify full CI, then REVIEW-027A observations, then minimal 0056 with no financial activation. No production access.
+
+## TEST-069 — verified / 2026-11-25
+- TEST-068 failed at 0f0614a49dd5ce236e88528d43afddde42b62c59 run 45618642657 with SQLSTATE 42601 at DO $; owner identified delimiter; FIX-027B at 1cf43716d1dd8f00e80192f6432c0fcc06caeb33 changed exactly two delimiter lines, no assertion or policy. TEST-069 verified run 45619317852 job 139222918412 at that exact SHA completed success: 55 contiguous migration/test pairs, 64 PASS suites, 85 tables, four ID guard tests, all nine concurrency suites and 24 COGS races. Four TEMPORAL_GUARD notices verified including independent committed late-cost close rejection. FIFO chain 1711/1699ms and moving-average 539/519ms synthetic only. No production access.
+
+## TEST-070 — candidate / 2026-11-25
+- TEST-070 candidate: characterize actual close followed by finance expiry before COMMIT and actual stock DEFAULT evaluated before shared tenant barrier using isolated temporal fixture B; exact two-int test lock, actual blocked writer and independent close commit verified by pg_locks, no timestamp rewrite or midnight crossing. Temporary test trigger removed; existing retry and ledger cap assertions retained. No runtime SQL, migration, table, financial or module policy change. CI pending.

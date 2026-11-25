@@ -571,3 +571,7 @@
 - [x] Audit all 55 migration table declarations and return/refund dependencies; establish independent receipt/disposition line gap and compatibility matrix in inventory valuation design.
 - [ ] Verify FIX-027A run 45618642657 at 0f0614a49dd5ce236e88528d43afddde42b62c59; repair any failure before advancing.
 - [ ] Execute REVIEW-027A commit expiry and pre-barrier timing observations, then minimal 0056 only with exact composite FK/RLS/ACL/barrier and legacy compatibility. Keep existing unique order/payment constraints until cap and dependent paths are safe; no active partial valuation/refund or production access.
+
+## TEST-069 / TEST-070 — current
+- [x] Verify exact corrected 0055 CI (64 suites); add two remaining temporal observations in existing synthetic COGS harness.
+- [ ] Verify exact new CI SHA and fix failures. Characterization only: if observed, document commit-expiry and pre-barrier ordering as limitations, not approved policy. Review mitigation for all relevant writers, then minimal 0056 according to REVIEW-027B, no new table unless necessary and no unapproved financial activation. Next unused migration 0056. No operational access.

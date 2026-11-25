@@ -93,3 +93,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### REVIEW-027B — independent event gap confirmed; proposal only
 - No current equivalent to a physical return receipt/disposition line was found in all 55 migrations. sales.return_items is a justified candidate dependent fact, not a new master; no table or writer added. Existing unique order/payment constraints and full-return/refund/replay semantics remain unchanged pending tested compatibility; final financial and quarantine policies still require approval.
+
+### TEST-069 / TEST-070 — confirmed 0055 and characterization boundary
+- 0055 verified against exact corrected fixture. The two new tests document behavior after close function return and before shared barrier; no global entitlement or effective-date change. Final commit-time validity and timestamp semantics remain owner decisions; no operational approval implied.
