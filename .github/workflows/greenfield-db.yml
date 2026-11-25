@@ -122,6 +122,11 @@ jobs:
           PG_CONTAINER: ${{ job.services.postgres.id }}
         run: bash db/tests/concurrency/reorder_policies.sh
 
+      - name: Run concurrent shipping method acceptance test
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/tests/concurrency/shipping_methods.sh
+
   return-upgrade:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -287,3 +292,26 @@ jobs:
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}
         run: bash db/tests/upgrade/0068_reorder_policy_config.sh
+
+  shipping-upgrade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: upc_greenfield_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres -d upc_greenfield_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Validate migration IDs and matching SQL tests
+        run: python3 db/check_migrations.py
+      - name: Verify committed shipping method upgrade
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/tests/upgrade/0069_shipping_methods.sh
