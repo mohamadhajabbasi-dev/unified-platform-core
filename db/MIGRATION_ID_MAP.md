@@ -74,3 +74,8 @@ Both 0059 jobs SUCCESS run 45635678490; 59 contiguous pairs. Next unused ID 0060
 
 ## BUILD-028E candidate
 0060_strict_return_allocation_contract.sql and matching acceptance test authored. CI pending. Next unused ID 0061.
+
+
+## TEST-081 verified
+Exact verified baseline: 1da3f256fe310ce61fe6b9cc0f756a90c069bf4a; [run 45638979449](https://github.com/mohamadhajabbasi-dev/unified-platform-core/actions/runs/45638979449), foundation 139292029109 SUCCESS and return-upgrade 139292029988 SUCCESS. Logs: 60 unique contiguous migration/test pairs, 86 tables, 69 PASS suites, four numbering tests, all nine concurrency suites including 24 COGS races; actual committed pre-0058 ordinary/traced history replay and upgrade passed. 0060 strict four-key allocation validation precedes normalization/replay; explicit damaged/expired/sellable and unknown keys, partial traced return and expired admission rejected; unchanged order/return/line/stock/refund/journal facts and valid exact replay.
+Next unused ID 0061; REVIEW-029 documentation checkpoint only.
