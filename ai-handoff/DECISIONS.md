@@ -132,3 +132,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### REVIEW-028D — lifecycle contract, not operational authorization
 - Derive physical receipt capacity from existing immutable receipt events and original sale movement; historical exact ledger fallback is exclusive, not additive. Custody, saleable admission, cost reversal and refund are distinct effects. Preserve all existing constraints until compatible callers and approved policy. 0059 verified; no 0060 SQL in this checkpoint.
+
+### BUILD-028E — reject undeclared return allocation semantics
+- Return-specific strict JSON allowlist before normalization or idempotent replay. Unknown metadata cannot be silently interpreted as sellable. No shared normalizer change, no new API, no new grants or policy. Existing documented four keys supported; formerly ignored keys now rejected. No partial writer or financial activation.

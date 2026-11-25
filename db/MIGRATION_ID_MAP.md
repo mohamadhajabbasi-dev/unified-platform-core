@@ -71,3 +71,6 @@ Both 0058 jobs verified run 45633317796. 0059_return_receipt_reconciliation.sql 
 
 ## TEST-080 verified
 Both 0059 jobs SUCCESS run 45635678490; 59 contiguous pairs. Next unused ID 0060; review only, no new migration.
+
+## BUILD-028E candidate
+0060_strict_return_allocation_contract.sql and matching acceptance test authored. CI pending. Next unused ID 0061.

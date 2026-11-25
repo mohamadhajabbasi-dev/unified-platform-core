@@ -621,3 +621,7 @@
 ## TEST-080 / REVIEW-028D — current
 - [x] Verify both 0059 jobs and scan all 59 migrations for receipt/refund/availability dependencies; define read-only lifecycle contract and regression matrix.
 - [ ] Next unused 0060: implement synthetic-only safety prerequisite if justified; verify live entrypoints fail closed for unsupported partial/non-sellable receipts and no effects, audit transitive dependencies. No partial/quarantine/financial policy activation before owner approval. No production access.
+
+## BUILD-028E — current
+- [x] Identify and close ignored disposition field on existing traced full-return entrypoint; add synthetic negative and exact replay tests.
+- [ ] Verify both 0060 CI jobs at exact SHA, fix failures. Then evaluate partial receipt/custody and trusted history marker only with owner-approved business policy; preserve financial and temporal gates. Next unused ID 0061. No operational access.
