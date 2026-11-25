@@ -49,7 +49,7 @@ BEGIN
  FOREACH bad IN ARRAY ARRAY[NULL::text,'','UPPER','bad key',repeat('a',81)] LOOP
   BEGIN PERFORM sales.register_shipping_method(bad,'Synthetic'); RAISE EXCEPTION 'FAIL invalid key'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
  END LOOP;
- FOREACH bad IN ARRAY ARRAY[NULL::text,'',E' \\t',E'a\\nb',repeat('a',201)] LOOP
+ FOREACH bad IN ARRAY ARRAY[NULL::text,'',E' \t',E'a\nb',repeat('a',201)] LOOP
   BEGIN PERFORM sales.register_shipping_method('invalid',bad); RAISE EXCEPTION 'FAIL invalid name'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
  END LOOP;
  FOREACH cmd IN ARRAY ARRAY[
