@@ -670,3 +670,8 @@
 ## TEST-086 / FIX-030B — current
 - [x] Inspect exact failed 0063 run 45650762864, separate volatile state transitions from acceptance assertions and strengthen exact replay row checks.
 - [ ] Verify correction branch ref and exact run, both jobs plus actual CRM create/attach contention and catalog count. If failed, diagnose precise new assertion. If PASS, promote exact branch changes to main preserving history (fast-forward or verified PR), verify resulting main SHA and required CI before next development. Last verified 0062. No 0064 until full success. All previous policy and production gates remain.
+
+
+## TEST-087 / REVIEW-031B — current
+- [x] Verify candidate 0063 exact full CI, count logs, prior upgrade and concurrency; record PR state and queue design.
+- [ ] Verify PR #1 exact run 45652606889 and merge result; main must contain tested candidate tree/history. Verify main CI. Reconcile this documentation-only checkpoint into main (do not duplicate existing commits). If connector fails, report blocker and retain branch/commit. No 0064 DDL before main promotion. Then implement and test minimal queue identity/binding per docs/CRM_SERVICE_QUEUE_DESIGN_FA.md. All previous gates remain; no production/legacy access.

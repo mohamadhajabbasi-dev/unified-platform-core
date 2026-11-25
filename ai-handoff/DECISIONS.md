@@ -177,3 +177,7 @@ Tag metadata and unique customer-tag relationship are separate from customer ide
 
 ## FIX-030B — test sequencing only
 Do not combine volatile tag mutations with snapshot reads or multiple state transitions inside one SQL boolean expression. Assert returned identity, persisted state and immutable full-row replay in separate statements; retain audit evidence. No change to business or access policy.
+
+
+## REVIEW-031B — provisional technical queue design
+One queue metadata identity per tenant; nullable tenant-aware FK on canonical support_tickets; preserve existing engagement read/write semantics and add dedicated queue write controls to prevent direct assignment bypass. No automatic assignment, queue access boundary or SLA/customer feedback policy. Design only, not owner-approved new policy. See docs/CRM_SERVICE_QUEUE_DESIGN_FA.md.

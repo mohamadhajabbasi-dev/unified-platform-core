@@ -383,3 +383,6 @@ Next 0060 should be a synthetic-only safety prerequisite, not an unapproved part
 
 
 - 2026-11-25 TEST-086 / FIX-030B: failed 0063 acceptance at combined detach retry assertion; separate volatile mutations from observations, add full-row replay checks. Migration unchanged; CI pending on candidate branch.
+
+
+- 2026-11-25 TEST-087 / REVIEW-031B: exact candidate 0063 verified (63/75/90), PR #1 still open, documented queue ACL and acceptance contract. Documentation checkpoint only; main not promoted.
