@@ -82,13 +82,13 @@ INSERT INTO inventory.warehouses(tenant_id,warehouse_id,warehouse_key,name) VALU
  ('e5500000-0000-0000-0000-000000000001','e5540000-0000-0000-0000-000000000003','second','Second warehouse');
 
 -- Verify the isolated fixture's role/membership setup before using it.
-DO $ BEGIN
+DO $$ BEGIN
  IF (SELECT count(*) FROM iam.membership_roles mr WHERE mr.tenant_id IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002'))<>3
  OR (SELECT count(*) FROM iam.roles r WHERE r.tenant_id IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002'))<>3
  OR EXISTS(SELECT 1 FROM iam.membership_roles mr JOIN iam.roles r USING(tenant_id,role_id)
   WHERE r.role_key IN ('temporal-0055-editor','temporal-0055-reader') AND mr.tenant_id NOT IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002'))
  THEN RAISE EXCEPTION 'FAIL temporal fixture role isolation'; END IF;
-END $;
+END $$;
 
 -- Fresh isolated synthetic tenant, run LAST after other COGS tests.
 -- Project historical receipt and posting dates only in fixture triggers.
