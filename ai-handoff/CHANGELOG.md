@@ -362,3 +362,6 @@ Next 0060 should be a synthetic-only safety prerequisite, not an unapproved part
 
 
 - 2026-11-25 TEST-081 / REVIEW-029: verify 0060 exact SHA and both CI jobs; reconcile all 57 canonical groups against 60 migration texts; refresh handoff, README, map and design. Documentation-only, no new migration, table, grant, test weakening or production change. 57 groups: 22 verified prototype, 12 partial, 23 not implemented. Counts classify groups, not percentage of database completion; some groups overlap (e.g. parties, distribution, tax submissions), and verified means relevant structures and baseline CI exist, not every field, policy or operation is validated. All 60 migration texts scanned for CREATE TABLE, ALTER move/rename, DROP, functions/views; selected definitions and 0060 acceptance/logs reviewed. No independent exhaustive column/ACL/call graph or load audit.
+
+
+- 2026-11-25 REVIEW-029A: inspect physical location/site dependency definitions and document minimal proposed 0061, existing website_host collision, audit identity extension and test matrix. CI 45641015000 still in progress at last observation, no new SQL or tests, no operational change.
