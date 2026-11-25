@@ -200,12 +200,12 @@ BEGIN
  BEGIN
   PERFORM finance.post_manual('inventory-other-activity','IRR','Synthetic outside activity',
   jsonb_build_array(jsonb_build_object('account_id',asset,'amount',25),jsonb_build_object('account_id',ap,'amount',-25)));
-  IF NOT EXISTS(SELECT 1 FROM finance.tenant_inventory_asset_activity() a WHERE a.account_id=asset AND a.inventory_net=1060 AND a.other_net=25 AND a.other_line_count=1 AND a.ledger_net=1085)
+  IF NOT EXISTS(SELECT 1 FROM finance.tenant_inventory_asset_activity() aa WHERE aa.account_id=asset AND aa.inventory_net=1060 AND aa.other_net=25 AND aa.other_line_count=1 AND aa.ledger_net=1085)
   OR NOT EXISTS(SELECT 1 FROM finance.tenant_inventory_cost_issues() i WHERE i.account_id=asset AND i.issue_code='inventory_asset_other_activity')
   THEN RAISE EXCEPTION 'FAIL outside inventory activity'; END IF;
   PERFORM finance.post_manual('inventory-other-offset','IRR','Synthetic offset',
   jsonb_build_array(jsonb_build_object('account_id',asset,'amount',-25),jsonb_build_object('account_id',ap,'amount',25)));
-  IF NOT EXISTS(SELECT 1 FROM finance.tenant_inventory_asset_activity() a WHERE a.account_id=asset AND a.other_net=0 AND a.other_line_count=2)
+  IF NOT EXISTS(SELECT 1 FROM finance.tenant_inventory_asset_activity() aa WHERE aa.account_id=asset AND aa.other_net=0 AND aa.other_line_count=2)
   OR NOT EXISTS(SELECT 1 FROM finance.tenant_inventory_cost_issues() i WHERE i.account_id=asset AND i.issue_code='inventory_asset_other_activity')
   THEN RAISE EXCEPTION 'FAIL net-zero outside activity'; END IF;
   BEGIN PERFORM finance.assert_tenant_inventory_cost_ready(); RAISE EXCEPTION 'FAIL unattributed activity readiness'; EXCEPTION WHEN check_violation THEN NULL; END;

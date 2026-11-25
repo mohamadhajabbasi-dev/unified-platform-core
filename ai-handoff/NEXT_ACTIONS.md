@@ -457,3 +457,8 @@
 ## TEST-047 / BUILD-026O — current
 - [x] Verify ten COGS races; author 0043 tenant-level reconciliation.
 - [ ] Verify exact new CI SHA (43 SQL + nine concurrency, ten COGS race cases, four guard tests). Repair failures. Next complex transfer dependency capture, tracked valuation, accounting policy and period-close review. No production access.
+
+
+## FIX-012 — current
+- [x] Diagnose failed 0043 test and remove alias collision from both assertions.
+- [ ] Verify exact FIX-012 CI SHA (43 SQL + nine concurrency, ten COGS races, four guard tests). Repair any subsequent failures. Only after success proceed to 0044 complex transfer chain cost capture. No production access.
