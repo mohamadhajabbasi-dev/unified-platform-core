@@ -579,3 +579,7 @@
 ## REVIEW-027C — current
 - [x] Check exact canonical keys and reduce candidate return-line identity to reservation and original movement; document composite FK targets and negative tests.
 - [ ] Verify TEST-070 run 45621026901 at df91393c97e5668b548975cdd21411eabb2458cb and fix any failure; record observed limitations. Then minimal 0056 structural implementation only with exact constraints, RLS/ACL/barrier, no runtime/executor DML before safe writer and cap. No policy activation or operational access.
+
+## TEST-070 / BUILD-027B — current
+- [x] Verify TEST-070 and record both unresolved temporal boundaries; add dormant 0056 structural relationship and rollback-only tests.
+- [ ] Verify exact 0056 CI SHA, repair failures first. Next implement safe single canonical receipt writer/cap and legacy compatibility before enabling any partial/non-sellable receipt; review all writers for timing mitigation, retain no unapproved accounting/refund/disposition activation. Owner decisions: commit entitlement, effective cutoff and quarantine/financial policy. Next unused migration 0057; no operational access.

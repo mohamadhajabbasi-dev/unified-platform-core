@@ -53,3 +53,6 @@ The original normalization table above is historical. Current canonical IDs 0001
 
 ## TEST-069 verified
 0055 verified at run 45619317852, exact SHA 1cf43716d1dd8f00e80192f6432c0fcc06caeb33; 55 contiguous pairs. Next unused ID 0056.
+
+## BUILD-027B candidate
+TEST-070 verified 55 pairs at run 45621026901. 0056_return_receipt_line_structure.sql and matching test authored; CI pending. Next unused ID 0057.

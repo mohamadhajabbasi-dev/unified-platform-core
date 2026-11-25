@@ -99,3 +99,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### REVIEW-027C — candidate normalized return line keys
 - Prefer deriving item/variant/warehouse/lot/serial/allocation from existing reservation and original sale movement. Exact three composite FK targets bind header, order item and sold movement; do not store redundant derived identity or totals. No new table or write permissions in this checkpoint. Final disposition and valuation policy open.
+
+### BUILD-027B — dormant dependent fact, not financial policy
+- TEST-070 demonstrates commit expiry and pre-barrier DEFAULT ordering; neither resolves final policy. 0056 adds only the independent receipt line structure, with normalized original sale identity and no runtime/executor DML. Keep old unique constraints and all existing full-return/refund/valuation semantics. Aggregate cap and physical disposition writer are mandatory future gates; no production or final policy approval.
