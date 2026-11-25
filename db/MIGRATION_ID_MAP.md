@@ -101,3 +101,8 @@ TEST-085: exact correction SHA 843483533613e7d577cb6953d4f0c51827cf3247 run 4564
 
 ## FIX-030B
 0063 authored on candidate branch; run 45650762864 failed at detach retry acceptance. Test sequencing correction only. Last verified 0062; next unused 0064 after PASS and main promotion.
+
+
+## TEST-087
+TEST-087: exact 0063 correction 6416975751ad8c178844ef6425d391ea9364eb2b, branch upc-0063-crm-tags-fix, run 45651092876 SUCCESS; foundation 139335469451 and return-upgrade 139335469186 SUCCESS; 63 contiguous pairs, 75 PASS suites (63 SQL + 12 concurrency), actual catalog count 90 base tables; observed CRM tag create and attach lock waits, exact IDs and audit counts, conflict rejected; 24 COGS races. Tag/merge group PARTIAL (merge absent). 57-group classification 23 verified prototype, 14 partial, 20 not implemented. Counts verified on candidate branch, NOT main. Main verified 0062 (62 migrations, 73 PASS, 88 tables).
+Next unused 0064 after main promotion and verification. No new migration in checkpoint.
