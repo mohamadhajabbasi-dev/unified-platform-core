@@ -365,3 +365,6 @@ Next 0060 should be a synthetic-only safety prerequisite, not an unapproved part
 
 
 - 2026-11-25 REVIEW-029A: inspect physical location/site dependency definitions and document minimal proposed 0061, existing website_host collision, audit identity extension and test matrix. CI 45641015000 still in progress at last observation, no new SQL or tests, no operational change.
+
+
+- 2026-11-25 TEST-082 / BUILD-029B: verified 0060 checkpoint; authored minimal business location relation and audit extension, SQL and unique-race tests, CI pending. No operational changes.

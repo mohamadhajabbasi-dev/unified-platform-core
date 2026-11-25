@@ -37,3 +37,9 @@
 
 ## مسائل باز حفظ‌شده
 commit-time module expiry و pre-barrier recorded_at در 0055 و تست‌های قبلی حل نشده‌اند؛ partial/damaged/expired receipt، quarantine، refund/valuation هم بدون سیاست مصوب فعال نشوند. هیچ دسترسی به ERPPlus/CommerceAI یا production.
+
+
+## TEST-082 / BUILD-029B — 2026-11-25
+- Verified exact 0060 checkpoint SHA aaf1bf5e490e36b6412b513f1956d32b0f9a8612, run 45641015000 SUCCESS, foundation 139299347881 and return-upgrade 139299347939 SUCCESS; logs 60 contiguous pairs, 86 tables, 69 PASS suites, 24 COGS races. Reviewed current HEAD c88c0afd092089987915a67a749641ae21090339.
+- Authored 0061_business_locations.sql with one physical business-location child, tenant-scoped immutable identity and composite existing address FK, RLS/ACL, exact existing audit writer target extension. No warehouse/host/site/stock/order changes. Address binding additionally requires existing tenant.legal.read; server generates ID/timestamp; location_kind immutable. Explicit location-key conflict, not silent retry or API idempotency; runtime create retry requires future reviewed exact-payload contract. Non-null address on UPDATE requires legal read (including other field updates); address text remains protected. No grant to new permissions except synthetic tests. Metadata only; no module or sales activation.
+- Matching rollback SQL test and real competing unique-index write shell test added; workflow adds one step before COGS, existing suites unchanged. Candidate expected 61 migration/test pairs, 87 tables, 71 PASS (61 SQL + 10 concurrent), plus independent return history upgrade. Runtime CI PENDING. No production or legacy access. Temporal expiry/pre-barrier timing, partial/quarantine/refund policy unchanged.

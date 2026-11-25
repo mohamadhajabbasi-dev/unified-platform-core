@@ -112,3 +112,7 @@ Open gates: module entitlement expiry after function returns and before COMMIT; 
 
 ## REVIEW-029A design dependency note
 Rows business_locations and sites_and_domains remain NOT IMPLEMENTED; 0011 has informational website_host, not a site/domain registry. [Provisional design](BUSINESS_LOCATION_SITE_DESIGN_FA.md) specifies no duplicate address/warehouse/host master and required compatibility and policy gates. No DDL, no coverage count change.
+
+
+## BUILD-029B candidate
+Business locations authored 0061, CI PENDING; classification and verified group counts unchanged until exact run passes. Site/domain remains not implemented.

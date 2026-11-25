@@ -639,3 +639,8 @@
 - [x] Audit existing core addresses/settings, warehouse, app and analytics schema; identify existing website_host collision and audit target gap; draft minimal location design and test matrix in docs/BUSINESS_LOCATION_SITE_DESIGN_FA.md.
 - [ ] Verify exact run 45641015000 both jobs at aaf1bf5e490e36b6412b513f1956d32b0f9a8612; if failed, fix root cause before development. If successful, implement minimal 0061 business locations and matched SQL acceptance plus actual competing-write test, run full CI and update coverage only after PASS. Keep site registry separate; complete all website_host caller/compatibility inventory and approved domain security policy before implementation. No new DDL until CI passes.
 - [ ] Preserve all prior open temporal, custody, refund/valuation and production gates. Next unused migration 0061.
+
+
+## TEST-082 / BUILD-029B — current
+- [x] Verify exact run 45641015000 both jobs and author minimal 0061 business_locations + SQL/real concurrency tests.
+- [ ] Verify new exact 0061 SHA and both CI jobs. Fix only actual failure if any; then update verified counts/dictionary. Next review website_host references in all migration/test files, informational vs routing semantics, migration compatibility and domain security policy; no duplicate host or operational activation. If security decision blocked, advance independent CRM/catalog requirements instead. Next unused 0062 only after verification. Temporal/financial/production gates remain.
