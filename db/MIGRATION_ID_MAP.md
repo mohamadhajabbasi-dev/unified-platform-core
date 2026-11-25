@@ -47,3 +47,6 @@ The original normalization table above is historical. Current canonical IDs 0001
 
 ## BUILD-026Z candidate
 0054_order_return_capacity.sql and matching acceptance test added; CI pending. Next unused ID 0055, verify tree first.
+
+## BUILD-027A candidate
+0054 verified at run 45608739070; 0055_temporal_close_guards.sql and matching acceptance test authored, CI pending. Next unused ID 0056.

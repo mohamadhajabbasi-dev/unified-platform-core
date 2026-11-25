@@ -553,3 +553,7 @@
 ## TEST-065 / BUILD-026Z — current
 - [x] Verify TEST-065; add 0054 read-only existing sale/return capacity evidence with ordinary and traced tests.
 - [ ] Verify exact new CI SHA, fix before continuing. Then design minimal independent return-line relation only if needed and audit all full-return/refund callers and stock valuation/period gates; cap and disposition must fail closed until supported. Temporal observations documented, final policy unapproved. Next unused ID 0055 (after verifying 0054). No operational access.
+
+## TEST-066 / BUILD-027A — current (owner priority)
+- [x] Verify 0054; implement provisional 0055 guards and regressions for late cost and live close-time module expiry.
+- [ ] Verify exact new CI SHA; fix any failure first. Review commit-time entitlement behavior, time-before-row-barrier boundary and lock/performance impact; final policy requires owner approval. After verified guard, return to DESIGN-0054 with independent line fact only if needed, cap/identity/non-sellable disposition; no financial activation. Next unused ID 0056; no operational access.

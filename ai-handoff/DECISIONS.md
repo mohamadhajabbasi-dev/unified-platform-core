@@ -81,3 +81,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### BUILD-026Z — provisional read-only evidence
 - Reuse existing tracked evidence and full-return keys; no new storage or write API. Derived remaining quantity is evidence of current legacy physical return capacity only, not financial approval, inspection result, or guarantee of eligible return. No owner-approved change to financial policy.
+
+### BUILD-027A — provisional conservative safeguards, not final policy
+- Late capture of pre-cutoff movements blocks close rather than inventing accounting effective dates or rewriting facts. Module decision lookup shared, ordinary statement-time RLS unchanged; live validity for new close is checked under existing locks and before/after write. No claim of transaction-commit validation, global expiry semantics, or historical as-of. Owner to decide late adjustments and whether entitlement must persist through commit, plus return financial/disposition policies.
