@@ -575,3 +575,7 @@
 ## TEST-069 / TEST-070 — current
 - [x] Verify exact corrected 0055 CI (64 suites); add two remaining temporal observations in existing synthetic COGS harness.
 - [ ] Verify exact new CI SHA and fix failures. Characterization only: if observed, document commit-expiry and pre-barrier ordering as limitations, not approved policy. Review mitigation for all relevant writers, then minimal 0056 according to REVIEW-027B, no new table unless necessary and no unapproved financial activation. Next unused migration 0056. No operational access.
+
+## REVIEW-027C — current
+- [x] Check exact canonical keys and reduce candidate return-line identity to reservation and original movement; document composite FK targets and negative tests.
+- [ ] Verify TEST-070 run 45621026901 at df91393c97e5668b548975cdd21411eabb2458cb and fix any failure; record observed limitations. Then minimal 0056 structural implementation only with exact constraints, RLS/ACL/barrier, no runtime/executor DML before safe writer and cap. No policy activation or operational access.

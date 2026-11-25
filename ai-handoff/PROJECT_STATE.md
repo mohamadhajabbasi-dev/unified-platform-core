@@ -581,3 +581,6 @@
 
 ## TEST-070 — candidate / 2026-11-25
 - TEST-070 candidate: characterize actual close followed by finance expiry before COMMIT and actual stock DEFAULT evaluated before shared tenant barrier using isolated temporal fixture B; exact two-int test lock, actual blocked writer and independent close commit verified by pg_locks, no timestamp rewrite or midnight crossing. Temporary test trigger removed; existing retry and ledger cap assertions retained. No runtime SQL, migration, table, financial or module policy change. CI pending.
+
+## REVIEW-027C — 2026-11-25
+- REVIEW-027C: exact key audit 0005/0006/0007/0027/0028/0031/0052/0054 at df91393c97e5668b548975cdd21411eabb2458cb; use reservation unique identity of order_item and sale movement with nonnull reservation FK to derive item/product/warehouse/lot/serial/allocation instead of duplicate columns. Document exact three candidate composite unique/FK targets, no direct writer until cap and existing lock/RLS/barrier integration, structural negative test matrix. No new table or SQL; TEST-070 run 45621026901 still in progress. No production or policy change.

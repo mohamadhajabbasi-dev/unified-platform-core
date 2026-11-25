@@ -96,3 +96,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### TEST-069 / TEST-070 — confirmed 0055 and characterization boundary
 - 0055 verified against exact corrected fixture. The two new tests document behavior after close function return and before shared barrier; no global entitlement or effective-date change. Final commit-time validity and timestamp semantics remain owner decisions; no operational approval implied.
+
+### REVIEW-027C — candidate normalized return line keys
+- Prefer deriving item/variant/warehouse/lot/serial/allocation from existing reservation and original sale movement. Exact three composite FK targets bind header, order item and sold movement; do not store redundant derived identity or totals. No new table or write permissions in this checkpoint. Final disposition and valuation policy open.
