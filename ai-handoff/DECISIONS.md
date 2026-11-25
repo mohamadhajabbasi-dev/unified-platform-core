@@ -126,3 +126,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### BUILD-027E — exact receipt reconciliation, no new quantity source
 - Keep existing capacity API and its read gates. New line-bearing receipts must exactly match validated return movements, legacy zero-line receipts retain ledger fallback. No double count, no new writer or financial rule. Total privileged deletion remains a known limit; no independent marker added.
+
+### REVIEW-028C — do not equate quarantine with warehouse naming
+- Reuse existing return header/line and movement identities; one-order/one-payment unique constraints not relaxed before all readers and writers are safe. Non-sellable physical receipt cannot increase available stock or silently reverse COGS/refund. Existing expiry/serial guards stay. Quarantine representation and independent event necessity require evaluation, no new table or final policy.

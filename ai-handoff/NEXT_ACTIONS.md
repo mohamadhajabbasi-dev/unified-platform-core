@@ -613,3 +613,7 @@
 ## TEST-078 / BUILD-027E — current
 - [x] Verify both corrected 0058 jobs; implement 0059 exact read-only receipt reconciliation and extend actual upgrade evidence.
 - [ ] Verify exact 0059 CI both jobs; fix any failures. Next review partial/damaged/expired physical receipt lifecycle, quarantine and independent facts without duplicates. Do not activate partial/non-sellable/valuation/refund without approved policy. Owner decisions for commit entitlement and temporal cutoff still open. Next unused ID 0060. No operational access.
+
+## TEST-079 / REVIEW-028C — current
+- [x] Verify 0059 actual upgrade job and inspect existing receipt/refund/warehouse/trace/valuation constraints. Record concrete gaps and preserve current controls.
+- [ ] Verify foundation 139280341524 exact run 45635678490 before changing SQL; audit remaining latest callers and design safe partial receipt/custody lifecycle without duplicate tables; next unused 0060. No partial/non-sellable/refund/valuation activation before owner approval; unresolved temporal boundaries remain. No operational access.
