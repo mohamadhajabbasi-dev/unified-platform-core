@@ -482,3 +482,8 @@
 ## TEST-051 / BUILD-026Q — current
 - [x] Verify TEST-050, document invalid timing, author 0045 traced evidence and monotonic timing fix.
 - [ ] Verify exact new CI SHA (45 SQL + nine concurrency, twelve COGS races, four guard tests); record valid timings; repair before proceeding to 0046 explicit tracked valuation policy and shared replay design. No production access.
+
+
+## TEST-052 / BUILD-026R — current
+- [x] Verify 0045 and valid timings; author explicit tracked policy methods and correct stale README.
+- [ ] Verify exact new CI SHA (46 SQL + nine concurrency, twelve COGS races, four guard tests). Repair before 0047 shared trace-aware replay/prefix and receipt/sale cost capture. Multi-line transfer capture, tracked COGS/returns and final policy pending. No production access.
