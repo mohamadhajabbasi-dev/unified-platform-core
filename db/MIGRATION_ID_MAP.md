@@ -44,3 +44,6 @@ Read-back correction FIX-008: actual one-character delimiter fix is committed se
 
 ## Current continuation checkpoint (2026-11-25)
 The original normalization table above is historical. Current canonical IDs 0001–0053 are contiguous and verified at run 45601424659. Next unused ID: **0054**; recheck tree and guard before allocating. TEST-063 adds no migration.
+
+## BUILD-026Z candidate
+0054_order_return_capacity.sql and matching acceptance test added; CI pending. Next unused ID 0055, verify tree first.

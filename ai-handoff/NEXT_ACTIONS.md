@@ -549,3 +549,7 @@
 - [x] Review existing return/refund and cost sources; document staged partial/damaged/expired design, open policies, acceptance and no duplicate masters.
 - [ ] Verify TEST-065 run 45606515589 at 7ad0480313c54bc7160f14786dccaa89e5859dbd; repair before executable changes.
 - [ ] Audit full return/refund callers and constraints against latest migration tree, then first minimal 0054 read-only evidence or independently justified line fact; keep unapproved valuation/refund/disposition choices provisional and fail closed. Time-before-barrier risk remains unverified; as-of and temporal policy still open. Do not start financial activation or production access. Next unused migration 0054.
+
+## TEST-065 / BUILD-026Z — current
+- [x] Verify TEST-065; add 0054 read-only existing sale/return capacity evidence with ordinary and traced tests.
+- [ ] Verify exact new CI SHA, fix before continuing. Then design minimal independent return-line relation only if needed and audit all full-return/refund callers and stock valuation/period gates; cap and disposition must fail closed until supported. Temporal observations documented, final policy unapproved. Next unused ID 0055 (after verifying 0054). No operational access.

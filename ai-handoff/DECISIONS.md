@@ -78,3 +78,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### DESIGN-0054 — return design proposal (not owner-approved)
 - Reuse canonical return/refund headers, order/items, stock ledger, cost facts, allocations and journal. Per-return line fact candidate only for independent receipt/disposition; validate all existing structures first. Preserve cap/identity/availability and legacy full-return retries. Final disposition, partial cost allocation/rounding, effective date and refund policies remain open; no runtime or production change.
+
+### BUILD-026Z — provisional read-only evidence
+- Reuse existing tracked evidence and full-return keys; no new storage or write API. Derived remaining quantity is evidence of current legacy physical return capacity only, not financial approval, inspection result, or guarantee of eligible return. No owner-approved change to financial policy.

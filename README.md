@@ -2,7 +2,7 @@
 
 مخزن **در حال حاضر عمومی (Public)** برای طراحی و اجرای کنترل‌شده یک دیتابیس عملیاتی مرکزی PostgreSQL در آینده، به‌جای اطلاعات تکراری میان ERPPlus (MySQL) و CommerceAI (PostgreSQL). برنامه‌های ERPPlus، Commerce، CRM، اپ موبایل و کانال‌های آینده باید از یک منبع معتبر و سرویس امن مشترک استفاده کنند.
 
-> **وضعیت تأییدشده (2026-11-25):** نمونه مستقل PostgreSQL با داده مصنوعی در GitHub Actions؛ ۸۵ جدول، ۵۳ Migration یکتا، ۶۲ مجموعه آزمون و چهار آزمون کنترل شماره‌گذاری موفق. [شاهد CI](https://github.com/mohamadhajabbasi-dev/unified-platform-core/actions/runs/45605363818). توسعه بعدی در PROJECT_STATE/NEXT_ACTIONS؛ هیچ استقرار یا مهاجرت داده عملیاتی انجام نشده است.
+> **وضعیت تأییدشده (2026-11-25):** نمونه مستقل PostgreSQL با داده مصنوعی در GitHub Actions؛ ۸۵ جدول، ۵۳ Migration یکتا، ۶۲ مجموعه آزمون و چهار آزمون کنترل شماره‌گذاری موفق. [شاهد CI](https://github.com/mohamadhajabbasi-dev/unified-platform-core/actions/runs/45606515589). توسعه بعدی در PROJECT_STATE/NEXT_ACTIONS؛ هیچ استقرار یا مهاجرت داده عملیاتی انجام نشده است.
 
 ## شروع الزامی هر عامل هوش مصنوعی
 1. [AGENTS.md](AGENTS.md) — دستورالعمل قطعی، ممنوعیت تکرار کار/جدول و اعمال ناامن
