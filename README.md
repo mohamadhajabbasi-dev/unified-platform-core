@@ -2,7 +2,7 @@
 
 مخزن **در حال حاضر عمومی (Public)** برای طراحی و اجرای کنترل‌شده یک دیتابیس عملیاتی مرکزی PostgreSQL در آینده، به‌جای اطلاعات تکراری میان ERPPlus (MySQL) و CommerceAI (PostgreSQL). برنامه‌های ERPPlus، Commerce، CRM، اپ موبایل و کانال‌های آینده باید از یک منبع معتبر و سرویس امن مشترک استفاده کنند.
 
-> **وضعیت تأییدشده شاخه اصلی (2026-11-25):** ۶۴ Migration، ۷۷ مجموعه تست و ۹۱ جدول؛ [CI موفق](https://github.com/mohamadhajabbasi-dev/unified-platform-core/actions/runs/45663024472). اجرای موازی در شاخه آزمایشی تأیید شده؛ ۰۰۶۵ نوشته شده و در انتظار CI است. بدون استقرار عملیاتی.
+> **وضعیت تأییدشده شاخه اصلی (2026-11-26):** ۶۸ Migration، ۸۵ مجموعه تست، ۹۵ جدول و ۸ Job موفق؛ [CI موفق](https://github.com/mohamadhajabbasi-dev/unified-platform-core/actions/runs/45696627212). بدون استقرار عملیاتی.
 
 ## شروع الزامی هر عامل هوش مصنوعی
 1. [AGENTS.md](AGENTS.md) — دستورالعمل قطعی، ممنوعیت تکرار کار/جدول و اعمال ناامن
@@ -33,10 +33,10 @@
 
 
 ## پوشش کامل داده‌های قدیمی در طراحی جدید (GitHub-only)
-برای پیگیری «تمام داده‌ها» ابتدا [فهرست ۲۳۴ مدل EF](docs/LEGACY_DBSET_COVERAGE_2026-11-24.md)، [شواهد فیلدهای واقعی](docs/SOURCE_FIELD_EVIDENCE_FA.md) و [ماتریس ۵۷ گروه جدول‌های مرجع مقصد](docs/CANONICAL_TARGET_TABLE_DICTIONARY_V1_FA.md) را بخوان. این فهرست‌ها برای **پوشش نیازها** هستند، نه کپی دیتابیس فعلی. اسکریپت‌ها و تست‌های مستقل با داده مصنوعی به مرحله تأییدشده 0064 در شاخه اصلی رسیده‌اند؛ آخرین وضعیت اجرای CI و مراحل بعد در PROJECT_STATE و NEXT_ACTIONS است. پایگاه‌داده/سرور/سورس پروژه‌های ERPPlus و CommerceAI دست‌نخورده‌اند. GitHub در حال حاضر **Public** است؛ فقط داده synthetic.
+برای پیگیری «تمام داده‌ها» ابتدا [فهرست ۲۳۴ مدل EF](docs/LEGACY_DBSET_COVERAGE_2026-11-24.md)، [شواهد فیلدهای واقعی](docs/SOURCE_FIELD_EVIDENCE_FA.md) و [ماتریس ۵۷ گروه جدول‌های مرجع مقصد](docs/CANONICAL_TARGET_TABLE_DICTIONARY_V1_FA.md) را بخوان. این فهرست‌ها برای **پوشش نیازها** هستند، نه کپی دیتابیس فعلی. اسکریپت‌ها و تست‌های مستقل با داده مصنوعی به مرحله تأییدشده 0068 در شاخه اصلی رسیده‌اند؛ آخرین وضعیت اجرای CI و مراحل بعد در PROJECT_STATE و NEXT_ACTIONS است. پایگاه‌داده/سرور/سورس پروژه‌های ERPPlus و CommerceAI دست‌نخورده‌اند. GitHub در حال حاضر **Public** است؛ فقط داده synthetic.
 
 
-پوشش ۵۷ گروه داده: 23 گروه نمونه پیاده‌سازی و CI تأییدشده، 14 گروه ناقص، 20 گروه فاقد پیاده‌سازی شناسایی‌شده؛ این تعداد درصد تکمیل پروژه نیست. مرجع جاری ماتریس پوشش و NEXT_ACTIONS است.
+پوشش ۵۷ گروه داده: 23 گروه نمونه پیاده‌سازی و CI تأییدشده، 16 گروه ناقص، 18 گروه فاقد پیاده‌سازی شناسایی‌شده؛ این تعداد درصد تکمیل پروژه نیست. مرجع جاری ماتریس پوشش و NEXT_ACTIONS است.
 
 
 ## TEST-092 / BUILD-033 — 2026-11-25
@@ -53,3 +53,11 @@
 ## TEST-094 / BUILD-034 — 2026-11-25
 - Exact main 0066 922820c9feb4076879cb16b65de8b145405acfc7 run 45688931947 all six jobs SUCCESS; foundation 139468893410 66 contiguous pairs, 80 PASS, 92 base tables, actual barcode concurrency; COGS 139468895366 one PASS/24 races; four committed upgrades passed. PR #7 exact run 45687821259 SUCCESS; merge tree matched candidate. Coverage 23 verified/15 partial/19 not implemented. Reconciled checkpoint 9c57da8ef52913ebd02f121126a1da446492f114 once, no duplicate PR.
 - BUILD-034: authored 0067 normalized tenant attribute definitions and one current descriptive textual assignment per variant+attribute. Stable key unique, display label NOT unique (translation/locale policy unresolved; no automatic merge). Explicit key bounds 1..80 and label/value nonblank/no controls 120/512 chars, exact text comparison, no normalization. Scoped executor, RLS, protected register/set, advisory locks, exact replay, serialized differing updates and shared entity/actor audit (not value-history). No new product/variant/price/stock master or permissions, no automatic variant creation, no typed/options/product-level fallback/delete/labels. Synthetic SQL, observed race tests and separate committed upgrade comparing prior rows even after writes; earlier tests unchanged. Expected 67 pairs, 82 foundation + 1 COGS PASS, 94 tables, five upgrades, seven jobs. Pending actual CI. Coverage unchanged pending CI and label lifecycle still absent. Next verify exact branch all jobs, fix actual failures, PR then main CI, no 0068 until complete. No legacy/production access.
+
+
+## TEST-097 / REVIEW-036 — verified main 0068 (2026-11-26)
+- Exact main `4d30eab9c0fbb689b57618e5c600f78ee2798018` verified directly through GitHub branch, merged PR #9 and run 45696627212: completed SUCCESS, all eight jobs (foundation, cogs, queue/category/barcode/attribute/reorder/return-upgrade) SUCCESS. PR run 45695839631 completed SUCCESS at head 2bf4c59cabf584b8b194dd766ba183f58051c6da. No open PR at review time.
+- Foundation job 139495607774: 68 unique contiguous migration/test pairs, 84 PASS markers, measured 95 base tables, actual reorder lock waits and serialized differing updates, exact audit, no stock/procurement effect. COGS job 139495607681: one PASS, 24 races; total 85 suites. Reorder upgrade 139495607634: exact committed pre-0068 stock/reservation/purchasing/permission/catalog facts preserved; no backfill or automatic procurement.
+- Reconciled the 57 dictionary rows using prior 0060 comprehensive migration inventory, subsequent verified 0061–0068 deltas, exact current untruncated migration tree, and current CI evidence. Reorder group N→P; category/attributes/barcodes still P (label lifecycle missing). Counts: 23 verified prototype / 16 partial / 18 not implemented, not a completion percentage. This is incremental coverage reconciliation, not an independent exhaustive field/call-graph/ACL audit.
+- Open temporal issues remain explicitly observed in main COGS logs: module expiry after function return before COMMIT; stock DEFAULT recorded_at preceding close despite later writer commit (no cutoff crossing proven). Partial/damaged/expired return, custody/refund/valuation, domain activation, CRM privacy, reorder basis/lead times/approval/automatic procurement remain gated. No operational or legacy change.
+- Next priority selected for review: shipping/delivery group, dormant tenant shipping-method identity as a possible independent increment; inspect all existing migrations for equivalent relation and audit paths first. No rates, routing, dispatch, order state change, payment/tax effect or activation without policy. Allocate 0069 only after justified non-duplication review. Existing main is verified, checkpoint changes are documentation-only; promotion requires exact branch and PR CI before merge, then main CI. No 0069 SQL in this checkpoint.
