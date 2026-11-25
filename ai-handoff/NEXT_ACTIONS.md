@@ -502,3 +502,8 @@
 ## TEST-055 / BUILD-026U — current
 - [x] Verify 0048, author 0049 shared traced COGS and scoped readiness.
 - [ ] Verify exact CI SHA (49 SQL + nine concurrency, twelve COGS races, four guard tests), repair. Next 0050 tracked full-return reversal and historical cost replay, reconciliation and traced concurrency. No production access.
+
+
+## TEST-056 / BUILD-026V — current
+- [x] Verify 0049, author 0050 exact traced return reversal and replay.
+- [ ] Verify exact CI SHA (50 SQL + nine concurrency, twelve COGS races, four guard tests), repair. Next tracked cost/transfer/COGS/reversal contention and period-close design. Partial/damaged/expired returns and financial policy approval pending. No production access.

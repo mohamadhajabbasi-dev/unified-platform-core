@@ -485,3 +485,10 @@
 
 ## BUILD-026U — latest
 - BUILD-026U: 0049 extends existing post_inventory_cogs and inventory_cost_issues; traced sale identified by exact 0045 evidence, same order/variant locks, confirmed prefix replay and exact source allocations required before writing one journal per sale movement using existing cogs key. Same asset/expense scope and original invoice debit plus exact lot/serial identity. No duplicate writer/table. Readiness now accepts supported traced receipt/sale/transfer histories and still blocks traced returns; replay checks remain. Test on multi-hop lot and serial sale plus a second order with two lot allocations, four COGS journals, exact/conflicting retries, wrong account/method and transfer rejection, tenant-level conservation 680 inventory/740 expense, permissions. 0046 obsolete unsupported receipt diagnostic assertion updated to purchase_invoice_missing. Traced reversal/return replay still pending. New CI pending. No production access.
+
+
+## TEST-056 — verified
+- TEST-056: run 45587915545 job 139114165981 at de663b49b0c5337c905fe9b23c30bb9a4ec4a497 success; 49 migrations, 58 suites (49 SQL + nine concurrency), four guard tests, twelve COGS races. Traced COGS and readiness verified. CHAIN_TIMING FIFO 900/894 ms, moving_average 281/275 ms, synthetic. 85 tables.
+
+## BUILD-026V — latest
+- BUILD-026V: canonical 0050 extends shared reverse_inventory_cogs, replay/prefix and readiness for exact full sellable traced returns. Original allocation and return key, exact identity, captured original replay, original and inverse journal lines, historical receipt layers restored in same engine; no new table or writer. Tests extend 0049 synthetic lifecycle with four returns over two orders, pre-reversal capture denial, wrong method, exact retries, value restoration 1420 and net expense zero, resale and tenant readiness. Traced reversal/return concurrency, partial/damaged/expired/zero-cost policies and period-close controls remain pending. New CI pending; no operational access.
