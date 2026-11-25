@@ -162,3 +162,7 @@ Open gates: module entitlement expiry after function returns and before COMMIT; 
 
 ## FIX-030A — test correction only, no policy change
 The 0062 acceptance test must snapshot complete canonical site and audit rows with explicitly named aliases before and after rejected/replayed operations. Correct unresolved alias references, not the assertion or implementation; no new domain or financial/security decision.
+
+
+## REVIEW-030B provisional technical design
+Tag metadata and unique customer-tag relationship are separate from customer identity, consent, pricing and customer merge. Reuse IAM/CRM module and shared audit; retain one link identity across state changes, no new commercial/security policy or production activation. Design: docs/CRM_CUSTOMER_TAG_DESIGN_FA.md.

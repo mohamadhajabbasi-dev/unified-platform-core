@@ -374,3 +374,6 @@ Next 0060 should be a synthetic-only safety prerequisite, not an unapproved part
 
 
 - 2026-11-25 TEST-084 / FIX-030A: exact 0062 CI failure (missing table alias in test JSON snapshot), corrected four expressions in before/after snapshots; migration and all test assertions unchanged. Full CI pending.
+
+
+- 2026-11-25 REVIEW-030B: 0062 corrected acceptance and site concurrency steps passed, final COGS still running; drafted customer tag design and acceptance matrix. No new migration or operational access.

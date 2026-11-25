@@ -127,3 +127,7 @@ BUILD-030A candidate: 0062 adds only immutable dormant core.sites identity (tena
 
 ## TEST-084 status
 0062 candidate CI run 45647070040 failed at snapshot query in acceptance test; corrected explicit table aliases only. Counts remain 23 verified prototype, 12 partial, 22 not implemented until full pass. Site/domain remains unverified; no policy change.
+
+
+## REVIEW-030B design note
+CRM customer_tags/customer_tag_links/customer_merge_reviews remains NOT IMPLEMENTED. [Tag design](CRM_CUSTOMER_TAG_DESIGN_FA.md) covers proposed tag/link metadata only; merge policy remains separately gated. No coverage count change pending exact 0062 CI completion.

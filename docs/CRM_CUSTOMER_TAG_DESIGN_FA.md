@@ -1,0 +1,28 @@
+# طراحی برچسب مشتری — REVIEW-030B
+تاریخ 2026-11-25. مبنا 843483533613e7d577cb6953d4f0c51827cf3247. طرح فنی آزمایشی، نه سیاست کسب‌وکار یا DDL.
+
+## شواهد و مرجع واحد
+- 0001/0003: crm.customers تنها پرونده مشتری؛ شناسه‌ها و آدرس‌ها جدا و FK مرکب؛ CRM read و module gate موجود.
+- 0013: crm.conversations، support_tickets و customer_consent_events از همان customer_id استفاده می‌کنند؛ consent event مستقل است.
+- 0015: catalog.product_reviews موجود؛ علاقه‌مندی کالا و برچسب مشتری معنای متفاوت دارند. هیچ جدول customer master جدید یا ذخیره TagsCsv در customer/product ساخته نشود.
+- فرهنگ 57 گروه: customer_tags/customer_tag_links/customer_merge_reviews در یک گروه؛ inventory قدیمی CrmTags/CrmPartnerMergeRecords شواهد نیاز هستند، نه الگو برای کپی. CustomerFavorites در گروه کاتالوگ است.
+- scan لفظی ساختار 61 migration قبلی در REVIEW-029B شامل customer_tags بدون hit بود؛ 0062 فقط site identity. این بررسی نبود هر نوع مصرف‌کننده خارجی یا معنای مشابه را اثبات نمی‌کند.
+- از IAM، platform.module_enabled('crm') و ops.audit_events موجود استفاده شود؛ audit function فعلی از site/location و dossier پشتیبانی می‌کند، باید فقط برای tag_id/link_id با شرط schema/table گسترش یابد.
+
+## مدل پیشنهادی 0063 (هنوز تخصیص قطعی نیست)
+1. crm.customer_tags: tenant_id + tag_id PK مرکب، tenant-scoped stable tag_key با الگوی lowercase ASCII و طول 1..80، display_name غیرخالی محدود (1..120)، created_at سرور. UNIQUE(tenant_id,tag_key). بررسی uniqueness نام نرمال‌شده lower(btrim(display_name)) برای جلوگیری از برچسب هم‌نام؛ این برابری معادل معنایی/تمام Unicode نیست. ایجاد مجدد exact key/name همان ID؛ اختلاف payload یا نام تکراری خطای 23505. نام/کلید فعلاً تغییرناپذیر در prototype؛ سیاست تغییر نام/حذف/retention جداگانه.
+2. crm.customer_tag_links: tenant_id + link_id PK مرکب برای audit دقیق، UNIQUE(tenant_id,customer_id,tag_id)، FK مرکب به crm.customers و crm.customer_tags، is_active boolean، created_at و changed_at سروری؛ index(tenant_id,tag_id,customer_id) برای جستجوی برچسب. رابطه یک‌بار ذخیره شود؛ تکرار attach همان شناسه بدون UPDATE/audit؛ detach به‌صورت وضعیت غیرفعال همان رابطه؛ attach مجدد همان ID. detach غایب no-op بدون ایجاد tombstone. سیاست حذف نهایی/retention و داده حساس قبل از استفاده عملیاتی تعیین شود.
+3. هیچ قیمت، تخفیف، اعتبار، گروه دسترسی، رضایت بازاریابی، امتیاز، ویژگی حساس یا merge خودکار از tag نتیجه‌گیری نشود. برچسب فقط metadata داخلی، بدون فعال‌سازی پیام/بازاریابی. free-text نمی‌تواند معنای حساس را در DB تشخیص دهد؛ محدودیت محتوایی و retention قبل از production لازم است.
+4. RLS ENABLE+FORCE، scope و crm.read + crm.tags.read + crm module برای خواندن؛ نوشتن افزون بر این crm.tags.write. هیچ grant خودکار به نقش‌های مشتری یا tenant admin، هیچ direct runtime DML. executor محدود NOLOGIN/NOBYPASSRLS با column ACL، search_path=pg_catalog؛ read-only customer dependency با همان tenant و permission/module، نه grant برای ساخت مشتری یا خواندن شناسه‌های خصوصی. reuse existing scope/permission/module functions. توابع ثبت برچسب و تنظیم رابطه فقط tenant را از session می‌گیرند؛ ورودی null/invalid رد، مشتری/برچسب خارجی و ناموجود به‌صورت یکسان 23503. قفل advisory بر (tenant,tag_key) و (tenant,customer_id,tag_id) در READ COMMITTED، unique constraint backstop. کنترل module statement-time مطابق قرارداد موجود؛ عدم ادعای commit-time expiry حل‌شده. قبل از implementation بررسی platform guard 0052 و 0055 و عدم معرفی قفل ناسازگار.
+5. audit با تابع مشترک موجود و target tag_id/link_id؛ رخداد فقط برای تغییر واقعی، عدم کپی نام یا داده مشتری؛ rollback اتمیک. شناسه‌های ثبت‌شده در audit metadata هستند نه تاریخچه محتوایی یا سیاست retention.
+
+## پذیرش پیشنهادی
+- دو تننت با کلید برچسب برابر و مشتری‌های مستقل؛ دو برچسب/چند مشتری؛ هیچ مشتری/شناسه/consent/قیمت جدید ایجاد نشود. duplicate name/key، payload conflict، invalid input، customer/tag FK cross-tenant و ناموجود رد.
+- exact create/attach/detach replay، inactive→active همان link_id، detach غایب بدون رکورد. شمارش و snapshot قبل/بعد همراه alias صریح؛ audit actor/tenant/entity_id و exact counts؛ rollback.
+- writer/reader/no permission/unmapped و disabled CRM؛ عدم direct DML/role escalation/PUBLIC grants؛ immutable identity. خواندن/نوشتن بدون crm.read رد؛ بدون module نیز رد. آزمون همزمان واقعی با مشاهده lock: duplicate create و duplicate attach، یک ID و یک رخداد، conflict payload رد؛ ترتیب attach/detach serialized (نه ادعای exactly-once historical command). آزمون‌های پیشین دست‌نخورده.
+- بررسی race مربوط به module decision طبق قرارداد موجود و ثبت محدودیت temporal؛ اگر نیاز به سیاست جدید بود، توقف آن بخش نه تضعیف تست. هیچ سیاست امنیتی/مالی جدید تصویب نشده.
+
+## وابستگی‌ها و مرحله بعد
+- ابتدا نتیجه نهایی exact run 45649134004 هر دو job؛ تا PASS هیچ 0063 DDL/test/workflow اضافه نشود.
+- 0062 site/domain فقط پس از PASS از NOT IMPLEMENTED به PARTIAL؛ مالکیت/claim/routing/activation و website_host بدون تغییر. سپس 0063 به عنوان candidate بعد از بررسی ACL/lock contract. بعد از tags، merge review مستقل و policy-gated؛ favorites/alerts نیازمند customer-self authorization و consent/delivery boundary؛ queue/SLA/feedback و counterparty domains همچنان باز.
+- حفظ دو temporal gate، receipt/quarantine/refund/valuation، location retry contract و منع دسترسی production/legacy.
