@@ -87,3 +87,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### REVIEW-027A — open, no policy change
 - A live check at function return is not a durable commit-time guarantee. Do not rely on a deferred trigger alone or change global RLS semantics. The proposed deterministic tests distinguish real timestamp ordering from synthetic cutoff projection. No changes to runtime behavior; approval needed for final financial and commit entitlement policy.
+
+### FIX-027A — synthetic fixture isolation
+- Role keys are tenant-local, not globally unique. All committed concurrency fixture bootstrap queries must explicitly restrict tenant/user scope, even when names are namespaced. Preserve uniqueness constraints; do not suppress duplicate-grant failures. No runtime decision or policy change.

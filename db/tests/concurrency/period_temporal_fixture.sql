@@ -21,15 +21,16 @@ INSERT INTO iam.db_principals VALUES
  ('upc_time_b','e5500000-0000-0000-0000-000000000002','e5510000-0000-0000-0000-000000000002'),
  ('upc_time_reader','e5500000-0000-0000-0000-000000000001','e5510000-0000-0000-0000-000000000003');
 INSERT INTO iam.roles(tenant_id,role_key) VALUES
- ('e5500000-0000-0000-0000-000000000001','inventory-editor'),
- ('e5500000-0000-0000-0000-000000000002','inventory-editor'),
- ('e5500000-0000-0000-0000-000000000001','inventory-reader');
+ ('e5500000-0000-0000-0000-000000000001','temporal-0055-editor'),
+ ('e5500000-0000-0000-0000-000000000002','temporal-0055-editor'),
+ ('e5500000-0000-0000-0000-000000000001','temporal-0055-reader');
 INSERT INTO iam.role_grants SELECT r.tenant_id,r.role_id,p.permission_key FROM iam.roles r CROSS JOIN iam.permissions p
- WHERE r.role_key='inventory-editor' AND p.permission_key LIKE 'inventory.%';
-INSERT INTO iam.role_grants SELECT tenant_id,role_id,'inventory.read' FROM iam.roles WHERE role_key='inventory-reader';
+ WHERE r.tenant_id IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002') AND r.role_key='temporal-0055-editor' AND p.permission_key LIKE 'inventory.%';
+INSERT INTO iam.role_grants SELECT tenant_id,role_id,'inventory.read' FROM iam.roles WHERE tenant_id IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002') AND role_key='temporal-0055-reader';
 INSERT INTO iam.membership_roles SELECT m.tenant_id,m.user_id,r.role_id FROM iam.memberships m JOIN iam.roles r USING(tenant_id)
- WHERE (m.user_id='e5510000-0000-0000-0000-000000000003' AND r.role_key='inventory-reader')
- OR (m.user_id<>'e5510000-0000-0000-0000-000000000003' AND r.role_key='inventory-editor');
+ WHERE m.tenant_id IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002') AND (
+ (m.user_id='e5510000-0000-0000-0000-000000000003' AND r.role_key='temporal-0055-reader')
+ OR (m.user_id IN ('e5510000-0000-0000-0000-000000000001','e5510000-0000-0000-0000-000000000002') AND r.role_key='temporal-0055-editor'));
 INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
  SELECT t.tenant_id,m.module_id,true,'e5510000-0000-0000-0000-000000000001','Synthetic test'
  FROM core.tenants t CROSS JOIN platform.modules m WHERE t.tenant_key IN ('temporal-0055-a','temporal-0055-b') AND m.module_key='inventory';
@@ -47,8 +48,8 @@ INSERT INTO inventory.warehouses(tenant_id,warehouse_id,warehouse_key,name) VALU
 
 GRANT upc_payment_recorder TO upc_time_a;
 INSERT INTO iam.role_grants SELECT r.tenant_id,r.role_id,p.permission_key FROM iam.roles r CROSS JOIN iam.permissions p
- WHERE r.role_key='inventory-editor' AND (p.permission_key LIKE 'sales.%' OR p.permission_key IN ('crm.read','catalog.read'));
-INSERT INTO iam.role_grants SELECT tenant_id,role_id,'sales.read' FROM iam.roles WHERE role_key='inventory-reader';
+ WHERE r.tenant_id IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002') AND r.role_key='temporal-0055-editor' AND (p.permission_key LIKE 'sales.%' OR p.permission_key IN ('crm.read','catalog.read'));
+INSERT INTO iam.role_grants SELECT tenant_id,role_id,'sales.read' FROM iam.roles WHERE tenant_id IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002') AND role_key='temporal-0055-reader';
 INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
  SELECT t.tenant_id,m.module_id,true,'e5510000-0000-0000-0000-000000000001','Synthetic sales test'
  FROM core.tenants t CROSS JOIN platform.modules m WHERE t.tenant_key IN ('temporal-0055-a','temporal-0055-b') AND m.module_key IN ('sales','crm','catalog');
@@ -66,19 +67,28 @@ INSERT INTO catalog.price_entries(tenant_id,variant_id,price_list_id,amount,vali
  FROM catalog.variants v WHERE v.tenant_id='e5500000-0000-0000-0000-000000000001';
 
 INSERT INTO iam.role_grants SELECT tenant_id,role_id,p.permission_key FROM iam.roles CROSS JOIN iam.permissions p
- WHERE role_key='inventory-editor' AND p.permission_key LIKE 'procurement.%';
-INSERT INTO iam.role_grants SELECT tenant_id,role_id,'procurement.read' FROM iam.roles WHERE role_key='inventory-reader';
+ WHERE tenant_id IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002') AND role_key='temporal-0055-editor' AND p.permission_key LIKE 'procurement.%';
+INSERT INTO iam.role_grants SELECT tenant_id,role_id,'procurement.read' FROM iam.roles WHERE tenant_id IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002') AND role_key='temporal-0055-reader';
 INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
  SELECT t.tenant_id,m.module_id,true,'e5510000-0000-0000-0000-000000000001','Synthetic procurement'
  FROM core.tenants t CROSS JOIN platform.modules m WHERE t.tenant_key IN ('temporal-0055-a','temporal-0055-b') AND m.module_key='procurement';
 GRANT upc_supplier_document_verifier,upc_supplier_payment_verifier TO upc_time_a;
 INSERT INTO iam.role_grants SELECT tenant_id,role_id,p.permission_key FROM iam.roles CROSS JOIN iam.permissions p
- WHERE role_key='inventory-editor' AND p.permission_key LIKE 'finance.%';
+ WHERE tenant_id IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002') AND role_key='temporal-0055-editor' AND p.permission_key LIKE 'finance.%';
 INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
  SELECT t.tenant_id,m.module_id,true,'e5510000-0000-0000-0000-000000000001','Synthetic finance'
  FROM core.tenants t CROSS JOIN platform.modules m WHERE t.tenant_key IN ('temporal-0055-a','temporal-0055-b') AND m.module_key='finance';
 INSERT INTO inventory.warehouses(tenant_id,warehouse_id,warehouse_key,name) VALUES
  ('e5500000-0000-0000-0000-000000000001','e5540000-0000-0000-0000-000000000003','second','Second warehouse');
+
+-- Verify the isolated fixture's role/membership setup before using it.
+DO $ BEGIN
+ IF (SELECT count(*) FROM iam.membership_roles mr WHERE mr.tenant_id IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002'))<>3
+ OR (SELECT count(*) FROM iam.roles r WHERE r.tenant_id IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002'))<>3
+ OR EXISTS(SELECT 1 FROM iam.membership_roles mr JOIN iam.roles r USING(tenant_id,role_id)
+  WHERE r.role_key IN ('temporal-0055-editor','temporal-0055-reader') AND mr.tenant_id NOT IN ('e5500000-0000-0000-0000-000000000001','e5500000-0000-0000-0000-000000000002'))
+ THEN RAISE EXCEPTION 'FAIL temporal fixture role isolation'; END IF;
+END $;
 
 -- Fresh isolated synthetic tenant, run LAST after other COGS tests.
 -- Project historical receipt and posting dates only in fixture triggers.

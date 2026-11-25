@@ -562,3 +562,7 @@
 - [ ] Verify 0055 exact run 45610267991 / b321c2ddc975af47acf89337b234be4c48c0efdd; repair any failure first.
 - [x] Specify deterministic commit-expiry and pre-barrier timestamp ordering tests in existing inventory valuation design; no runtime policy change.
 - [ ] Implement observations in the existing synthetic concurrency fixture once 0055 is green, preserve all guards, verify actual CI. Then proceed with minimal physical return-line/cap design, no financial activation without approved policies. Next unused migration 0056. No operational access.
+
+## TEST-067 / FIX-027A — current
+- [x] Inspect exact 0055 failed CI, isolate role-grant and membership fixture namespace and tenant scope; preserve all guards.
+- [ ] Verify exact new full CI SHA, especially independent committed late-cost close rejection. Repair further failure before any new migration. Then execute REVIEW-027A commit-expiry and pre-barrier timestamp observations and proceed with DESIGN-0054. No production or final financial policy changes. Next unused ID 0056.
