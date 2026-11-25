@@ -472,3 +472,8 @@
 ## TEST-049 / TEST-050 — current
 - [x] Verify 0044 and add two distinct-entry chain races and bounded timing sample to existing COGS suite.
 - [ ] Verify exact new CI SHA (44 SQL + nine concurrency, twelve COGS races, four guard tests); record actual CHAIN_TIMING results, repair before proceeding. Next 0045 tracked inventory valuation design/implementation preserving canonical stock ledger and source facts. No production access.
+
+
+## DESIGN-0045 — current
+- [x] Review canonical tracked sources and document staged design, acceptance and limitations.
+- [ ] Verify TEST-050 exact SHA 9410c90335794e4b2b27b04278315deca3e2bc67 (or repair) before writing migration 0045. First 0045A read-only evidence via existing joins and tenant/permission gates, then phased tracked policy/replay/COGS. No production access.
