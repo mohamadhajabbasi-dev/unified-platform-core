@@ -129,3 +129,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### REVIEW-028C — do not equate quarantine with warehouse naming
 - Reuse existing return header/line and movement identities; one-order/one-payment unique constraints not relaxed before all readers and writers are safe. Non-sellable physical receipt cannot increase available stock or silently reverse COGS/refund. Existing expiry/serial guards stay. Quarantine representation and independent event necessity require evaluation, no new table or final policy.
+
+### REVIEW-028D — lifecycle contract, not operational authorization
+- Derive physical receipt capacity from existing immutable receipt events and original sale movement; historical exact ledger fallback is exclusive, not additive. Custody, saleable admission, cost reversal and refund are distinct effects. Preserve all existing constraints until compatible callers and approved policy. 0059 verified; no 0060 SQL in this checkpoint.

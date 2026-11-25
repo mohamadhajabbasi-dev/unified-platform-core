@@ -617,3 +617,7 @@
 ## TEST-079 / REVIEW-028C — current
 - [x] Verify 0059 actual upgrade job and inspect existing receipt/refund/warehouse/trace/valuation constraints. Record concrete gaps and preserve current controls.
 - [ ] Verify foundation 139280341524 exact run 45635678490 before changing SQL; audit remaining latest callers and design safe partial receipt/custody lifecycle without duplicate tables; next unused 0060. No partial/non-sellable/refund/valuation activation before owner approval; unresolved temporal boundaries remain. No operational access.
+
+## TEST-080 / REVIEW-028D — current
+- [x] Verify both 0059 jobs and scan all 59 migrations for receipt/refund/availability dependencies; define read-only lifecycle contract and regression matrix.
+- [ ] Next unused 0060: implement synthetic-only safety prerequisite if justified; verify live entrypoints fail closed for unsupported partial/non-sellable receipts and no effects, audit transitive dependencies. No partial/quarantine/financial policy activation before owner approval. No production access.
