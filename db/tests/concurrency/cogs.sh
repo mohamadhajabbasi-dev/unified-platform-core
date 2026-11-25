@@ -568,11 +568,34 @@ DO \$\$ BEGIN
  IF EXISTS(SELECT 1 FROM finance.fiscal_periods WHERE period_id='$ended' AND closed_at IS NOT NULL) THEN RAISE EXCEPTION 'FAIL refused close persisted'; END IF;
 END \$\$;
 SQL
+# Actual platform approver (no tenant scope), not an artificial direct grant.
+psql_ci <<SQL
+CREATE ROLE upc_cogs_approver LOGIN NOSUPERUSER NOBYPASSRLS;
+GRANT upc_platform_approver TO upc_cogs_approver;
+INSERT INTO core.users(user_id,identity_issuer,identity_subject)
+ VALUES ('b6100000-0000-0000-0000-000000000004','test','cogs-race-approver');
+INSERT INTO iam.platform_staff_assignments(login_role,user_id,is_superadmin)
+ VALUES ('upc_cogs_approver','b6100000-0000-0000-0000-000000000004',true);
+SET SESSION AUTHORIZATION upc_cogs_approver;
+SELECT platform.record_module_decision('$tenant','inventory',false,NULL,'Synthetic historical module revocation');
+RESET SESSION AUTHORIZATION;
+SET SESSION AUTHORIZATION upc_cogs_a;
+DO \$\$ BEGIN
+ IF platform.module_enabled('inventory') THEN RAISE EXCEPTION 'FAIL inventory not revoked'; END IF;
+ BEGIN PERFORM finance.close_period('$ended'); RAISE EXCEPTION 'FAIL disabled module hid inventory history'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+ IF EXISTS(SELECT 1 FROM finance.fiscal_periods WHERE period_id='$ended' AND closed_at IS NOT NULL) THEN RAISE EXCEPTION 'FAIL disabled history close persisted'; END IF;
+END \$\$;
+RESET SESSION AUTHORIZATION;
+SET SESSION AUTHORIZATION upc_cogs_approver;
+SELECT platform.record_module_decision('$tenant','inventory',true,NULL,'Synthetic restore');
+RESET SESSION AUTHORIZATION;
+SQL
 # Tenant B genuinely has no inventory history. Revoke the inventory module
 # with an explicit synthetic decision and ensure the finance-only close works.
 psql_ci <<SQL
-INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
- SELECT '$tenant_b',module_id,false,'b6100000-0000-0000-0000-000000000001','Synthetic finance only' FROM platform.modules WHERE module_key='inventory';
+SET SESSION AUTHORIZATION upc_cogs_approver;
+SELECT platform.record_module_decision('$tenant_b','inventory',false,NULL,'Synthetic finance only');
+RESET SESSION AUTHORIZATION;
 SQL
 ended_b=$(psql_ci <<SQL
 SET SESSION AUTHORIZATION upc_cogs_b;
@@ -582,6 +605,27 @@ SQL
 [[ "$ended_b" =~ ^[0-9a-f-]{36}$ ]]
 saved_tenant=$tenant
 tenant=$tenant_b
+# Actual module decision holds shared barrier; competing close must fail fast.
+psql_ci >"$tmp/module_writer" 2>&1 <<SQL &
+SET application_name='upc_module_writer';
+SET SESSION AUTHORIZATION upc_cogs_approver;
+BEGIN;
+SET LOCAL statement_timeout='25s';
+SELECT platform.record_module_decision('$tenant_b','inventory',true,NULL,'Synthetic held module decision');
+SELECT pg_sleep(8);
+ROLLBACK;
+SQL
+holder=$!
+await_barrier upc_module_writer ShareLock
+psql_ci <<SQL
+SET statement_timeout='3s';
+SET SESSION AUTHORIZATION upc_cogs_b;
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.close_period('$ended_b'); RAISE EXCEPTION 'FAIL close crossed actual module decision'; EXCEPTION WHEN lock_not_available THEN NULL; END;
+END \$\$;
+SQL
+await_barrier upc_module_writer ShareLock
+wait "$holder" || { cat "$tmp/module_writer"; exit 1; }
 psql_ci >"$tmp/real_close" 2>&1 <<SQL &
 SET application_name='upc_real_close';
 SET SESSION AUTHORIZATION upc_cogs_b;
@@ -603,7 +647,17 @@ SET SESSION AUTHORIZATION upc_cogs_b;
 DO \$\$ BEGIN
  BEGIN PERFORM finance.close_period('$ended_b'); RAISE EXCEPTION 'FAIL competing actual close'; EXCEPTION WHEN lock_not_available THEN NULL; END;
 END \$\$;
+RESET SESSION AUTHORIZATION;
+SET SESSION AUTHORIZATION upc_cogs_approver;
+DO \$\$ BEGIN
+ BEGIN PERFORM platform.record_module_decision('$tenant_b','inventory',true,NULL,'Synthetic denied by close'); RAISE EXCEPTION 'FAIL module decision crossed close'; EXCEPTION WHEN lock_not_available THEN NULL; END;
+END \$\$;
+BEGIN;
+SELECT platform.record_module_decision('$saved_tenant','inventory',false,NULL,'Synthetic other tenant during close');
+ROLLBACK;
+RESET SESSION AUTHORIZATION;
 SQL
+await_barrier upc_real_close ExclusiveLock
 wait "$holder" || { cat "$tmp/real_close"; exit 1; }
 tenant=$saved_tenant
 closed_at=$(psql_ci -c "SELECT closed_at FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_id='$ended_b' AND closed_at IS NOT NULL")
@@ -615,7 +669,8 @@ SQL
 )" == "$ended_b" ]]
 [[ "$(psql_ci -c "SELECT closed_at FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_id='$ended_b'")" == "$closed_at" ]]
 [[ "$(psql_ci -c "SELECT count(*)=0 FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_name='Mutation after close'")" == t ]]
-echo 'PASS COGS concurrency: twenty-four competing lock races, barrier exclusion and actual atomic close contention, finance-only tenant, historical rejection and exact retry'
+[[ "$(psql_ci -c "SELECT count(*)=0 FROM platform.tenant_module_grants WHERE reason IN ('Synthetic held module decision','Synthetic denied by close','Synthetic other tenant during close')")" == t ]]
+echo 'PASS COGS concurrency: twenty-four competing lock races, barrier exclusion and actual atomic close contention, finance-only tenant, historical rejection, exact retry and actual platform module decision contention'
 
 
 

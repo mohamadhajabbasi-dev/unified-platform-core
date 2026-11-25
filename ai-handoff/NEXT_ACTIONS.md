@@ -532,3 +532,7 @@
 ## TEST-061 / BUILD-026Y — current
 - [x] Verify 0052; author 0053 atomic close and actual contention tests; exact code SHA 36d261c1c1bb57a6e4bf012c52cc155325fea15f.
 - [ ] Verify exact 0053 CI (53 SQL + nine concurrency; four guard tests; 24 COGS plus barrier and real close cases); repair before advancing. Check historical/as-of semantics, nonempty positive close fixture, disabled-module history, timestamp/backdating and privileged administrative boundaries, actual module decision race; assess lock overhead. Then partial/damaged/expired returns design and outstanding domains. No operational access.
+
+## TEST-062 / TEST-063 — current
+- [x] Verify 0053 at run 45601424659 / 36d261c1c1bb57a6e4bf012c52cc155325fea15f (62 suites); add targeted real module decision contention regression to existing harness.
+- [ ] Verify exact new CI SHA, repair if needed; then prove positive nonempty historical close with explicitly synthetic historical fixtures, audit authoritative timestamps, module expiry and privileged/global identity changes. Historical as-of after later activity remains unsupported; partial/damaged/expired returns next only after period close limitations are documented and required decisions approved. Next unused migration 0054. No operational access.

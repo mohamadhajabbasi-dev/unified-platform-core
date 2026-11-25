@@ -41,3 +41,6 @@ Baseline: 86deadf3f95edda175168eda605774546300e4ee. The previous CI used lexical
 Next unused ID: **0034**. CI rejects invalid names, duplicates, gaps and mismatched migration/test ID sets before SQL application. Accounting rules remain provisional; no production approval implied.
 
 Read-back correction FIX-008: actual one-character delimiter fix is committed separately after MIG-ID-001; both numbering and original SQL order were verified unchanged.
+
+## Current continuation checkpoint (2026-11-25)
+The original normalization table above is historical. Current canonical IDs 0001–0053 are contiguous and verified at run 45601424659. Next unused ID: **0054**; recheck tree and guard before allocating. TEST-063 adds no migration.

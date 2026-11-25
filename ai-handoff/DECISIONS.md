@@ -66,3 +66,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ## D-018 — migration identity normalization (owner-directed)
 - Canonical unique contiguous four-digit numeric prefix plus snake_case suffix; corresponding SQL acceptance test shares numeric ID. Historical sequence preserved by one-to-one filename mapping in db/MIGRATION_ID_MAP.md. Do not rewrite SQL solely to change historical comments. CI preflight mandatory. Disposable greenfield only; production migration tracking/checksums require separate review. Accounting policy remains unapproved for production.
+
+### D-018 / TEST-063 — review note (not a new approved accounting decision)
+- No change to owner-approved policy. Retain 0053 conservative fail-closed behavior; test the existing module-decision API and real history before considering new SQL. Historical as-of, expiry during a statement and privileged bypass are open design/security review items, not certified. No new canonical entity or parallel close API.
