@@ -644,3 +644,9 @@
 ## TEST-082 / BUILD-029B — current
 - [x] Verify exact run 45641015000 both jobs and author minimal 0061 business_locations + SQL/real concurrency tests.
 - [ ] Verify new exact 0061 SHA and both CI jobs. Fix only actual failure if any; then update verified counts/dictionary. Next review website_host references in all migration/test files, informational vs routing semantics, migration compatibility and domain security policy; no duplicate host or operational activation. If security decision blocked, advance independent CRM/catalog requirements instead. Next unused 0062 only after verification. Temporal/financial/production gates remain.
+
+
+## TEST-083 / BUILD-030A — current
+- [x] Verify 0061 exact both jobs, update verified coverage; audit all migration/test host references; author dormant 0062 site identity and exact retry tests.
+- [ ] Verify exact 0062 SHA and both CI jobs, repair actual failure only. Check explicit runtime base-table count; update verified coverage only after success. Next unused 0063; no domain claim/routing or host duplication. Advance independent CRM/catalog favorites/tag or counterparty design while owner domain policy remains open.
+- [ ] Preserve temporal, custody, refund/valuation gates; location retry contract remains open. No production access.

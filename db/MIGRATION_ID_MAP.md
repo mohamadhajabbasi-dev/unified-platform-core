@@ -83,3 +83,8 @@ Next unused ID 0061; REVIEW-029 documentation checkpoint only.
 
 ## BUILD-029B candidate
 0061_business_locations.sql and matching acceptance test authored; real concurrency step added. CI pending. Next unused ID 0062 (do not allocate until verification).
+
+
+## TEST-083 verified / BUILD-030A candidate
+TEST-083: exact 0061 run 45643530975 at 27faa6a220cf327a2d60047c6b63cedd97aaca1a SUCCESS, foundation 139308257824 and return-upgrade 139308258268 SUCCESS; logs 61 contiguous pairs, 71 PASS suites (61 SQL + 10 concurrent), actual unique-index contention and SQLSTATE 23505, one location and one exact audit, 24 COGS races, actual return history upgrades. 87 base tables derived from DDL inventory (86 earlier + one location relation); prior log numeric 86 was a module decision ID, not a direct runtime table-count query. 0062 test adds explicit catalog count diagnostic.
+0062_dormant_sites.sql and matched test authored; CI pending. Next unused 0063 only after PASS.
