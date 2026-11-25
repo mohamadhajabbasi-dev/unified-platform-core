@@ -487,3 +487,8 @@
 ## TEST-052 / BUILD-026R — current
 - [x] Verify 0045 and valid timings; author explicit tracked policy methods and correct stale README.
 - [ ] Verify exact new CI SHA (46 SQL + nine concurrency, twelve COGS races, four guard tests). Repair before 0047 shared trace-aware replay/prefix and receipt/sale cost capture. Multi-line transfer capture, tracked COGS/returns and final policy pending. No production access.
+
+
+## TEST-053 / BUILD-026S — current
+- [x] Verify 0046, implement shared 0047 traced receipt/sale cost replay and capture.
+- [ ] Verify exact new CI SHA (47 SQL + nine concurrency, twelve COGS races, four guard tests), repair. Next 0048 exact traced multi-line transfers via connected component; then traced COGS, return reversal and readiness. Policy approval and load testing pending. No production access.

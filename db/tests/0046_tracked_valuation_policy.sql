@@ -125,8 +125,11 @@ BEGIN
  THEN RAISE EXCEPTION 'FAIL policy retry after receipt'; END IF;
  IF (SELECT count(*) FROM finance.valuation_policies WHERE (variant_id=v AND method='lot_fifo') OR (variant_id=sv AND method='serial_specific'))<>2
  THEN RAISE EXCEPTION 'FAIL canonical policy rows'; END IF;
- BEGIN PERFORM finance.configured_inventory_preview(w,v); RAISE EXCEPTION 'FAIL tracked preview activated'; EXCEPTION WHEN check_violation THEN NULL; END;
- BEGIN PERFORM finance.capture_movement_costs(w,sv); RAISE EXCEPTION 'FAIL tracked capture activated'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+ -- 0047 supersedes the earlier blanket engine block: unconfirmed preview is read-only,
+ -- while capture still requires the supplier invoice.
+ IF NOT EXISTS(SELECT 1 FROM finance.configured_inventory_preview(w,v) p WHERE p.on_hand=2 AND p.remaining_value=200 AND NOT p.all_receipts_invoiced)
+ THEN RAISE EXCEPTION 'FAIL unconfirmed tracked preview'; END IF;
+ BEGIN PERFORM finance.capture_movement_costs(w,sv); RAISE EXCEPTION 'FAIL unconfirmed tracked capture'; EXCEPTION WHEN check_violation THEN NULL; END;
  IF EXISTS(SELECT 1 FROM finance.movement_cost_facts) OR EXISTS(SELECT 1 FROM finance.fifo_cost_allocations) OR EXISTS(SELECT 1 FROM finance.journal_entries)
  THEN RAISE EXCEPTION 'FAIL policy wrote financial facts'; END IF;
  IF NOT EXISTS(SELECT 1 FROM finance.tenant_inventory_cost_issues() i WHERE i.variant_id=v AND i.issue_code='unsupported_movement')
@@ -147,4 +150,4 @@ DO $$ BEGIN
 END $$;
 RESET SESSION AUTHORIZATION;
 ROLLBACK;
-\echo PASS explicit tracked valuation enrollment, compatibility, immutable retry, pending engine and tenant isolation
+\echo PASS explicit tracked valuation enrollment, compatibility, immutable retry, unconfirmed receipt guard and tenant isolation
