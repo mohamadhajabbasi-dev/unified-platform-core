@@ -527,3 +527,8 @@
 ## TEST-060 / BUILD-026X — current
 - [x] Verify 0051; author private 0052 barrier and bidirectional contention tests.
 - [ ] Verify exact CI SHA (52 SQL + nine concurrency, 24 existing COGS races and new barrier assertions, four guard tests); fix first. Next 0053 guarded single close_period only after cutoff/module/no-inventory and lock upgrade/period lock order policy, admin paths and timestamp review. No production access.
+
+
+## TEST-061 / BUILD-026Y — current
+- [x] Verify 0052; author 0053 atomic close and actual contention tests; exact code SHA 36d261c1c1bb57a6e4bf012c52cc155325fea15f.
+- [ ] Verify exact 0053 CI (53 SQL + nine concurrency; four guard tests; 24 COGS plus barrier and real close cases); repair before advancing. Check historical/as-of semantics, nonempty positive close fixture, disabled-module history, timestamp/backdating and privileged administrative boundaries, actual module decision race; assess lock overhead. Then partial/damaged/expired returns design and outstanding domains. No operational access.
