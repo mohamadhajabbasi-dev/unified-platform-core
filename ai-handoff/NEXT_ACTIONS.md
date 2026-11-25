@@ -650,3 +650,8 @@
 - [x] Verify 0061 exact both jobs, update verified coverage; audit all migration/test host references; author dormant 0062 site identity and exact retry tests.
 - [ ] Verify exact 0062 SHA and both CI jobs, repair actual failure only. Check explicit runtime base-table count; update verified coverage only after success. Next unused 0063; no domain claim/routing or host duplication. Advance independent CRM/catalog favorites/tag or counterparty design while owner domain policy remains open.
 - [ ] Preserve temporal, custody, refund/valuation gates; location retry contract remains open. No production access.
+
+
+## TEST-084 / FIX-030A — current (supersedes prior next action)
+- [x] Verify failed exact 0062 CI run 45647070040; inspect actual log and fix missing aliases in both full JSON snapshots only; preserve all assertions.
+- [ ] Verify new correction SHA and both CI jobs; if any actual failure, inspect and fix root cause before next migration. Check runtime base-table count diagnostic and actual site concurrency evidence. Last fully verified 0061; next unused 0063 after success. Then advance independent CRM/catalog favorites/tag or counterparty design. No domain routing/ownership activation or duplicated host; existing temporal/financial/custody gates unchanged. No production access.

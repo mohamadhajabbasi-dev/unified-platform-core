@@ -752,3 +752,10 @@ Files: migration, matching SQL, concurrency shell, workflow, design/dictionary, 
 - Open: module expiry after return before COMMIT; pre-barrier recorded_at; partial/quarantine/refund/valuation policy; location exact-retry API still pending. No production access. Next verify exact 0062 CI both jobs and update counts, then advance independent CRM/catalog favorites/tag or counterparty/financial design while domain security policy remains gated.
 
 Files: 0062 migration/test/race, workflow, five handoff files, dictionary, design, migration map, README. Commit and CI must be verified separately.
+
+
+## TEST-084 / FIX-030A — 2026-11-25
+- Exact candidate fff251e1db599a9e1958c896b199c44c392499d2, run 45647070040: FAILURE; return-upgrade 139320797126 SUCCESS; foundation 139320797944 FAILURE at synthetic acceptance test 0062. Migration numbering and all 62 migrations applied; earlier SQL tests through 0061 passed. All 11 concurrency steps skipped. Log: `ERROR: column "s" does not exist`, PL/pgSQL inline block line 13, first JSON snapshot. No complete 0062 acceptance or table-count evidence.
+- Root cause: missing table aliases in before/after `jsonb_agg(to_jsonb(s))` for core.sites; same defect statically identified for `to_jsonb(e)` on ops.audit_events. Add explicit aliases s/e and qualify sort columns in both snapshots (four replacements). Preserve full rows, stable ordering, equality assertion and all positive/negative tests. No changes to applied migration, functions, policies, privileges, workflow or race script. New CI pending; last fully verified baseline 0061 run 45643530975. No new migration; next unused 0063 only after both jobs PASS. No operational or legacy access. All domain ownership, temporal, financial, custody and location retry gates preserved.
+
+Files: corrected 0062 acceptance test, five handoff files, migration map, design and dictionary. Confirm exact correction commit and new CI; do not start 0063 before success.

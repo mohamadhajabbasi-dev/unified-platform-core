@@ -371,3 +371,6 @@ Next 0060 should be a synthetic-only safety prerequisite, not an unapproved part
 
 
 - 2026-11-25 TEST-083 / BUILD-030A: verified 0061, scanned host references, authored dormant site identity and exact retry/real concurrency tests. 0062 CI pending; no host, routing, financial policy or operational change.
+
+
+- 2026-11-25 TEST-084 / FIX-030A: exact 0062 CI failure (missing table alias in test JSON snapshot), corrected four expressions in before/after snapshots; migration and all test assertions unchanged. Full CI pending.

@@ -46,7 +46,7 @@ BEGIN
  IF (SELECT count(*) FROM ops.audit_events WHERE entity_type='core.sites')<>2
  OR NOT EXISTS(SELECT 1 FROM ops.audit_events WHERE entity_type='core.sites' AND entity_id=sid AND actor_user_id=iam.current_user_id() AND event_type='insert')
  THEN RAISE EXCEPTION 'FAIL exact audit'; END IF;
- SELECT jsonb_build_object('sites',(SELECT jsonb_agg(to_jsonb(s) ORDER BY site_id) FROM core.sites),'audit',(SELECT jsonb_agg(to_jsonb(e) ORDER BY event_id) FROM ops.audit_events),'settings',(SELECT to_jsonb(s) FROM core.tenant_settings s)) INTO old_facts;
+ SELECT jsonb_build_object('sites',(SELECT jsonb_agg(to_jsonb(s) ORDER BY s.site_id) FROM core.sites AS s),'audit',(SELECT jsonb_agg(to_jsonb(e) ORDER BY e.event_id) FROM ops.audit_events AS e),'settings',(SELECT to_jsonb(s) FROM core.tenant_settings s)) INTO old_facts;
  BEGIN PERFORM core.register_site('main','Different'); RAISE EXCEPTION 'FAIL conflicting retry'; EXCEPTION WHEN unique_violation THEN NULL; END;
  FOREACH bad IN ARRAY ARRAY[NULL::text,'','UPPER','bad key',repeat('a',81)] LOOP
   BEGIN PERFORM core.register_site(bad,'Synthetic'); RAISE EXCEPTION 'FAIL invalid key'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
@@ -62,7 +62,7 @@ BEGIN
   BEGIN EXECUTE cmd; RAISE EXCEPTION 'FAIL direct DML/role: %',cmd; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
  END LOOP;
  BEGIN PERFORM core.register_site('rollback','Synthetic'); RAISE EXCEPTION 'synthetic rollback' USING ERRCODE='P0002'; EXCEPTION WHEN no_data_found THEN NULL; END;
- IF old_facts IS DISTINCT FROM jsonb_build_object('sites',(SELECT jsonb_agg(to_jsonb(s) ORDER BY site_id) FROM core.sites),'audit',(SELECT jsonb_agg(to_jsonb(e) ORDER BY event_id) FROM ops.audit_events),'settings',(SELECT to_jsonb(s) FROM core.tenant_settings s))
+ IF old_facts IS DISTINCT FROM jsonb_build_object('sites',(SELECT jsonb_agg(to_jsonb(s) ORDER BY s.site_id) FROM core.sites AS s),'audit',(SELECT jsonb_agg(to_jsonb(e) ORDER BY e.event_id) FROM ops.audit_events AS e),'settings',(SELECT to_jsonb(s) FROM core.tenant_settings s))
  OR platform.commerce_eligible() THEN RAISE EXCEPTION 'FAIL rejected/retry operations changed facts or activated commerce'; END IF;
 END $$;
 RESET SESSION AUTHORIZATION;
