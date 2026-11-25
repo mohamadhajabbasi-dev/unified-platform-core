@@ -72,3 +72,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### TEST-064 — temporal review (open, not approved)
 - 0051 explicitly checks recorded_at and posted_at cutoff, not captured_at; whether documented late costing may be finalized at close is unapproved. Statement-time module expiry is not reevaluated by repeating same statement-time check. Privileged DB operations require separate trust boundary. Synthetic historical fixture projection is not runtime policy; no migration changes.
+
+### TEST-065 — temporal characterization only (no new policy approval)
+- Preserve 0053 runtime code. Late cost capture and within-statement module expiry observations are characterization tests, not desired accounting/security policy; if behavior changes, review and update the observation rather than treating current behavior as an invariant. Privileged login/grant checks cover only selected synthetic roles/relations, not all production operations. Owner approval remains required for final effective-date, cutoff and entitlement semantics.

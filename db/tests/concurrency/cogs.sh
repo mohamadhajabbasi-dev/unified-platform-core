@@ -702,7 +702,8 @@ BEGIN
   NEW.posted_at:=base+interval '5 minutes';
   SELECT period_id INTO STRICT NEW.period_id FROM finance.fiscal_periods
    WHERE tenant_id=NEW.tenant_id AND period_name='Synthetic historical populated' AND dates @> (NEW.posted_at AT TIME ZONE 'UTC')::date AND closed_at IS NULL;
- WHEN 'movement_cost_facts' THEN NEW.captured_at:=base+interval '6 minutes';
+ WHEN 'movement_cost_facts' THEN
+  IF current_setting('upc.test_late_cost',true) IS DISTINCT FROM 'on' THEN NEW.captured_at:=base+interval '6 minutes'; END IF;
  ELSE RAISE EXCEPTION 'Unexpected historical fixture relation';
  END CASE;
  RETURN NEW;
@@ -727,6 +728,25 @@ BEGIN
  po:=procurement.issue_purchase('historical-po',supplier,'$wh_b','IRR',jsonb_build_array(jsonb_build_object('variant_id','$variant_b','quantity',2,'unit_cost',100)));
  PERFORM procurement.receive_purchase(po,'historical-receipt','Synthetic historical receipt');
  PERFORM finance.record_supplier_invoice(po,'HISTORICAL-INVOICE',d,d+7,200,'IRR',decode(repeat('ab',32),'hex'),a,p);
+ -- Characterize current behavior only; do not approve late costing as policy.
+ -- The real cost writer uses its default current timestamp in this subtransaction.
+ -- Receipt and invoice remain historical. Roll back the late fact before the
+ -- original positive fixture, so no synthetic late state persists.
+ BEGIN
+  PERFORM set_config('upc.test_late_cost','on',true);
+  IF finance.capture_movement_costs('$wh_b','$variant_b')<>1 THEN RAISE EXCEPTION 'FAIL late capture fixture'; END IF;
+  IF NOT EXISTS(SELECT 1 FROM finance.movement_cost_facts cf WHERE cf.tenant_id=t
+    AND cf.variant_id='$variant_b' AND cf.captured_at >= ((d+5)::timestamp AT TIME ZONE 'UTC'))
+  THEN RAISE EXCEPTION 'FAIL late fact timestamp'; END IF;
+  IF EXISTS(SELECT 1 FROM finance.inventory_period_close_issues(
+    (SELECT period_id FROM finance.fiscal_periods WHERE tenant_id=t AND period_name='Synthetic historical populated')))
+  THEN RAISE EXCEPTION 'Unexpected change in late capture preflight behavior; review policy'; END IF;
+  RAISE NOTICE 'TEMPORAL_OBSERVATION late cost capture not flagged by current preflight';
+  RAISE EXCEPTION USING ERRCODE='Z0065',MESSAGE='Rollback observation, not approved policy';
+ EXCEPTION WHEN SQLSTATE 'Z0065' THEN NULL;
+ END;
+ IF EXISTS(SELECT 1 FROM finance.movement_cost_facts cf WHERE cf.tenant_id=t AND cf.variant_id='$variant_b')
+ THEN RAISE EXCEPTION 'FAIL late fact rollback'; END IF;
  IF finance.capture_movement_costs('$wh_b','$variant_b')<>1 THEN RAISE EXCEPTION 'FAIL historical fixture capture'; END IF;
  PERFORM finance.assert_tenant_inventory_cost_ready();
 END \$\$;
@@ -761,6 +781,57 @@ DO \$\$ BEGIN
 END \$\$;
 RESET SESSION AUTHORIZATION;
 SQL
+# Characterize module time expiry in one statement. Use an actual approver
+# decision and rollback the close. A new statement must reject the expired
+# module; explicitly restore it before the original positive close.
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_approver;
+SELECT platform.record_module_decision('$tenant_b','inventory',true,clock_timestamp()+interval '8 seconds','Synthetic statement expiry observation');
+RESET SESSION AUTHORIZATION;
+SET SESSION AUTHORIZATION upc_cogs_b;
+BEGIN;
+SET LOCAL statement_timeout='20s';
+DO \$\$
+DECLARE started timestamptz:=statement_timestamp();
+BEGIN
+ IF NOT platform.module_enabled('inventory') THEN RAISE EXCEPTION 'FAIL expiry fixture already expired'; END IF;
+ PERFORM pg_sleep(9);
+ IF clock_timestamp()<started+interval '9 seconds' THEN RAISE EXCEPTION 'FAIL expiry clock observation'; END IF;
+ IF NOT platform.module_enabled('inventory') THEN RAISE EXCEPTION 'Unexpected change in statement-time module policy; review'; END IF;
+ IF finance.close_period('$history_period')<>'$history_period'::uuid THEN RAISE EXCEPTION 'FAIL statement-time close observation'; END IF;
+ RAISE NOTICE 'TEMPORAL_OBSERVATION close can use statement-start module entitlement after wall-clock expiry';
+END \$\$;
+ROLLBACK;
+DO \$\$ BEGIN
+ IF platform.module_enabled('inventory') THEN RAISE EXCEPTION 'FAIL expired module visible in fresh statement'; END IF;
+ BEGIN PERFORM finance.close_period('$history_period'); RAISE EXCEPTION 'FAIL fresh statement close with expired module'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+ IF EXISTS(SELECT 1 FROM finance.fiscal_periods WHERE period_id='$history_period' AND closed_at IS NOT NULL)
+ THEN RAISE EXCEPTION 'FAIL expiry observation persisted close'; END IF;
+END \$\$;
+RESET SESSION AUTHORIZATION;
+SET SESSION AUTHORIZATION upc_cogs_approver;
+SELECT platform.record_module_decision('$tenant_b','inventory',true,NULL,'Synthetic restore after expiry observation');
+RESET SESSION AUTHORIZATION;
+SQL
+# Narrow admin trust-boundary checks: real tenant logins cannot acquire
+# executor memberships or directly modify these canonical protected relations.
+psql_ci <<SQL
+DO \$\$
+DECLARE login_name text; rel text;
+BEGIN
+ FOREACH login_name IN ARRAY ARRAY['upc_cogs_a','upc_cogs_b','upc_cogs_reader','upc_cogs_approver'] LOOP
+  IF EXISTS(SELECT 1 FROM pg_roles WHERE rolname=login_name AND (rolsuper OR rolbypassrls OR rolcreaterole))
+  OR EXISTS(SELECT 1 FROM pg_roles WHERE (rolname LIKE 'upc_%_executor' OR rolname IN ('upc_scope_owner','upc_policy_reader','upc_finance_checker'))
+    AND pg_has_role(login_name,oid,'MEMBER'))
+  THEN RAISE EXCEPTION 'FAIL privileged login or inherited executor %',login_name; END IF;
+  FOREACH rel IN ARRAY ARRAY['inventory.stock_ledger','finance.movement_cost_facts','finance.journal_entries','finance.journal_lines','finance.fiscal_periods','platform.tenant_module_grants','iam.platform_staff_assignments','iam.db_principals'] LOOP
+   IF has_table_privilege(login_name,rel,'INSERT,UPDATE,DELETE,TRUNCATE,TRIGGER')
+    OR has_any_column_privilege(login_name,rel,'INSERT,UPDATE')
+   THEN RAISE EXCEPTION 'FAIL direct protected mutation % %',login_name,rel; END IF;
+  END LOOP;
+ END LOOP;
+END \$\$;
+SQL
 [[ "$(psql_ci <<SQL
 SET SESSION AUTHORIZATION upc_cogs_b;
 SELECT finance.close_period('$history_period');
@@ -775,7 +846,7 @@ SQL
 )" == "$history_period" ]]
 [[ "$(psql_ci -c "SELECT closed_at FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_id='$history_period'")" == "$history_closed" ]]
 [[ "$(psql_ci -c "SELECT (SELECT count(*) FROM inventory.stock_ledger WHERE tenant_id='$tenant_b')=1 AND (SELECT count(*) FROM finance.movement_cost_facts WHERE tenant_id='$tenant_b')=1 AND (SELECT count(*) FROM finance.journal_entries WHERE tenant_id='$tenant_b')=1")" == t ]]
-echo 'PASS COGS concurrency: twenty-four competing lock races, barrier exclusion and actual atomic close contention, finance-only tenant, historical rejection, exact retry and actual platform module decision contention and positive reconciled nonempty historical close'
+echo 'PASS COGS concurrency: twenty-four competing lock races, barrier exclusion and actual atomic close contention, finance-only tenant, historical rejection, exact retry and actual platform module decision contention and positive reconciled nonempty historical close, temporal observations and protected-role audit'
 
 
 

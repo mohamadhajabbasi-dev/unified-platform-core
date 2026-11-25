@@ -540,3 +540,7 @@
 ## TEST-063 / TEST-064 — current
 - [x] Verify TEST-063 exact CI; add synthetic positive nonempty historical close fixture to existing COGS harness.
 - [ ] Verify new exact CI SHA and repair failures first. Then test/assess late cost capture relative to cutoff, time before row barrier, expiry and privileged administration boundaries; preserve conservative close until owner approves policy. Historical as-of with later activity remains unsupported. No new migration unless required; next unused ID 0054. Partial/damaged/expired return design afterward. No operational access.
+
+## TEST-064 / TEST-065 — current
+- [x] Verify exact TEST-064 CI; extend existing suite with rollback-only late capture and expiry observations, and targeted privileged role/grant assertions.
+- [ ] Verify TEST-065 exact new CI SHA, repair failures first. Review timestamp-before-row-barrier risk with controlled synthetic test if necessary; document unresolved cutoff/as-of, late capture and expiry policy for owner rather than silently change accounting. Then design partial/damaged/expired returns from existing canonical sales/inventory/finance structures. Next unused migration ID 0054. No operational access.

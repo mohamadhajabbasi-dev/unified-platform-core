@@ -536,3 +536,9 @@
 
 ## TEST-064 — candidate / 2026-11-25
 - TEST-064 candidate: positive nonempty historical close using existing COGS tenant B after finance-only cases, one purchase receipt, invoice and captured FIFO cost 200 IRR. Test-only scoped INSERT clock projection creates historical facts through existing APIs, retains existing triggers and removes fixture triggers/function before committed close. Existing journal gate runs for current open period then fixture-only trigger projects historical period; this is synthetic data construction, not evidence of production backdating. Actual close, preflight, cross-tenant rejection, exact retry and no extra facts/journal assertions. 53 migrations, 85 tables, no runtime code change. CI pending. Late cost capture, as-of and module expiry/admin policy remain open.
+
+## TEST-064 — verified / 2026-11-25
+- TEST-064 verified: run 45605363818 job 139174725186 at 10746494260b5b24e445bf0e14b69e8bfa7edcb5 completed success; 53 migration/test pairs, 62 PASS suites, four guard tests, 24 COGS races plus real module decision contention and positive nonempty reconciled historical close. 85 tables confirmed; CHAIN_TIMING FIFO 704/680ms, moving_average 221/207ms synthetic only. No production access.
+
+## TEST-065 — candidate / 2026-11-25
+- TEST-065 candidate: characterize actual existing late cost capture in rollback-only historical fixture and statement-time inventory entitlement expiry across actual close (rolled back, fresh statement denies, restore entitlement and retain positive close). Check four actual synthetic logins for SUPERUSER/BYPASSRLS/CREATEROLE, executor membership, direct table/column mutation privileges on eight protected relations. No new runtime behavior/policy, table or migration; new CI pending. Time-at-row-barrier boundary remains untested; historical as-of and expiry/late-cost final policy unapproved.
