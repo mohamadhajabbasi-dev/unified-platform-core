@@ -214,7 +214,7 @@ BEGIN
  SELECT count(*),sum(quantity_delta) INTO n,qs FROM inventory.stock_ledger;
  SELECT count(*) INTO js FROM finance.journal_entries;
  INSERT INTO sales.return_items(tenant_id,return_id,order_id,reservation_id,sale_movement_id,received_quantity,disposition)
- VALUES(a,h.return_id,h.order_id,m.reservation_id,m.movement_id,2,'sellable'),
+ VALUES(a,h.return_id,h.order_id,m.reservation_id,m.movement_id,1,'sellable'),
        (a,h2.return_id,h2.order_id,m2.reservation_id,m2.movement_id,1,'sellable');
  -- Actual wrong relationships, rather than nonexistent random-only FKs.
  BEGIN
@@ -272,7 +272,7 @@ BEGIN
  BEGIN
   INSERT INTO sales.return_items(tenant_id,return_id,order_id,reservation_id,sale_movement_id,received_quantity,disposition)
   VALUES(a,h.return_id,h.order_id,m.reservation_id,m.movement_id,1,'damaged'),
-        (a,h.return_id,h.order_id,m.reservation_id,m.movement_id,1,'expired');
+        (a,h2.return_id,h2.order_id,other_m.reservation_id,other_m.movement_id,1,'expired');
   IF (SELECT count(*) FROM sales.return_items WHERE disposition IN ('damaged','expired'))<>2
   THEN RAISE EXCEPTION 'FAIL dormant inspection classifications'; END IF;
   RAISE EXCEPTION USING ERRCODE='Z0056',MESSAGE='Rollback-only classification example';

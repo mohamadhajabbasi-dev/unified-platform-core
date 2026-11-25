@@ -120,4 +120,58 @@ payment=$(race capture "SELECT sales.record_capture('$order','synthetic','acct',
 [[ "$(psql_ci -c "SELECT count(*) FROM sales.orders WHERE tenant_id='a0000000-0000-0000-0000-000000000001'")" == 1 ]]
 [[ "$(psql_ci -c "SELECT count(*) FROM sales.payments WHERE tenant_id='a0000000-0000-0000-0000-000000000001'")" == 1 ]]
 [[ "$(psql_ci -c "SELECT count(*) FROM inventory.reservations WHERE tenant_id='a0000000-0000-0000-0000-000000000001'")" == 1 ]]
-echo 'PASS sales concurrency: actual competing checkout and capture locks, one order, one hold, one payment'
+
+# 0057: real competing privileged synthetic receipt-line inserts only.
+# Existing runtime writer remains the legacy full-return API. No grants.
+return_id=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_sale_a;
+SELECT sales.fulfill_order('$order');
+SELECT sales.receive_full_return('$order','cap-race-full-return','Synthetic sellable');
+SQL
+)
+return_id=$(printf '%s\n' "$return_id" | tail -n 1)
+[[ "$return_id" =~ ^[0-9a-f-]{36}$ ]]
+tenant='a0000000-0000-0000-0000-000000000001'
+identity=$(psql_ci -c "SELECT l.movement_id||'|'||l.reservation_id FROM inventory.stock_ledger l JOIN sales.order_items i USING(tenant_id,reservation_id) WHERE i.tenant_id='$tenant' AND i.order_id='$order' AND l.quantity_delta=-2")
+IFS='|' read -r movement reservation <<<"$identity"
+[[ "$movement" =~ ^[0-9a-f-]{36}$ && "$reservation" =~ ^[0-9a-f-]{36}$ ]]
+baseline=$(psql_ci -c "SELECT count(*)||'|'||sum(quantity_delta) FROM inventory.stock_ledger WHERE tenant_id='$tenant'")
+[[ "$(psql_ci -c "SELECT count(*) FROM sales.return_items WHERE tenant_id='$tenant'")" == 0 ]]
+psql_ci >"$tmp/return-cap-first" 2>&1 <<SQL &
+SET application_name='upc_return_cap_first';
+BEGIN;
+SET LOCAL statement_timeout='25s';
+INSERT INTO sales.return_items(tenant_id,return_id,order_id,reservation_id,sale_movement_id,received_quantity,disposition)
+VALUES('$tenant','$return_id','$order','$reservation','$movement',2,'sellable');
+SELECT pg_sleep(8);
+COMMIT;
+SQL
+cap_first=$!
+# Observe the exact canonical order lock, not merely any advisory lock.
+cap_lock() {
+ local app=$1 granted=$2 i
+ for i in {1..50}; do
+  if [[ "$(psql_ci -c "SELECT count(*) FROM pg_locks l JOIN pg_stat_activity a USING(pid) WHERE a.application_name='$app' AND l.locktype='advisory' AND l.mode='ExclusiveLock' AND l.granted=$granted AND l.classid=((hashtextextended(jsonb_build_array('sales-order','$tenant'::uuid,'$order'::uuid)::text,0)>>32)&4294967295)::oid AND l.objid=(hashtextextended(jsonb_build_array('sales-order','$tenant'::uuid,'$order'::uuid)::text,0)&4294967295)::oid AND l.objsubid=1")" == 1 ]]; then return 0; fi
+  sleep 0.1
+ done
+ return 1
+}
+cap_lock upc_return_cap_first true
+psql_ci >"$tmp/return-cap-second" 2>&1 <<SQL &
+\set VERBOSITY verbose
+SET application_name='upc_return_cap_second';
+SET statement_timeout='25s';
+INSERT INTO sales.return_items(tenant_id,return_id,order_id,reservation_id,sale_movement_id,received_quantity,disposition)
+VALUES('$tenant','$return_id','$order','$reservation','$movement',1,'damaged');
+SQL
+cap_second=$!
+cap_lock upc_return_cap_second false
+wait "$cap_first" || { cat "$tmp/return-cap-first"; exit 1; }
+if wait "$cap_second"; then echo 'FAIL concurrent receipt exceeded sale'; exit 1; fi
+grep -q '23514: Return receipt quantity exceeds original sale movement' "$tmp/return-cap-second"
+[[ "$(psql_ci -c "SELECT count(*)=1 AND sum(received_quantity)=2 FROM sales.return_items WHERE tenant_id='$tenant' AND sale_movement_id='$movement'")" == t ]]
+[[ "$(psql_ci -c "SELECT count(*)||'|'||sum(quantity_delta) FROM inventory.stock_ledger WHERE tenant_id='$tenant'")" == "$baseline" ]]
+[[ "$(psql_ci -c "SELECT count(*) FROM sales.refunds WHERE tenant_id='$tenant'")" == 0 ]]
+echo 'RETURN_CAP_RACE competing inserts serialized on exact order lock; one committed and excess rejected'
+
+echo 'PASS sales concurrency: actual competing checkout and capture locks, one order, one hold, one payment, atomic return quantity cap race'

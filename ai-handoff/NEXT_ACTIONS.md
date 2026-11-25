@@ -583,3 +583,7 @@
 ## TEST-070 / BUILD-027B — current
 - [x] Verify TEST-070 and record both unresolved temporal boundaries; add dormant 0056 structural relationship and rollback-only tests.
 - [ ] Verify exact 0056 CI SHA, repair failures first. Next implement safe single canonical receipt writer/cap and legacy compatibility before enabling any partial/non-sellable receipt; review all writers for timing mitigation, retain no unapproved accounting/refund/disposition activation. Owner decisions: commit entitlement, effective cutoff and quarantine/financial policy. Next unused migration 0057; no operational access.
+
+## TEST-071 / BUILD-027C — current
+- [x] Verify 0056 and add locked aggregate receipt-line cap, append-only enforcement and actual privileged synthetic race with no write grants.
+- [ ] Verify exact 0057 CI, fix failures. Next integrate existing receive_full_return_allocated only, preserve exact retry/old ledger fallback without counting lines twice, add minimal scoped writer privilege and actual runtime race. Evolve dormant-only tests explicitly without weakening negative assertions; no partial/non-sellable/refund/valuation activation until safe and approved. Next unused 0058. No operational access.

@@ -102,3 +102,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### BUILD-027B — dormant dependent fact, not financial policy
 - TEST-070 demonstrates commit expiry and pre-barrier DEFAULT ordering; neither resolves final policy. 0056 adds only the independent receipt line structure, with normalized original sale identity and no runtime/executor DML. Keep old unique constraints and all existing full-return/refund/valuation semantics. Aggregate cap and physical disposition writer are mandatory future gates; no production or final policy approval.
+
+### BUILD-027C — provisional quantity fact guard, no operational writer
+- Use existing order lock and READ COMMITTED for receipt-line aggregate. Cap is per original sale movement across dispositions, not a policy for legacy plus partial receipts. Append-only; no new grants. Keep existing receipt/valuation APIs. A future writer must have complete tenant-scoped evidence visibility, same locks, validate consumed reservation and exact sale/return evidence, and treat prior legacy rows as the same event, never count twice. No approval of final cutoff, entitlement or disposition/refund policy.

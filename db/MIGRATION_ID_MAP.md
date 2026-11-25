@@ -56,3 +56,6 @@ The original normalization table above is historical. Current canonical IDs 0001
 
 ## BUILD-027B candidate
 TEST-070 verified 55 pairs at run 45621026901. 0056_return_receipt_line_structure.sql and matching test authored; CI pending. Next unused ID 0057.
+
+## TEST-071 / BUILD-027C
+0056 verified run 45623787029 (56 contiguous pairs). 0057_return_receipt_quantity_cap.sql and matching test authored, CI pending. Next unused ID 0058.
