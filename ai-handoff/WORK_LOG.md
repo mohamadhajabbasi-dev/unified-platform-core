@@ -550,3 +550,10 @@
 
 ## TEST-058 — candidate
 - TEST-058 candidate: extend existing COGS harness (no new test suite or runtime changes) with six actual two-session advisory lock races per lot_fifo and serial_specific: capture two confirmed receipts, capture two transfer pairs, capture two sale allocations, post two COGS journals, reverse both exact returns, capture both returns. Both post/reversal requests run both allocations atomically, same order/variant locks; check exact UUID retries, one-time facts and journals, remote receipt identity, pre-reversal rejection, conservation and readiness, reader/tenant gates. Expected 24 total race scenarios, 59 suites unchanged, 22 journals in isolated synthetic tenant. New CI pending. Not a production load benchmark. No operational access.
+
+
+## TEST-059 / 2026-11-25
+- TEST-059: run 45595381537 job 139139952220 at db67b4571fe1e7bce28e18414886b7f7a1adb8bc success; 50 migrations, 59 suites (50 SQL + nine concurrency), four migration guard tests, 24 actual COGS lock races (six per method). CHAIN_TIMING FIFO 1147/1143 ms, moving_average 331/324 ms, synthetic. 85 tables.
+
+## BUILD-026W
+- BUILD-026W: 0051 adds one read-only finance.inventory_period_close_issues(period) preflight using existing tenant reconciliation, period.manage + four read/module gates, exact tenant period and exclusive UTC upper-date boundary. Reports not ended, already closed, any newer inventory movements or source-linked inventory journals, plus existing current-state issues. No historical as-of certification or automatic close; current-state readiness alone cannot certify a past cutoff with newer activity. Existing close_period unchanged. Tests cover empty ended, current/future, unknown stock, uninvoiced, mismatched/captured and later journal, read-only, permissions, foreign period. No new tables. CI pending. Next design an atomic tenant-scoped write barrier, inventory as-of/cutoff policy and actual single close API guard; do not reverse existing lock order or silently alter module/period policy. Partial/damaged/expired returns pending. No production access.

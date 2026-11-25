@@ -512,3 +512,8 @@
 ## TEST-057 / TEST-058 — current
 - [x] Verify 0050; add six traced cost races per method in existing COGS suite.
 - [ ] Verify exact new CI SHA (50 SQL + nine concurrency, 24 COGS races, four guard tests); repair any failures. Next period-close invariant and policy review, partial/damaged/expired return design, then other outstanding domain coverage. No production access.
+
+
+## TEST-059 / BUILD-026W — current
+- [x] Verify all 24 contention cases, implement 0051 read-only conservative period preflight.
+- [ ] Verify exact new CI SHA (51 SQL + nine concurrency, 24 COGS races, four guard tests), repair. Next atomic period closure with explicit cutoff semantics and tenant write barrier, preserve one close_period API and exact retries, review module coverage and historical as-of policy. No production access.
