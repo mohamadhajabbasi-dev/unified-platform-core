@@ -84,3 +84,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### BUILD-027A — provisional conservative safeguards, not final policy
 - Late capture of pre-cutoff movements blocks close rather than inventing accounting effective dates or rewriting facts. Module decision lookup shared, ordinary statement-time RLS unchanged; live validity for new close is checked under existing locks and before/after write. No claim of transaction-commit validation, global expiry semantics, or historical as-of. Owner to decide late adjustments and whether entitlement must persist through commit, plus return financial/disposition policies.
+
+### REVIEW-027A — open, no policy change
+- A live check at function return is not a durable commit-time guarantee. Do not rely on a deferred trigger alone or change global RLS semantics. The proposed deterministic tests distinguish real timestamp ordering from synthetic cutoff projection. No changes to runtime behavior; approval needed for final financial and commit entitlement policy.

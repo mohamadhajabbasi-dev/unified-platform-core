@@ -255,3 +255,9 @@
 
 ## BUILD-027A — candidate / 2026-11-25
 - BUILD-027A candidate: 0055 replaces existing preflight and close; explicit late capture issue for pre-cutoff movement with captured_at at/after UTC cutoff, closes fail closed without rewriting any facts. Single shared entitlement implementation via private explicit-time overload, original statement-time signature/RLS unchanged, live finance check at entry, required modules after exclusive/period lock and immediately before and after close update; no commit-time guarantee. Tests: ACL, existing late and expiry characterization assertions upgraded to rejection, actual expiry during UPDATE using scoped synthetic trigger, independent committed historical late-cost fixture at end of COGS. Existing positive historical and concurrency tests retained. 55 migrations/64 suites expected, 85 tables unchanged, CI pending. No production access. No approved late adjustment, effective-date or global module expiry policy.
+
+## BUILD-027A — CI checkpoint / 2026-11-25
+- 0055 run 45610267991 at b321c2ddc975af47acf89337b234be4c48c0efdd in progress; job 139191653353 guard, all migrations, SQL and eight concurrency steps passed; final COGS not yet verified.
+
+## REVIEW-027A — 2026-11-25
+- REVIEW-027A / 2026-11-25: inspected 0005/0007 actual adjustment API, 0052/0053 barrier, 0055 close/entitlement implementation and the new standalone temporal fixture. Designed deterministic follow-up observations for post-close/pre-COMMIT module expiry and default stock recorded_at before tenant barrier, using only synthetic tenants, existing APIs and isolated temporary test instrumentation. No executable changes while 0055 CI is pending (or before independent regression authoring). Commit-time guarantee, effective-date semantics and remedy remain open. Do not mislabel observed behavior as owner-approved policy. No production access.

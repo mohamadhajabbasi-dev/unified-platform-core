@@ -557,3 +557,8 @@
 ## TEST-066 / BUILD-027A — current (owner priority)
 - [x] Verify 0054; implement provisional 0055 guards and regressions for late cost and live close-time module expiry.
 - [ ] Verify exact new CI SHA; fix any failure first. Review commit-time entitlement behavior, time-before-row-barrier boundary and lock/performance impact; final policy requires owner approval. After verified guard, return to DESIGN-0054 with independent line fact only if needed, cap/identity/non-sellable disposition; no financial activation. Next unused ID 0056; no operational access.
+
+## REVIEW-027A — current
+- [ ] Verify 0055 exact run 45610267991 / b321c2ddc975af47acf89337b234be4c48c0efdd; repair any failure first.
+- [x] Specify deterministic commit-expiry and pre-barrier timestamp ordering tests in existing inventory valuation design; no runtime policy change.
+- [ ] Implement observations in the existing synthetic concurrency fixture once 0055 is green, preserve all guards, verify actual CI. Then proceed with minimal physical return-line/cap design, no financial activation without approved policies. Next unused migration 0056. No operational access.
