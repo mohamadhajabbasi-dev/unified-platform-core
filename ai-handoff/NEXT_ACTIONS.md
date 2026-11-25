@@ -462,3 +462,8 @@
 ## FIX-012 — current
 - [x] Diagnose failed 0043 test and remove alias collision from both assertions.
 - [ ] Verify exact FIX-012 CI SHA (43 SQL + nine concurrency, ten COGS races, four guard tests). Repair any subsequent failures. Only after success proceed to 0044 complex transfer chain cost capture. No production access.
+
+
+## TEST-048 / BUILD-026P — current
+- [x] Verify FIX-012; author 0044 connected transfer capture for both methods.
+- [ ] Verify exact new CI SHA (44 SQL + nine concurrency, ten COGS races, four guard tests), repair. Next chain-specific concurrency/performance and tracked valuation design; financial policy and period-close review pending. No production access.

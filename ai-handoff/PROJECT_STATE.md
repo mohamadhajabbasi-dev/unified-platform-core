@@ -432,3 +432,10 @@
 
 ## FIX-012 — latest
 - FIX-012: run 45578648148 job 139082801809 at 775b58592165d8a5c9e43892fa5d2d2ddf9d2a6c failed at 0043 synthetic test with record a has no field account_id; PL/pgSQL local preview record a collides with SQL alias a in two asset-activity assertions. All 43 migrations applied, 42 prior SQL suites passed; concurrency skipped. Changed only both conflicting SQL aliases to aa, retaining preview variables and all assertions. No runtime/DDL changes. Fully verified baseline 42 migrations, 51 suites (42 SQL + nine concurrency; ten COGS lock races), four guard tests, 85 tables. New CI pending. No production access.
+
+
+## TEST-048 — verified
+- TEST-048: run 45578934697 job 139083768266 at 429e9672dc8c7832d77d78fc856ef91ce7396a55 success; 43 migrations, 52 suites (43 SQL + nine concurrency), four guard tests, ten COGS races; tenant reconciliation and FIX-012 verified; 85 tables.
+
+## BUILD-026P — latest
+- BUILD-026P: canonical 0044 factors existing replay into one read-only optional inclusive prefix engine and full replay wrapper; one private prefix cost writer and existing full private wrapper. Existing transfer capture now walks the historically connected warehouses for the same tenant/variant under variant lock, processes transfer pairs in outgoing chronological order then validates full histories/pairs, all in one transaction. No tables or duplicate costing algorithms. Both methods tested on A->B->C->A with later uninvoiced receipt forcing rollback of all tentative facts/allocations, then exact retry, per-warehouse balance, destination sale/receipt lineage, tenant totals, private writer and cutoff access. New behavior captures all connected histories, not just requested transfer; conservative fail-closed if any later unsupported/unconfirmed movement. Replay repeated per transfer, performance/large history limits not benchmarked; strict chronology, tracked valuation and financial policy still pending. CI pending. No operational access.
