@@ -13,6 +13,7 @@ expense=b6700000-0000-0000-0000-000000000003
 other=b6700000-0000-0000-0000-000000000004
 race() {
  local name=$1 statement=$2 ready=0 blocked=0 first second i
+ local second_statement=${3:-$2}
  psql_ci >"$tmp/first" 2>&1 <<SQL &
 SET application_name='upc_cogs_${name}_first';
 SET SESSION AUTHORIZATION upc_cogs_a;
@@ -32,7 +33,7 @@ SQL
 SET application_name='upc_cogs_${name}_second';
 SET SESSION AUTHORIZATION upc_cogs_a;
 SET statement_timeout='25s';
-$statement
+$second_statement
 SQL
  second=$!
  for i in {1..35}; do
@@ -243,6 +244,86 @@ DO \$\$ BEGIN
 END \$\$;
 RESET SESSION AUTHORIZATION;
 SQL
-echo 'PASS COGS concurrency: ten competing lock races (five FIFO, five moving average), exact paired costs and reversals, readiness and tenant isolation'
+# Two different entry points into one historical connected component must share the
+# same variant lock, without duplicating facts or posting any transfer journals.
+warehouse3=b6400000-0000-0000-0000-000000000004
+psql_ci -c "INSERT INTO inventory.warehouses(tenant_id,warehouse_id,warehouse_key,name) VALUES ('$tenant','$warehouse3','third','Synthetic chain destination')"
+for method in fifo moving_average; do
+ if [[ "$method" == fifo ]]; then
+  variant=b6300000-0000-0000-0000-000000000001
+  unit=120
+  expected=960
+ else
+  variant=b6300000-0000-0000-0000-000000000004
+  unit=110
+  expected=880
+ fi
+ ids=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT inventory.transfer_stock('chain-bc-$method','$warehouse2','$warehouse3','Chain B to C',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',2)));
+SELECT inventory.transfer_stock('chain-ca-$method','$warehouse3','$warehouse','Chain C to A',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',1)));
+SELECT inventory.transfer_stock('chain-ab-$method','$warehouse','$warehouse2','Chain A to B',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',1)));
+SQL
+)
+ mapfile -t chain_ids <<< "$ids"
+ [[ "${#chain_ids[@]}" == 3 ]]
+ for id in "${chain_ids[@]}"; do [[ "$id" =~ ^[0-9a-f-]{36}$ ]]; done
+ tid1=${chain_ids[0]}
+ tid3=${chain_ids[2]}
+ race "chain_$method" "SELECT finance.capture_transfer_costs('$tid3','$variant');" "SELECT finance.capture_transfer_costs('$tid1','$variant');"
+ [[ "$(grep -E '^[0-9]+$' "$tmp/first")" == 6 ]]
+ [[ "$(grep -E '^[0-9]+$' "$tmp/second")" == 0 ]]
+ [[ "$(psql_ci -c "SELECT count(*)=13 AND sum(value_delta)=$expected AND sum(quantity_delta) FILTER(WHERE warehouse_id='$warehouse')=5 AND sum(quantity_delta) FILTER(WHERE warehouse_id='$warehouse2')=2 AND sum(quantity_delta) FILTER(WHERE warehouse_id='$warehouse3')=1 AND sum(value_delta) FILTER(WHERE warehouse_id='$warehouse')=5*$unit AND sum(value_delta) FILTER(WHERE warehouse_id='$warehouse2')=2*$unit AND sum(value_delta) FILTER(WHERE warehouse_id='$warehouse3')=$unit FROM finance.movement_cost_facts WHERE tenant_id='$tenant' AND variant_id='$variant'")" == t ]]
+ # Bounded synthetic timing sample: 8 cycles = 24 transfers, 48 new cost facts.
+ # The timeout is a CI regression ceiling, not a production latency target.
+ psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+DO \$\$
+BEGIN
+ FOR i IN 1..8 LOOP
+  PERFORM inventory.transfer_stock('chain-scale-ab-$method-'||i,'$warehouse','$warehouse2','Sample A to B',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',1)));
+  PERFORM inventory.transfer_stock('chain-scale-bc-$method-'||i,'$warehouse2','$warehouse3','Sample B to C',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',1)));
+  PERFORM inventory.transfer_stock('chain-scale-ca-$method-'||i,'$warehouse3','$warehouse','Sample C to A',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',1)));
+ END LOOP;
+END \$\$;
+SQL
+ start_ms=$(date +%s%3N)
+ result=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SET statement_timeout='60s';
+SELECT finance.capture_transfer_costs('$tid1','$variant');
+SQL
+)
+ capture_ms=$(( $(date +%s%3N) - start_ms ))
+ [[ "$result" == 48 ]]
+ start_ms=$(date +%s%3N)
+ result=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SET statement_timeout='60s';
+SELECT finance.capture_transfer_costs('$tid3','$variant');
+SQL
+)
+ retry_ms=$(( $(date +%s%3N) - start_ms ))
+ [[ "$result" == 0 ]]
+ echo "CHAIN_TIMING method=$method transfers=24 new_facts=48 capture_ms=$capture_ms retry_ms=$retry_ms"
+ [[ "$(psql_ci -c "SELECT count(*)=61 AND sum(value_delta)=$expected AND sum(quantity_delta)=8 AND sum(quantity_delta) FILTER(WHERE warehouse_id='$warehouse')=5 AND sum(quantity_delta) FILTER(WHERE warehouse_id='$warehouse2')=2 AND sum(quantity_delta) FILTER(WHERE warehouse_id='$warehouse3')=1 AND sum(value_delta) FILTER(WHERE warehouse_id='$warehouse')=5*$unit AND sum(value_delta) FILTER(WHERE warehouse_id='$warehouse2')=2*$unit AND sum(value_delta) FILTER(WHERE warehouse_id='$warehouse3')=$unit FROM finance.movement_cost_facts WHERE tenant_id='$tenant' AND variant_id='$variant'")" == t ]]
+ [[ "$(psql_ci -c "SELECT count(*)=28 AND bool_and(fo.quantity_delta=-tl.quantity AND fi.quantity_delta=tl.quantity AND fo.value_delta=-fi.value_delta) FROM inventory.transfer_lines tl JOIN finance.movement_cost_facts fo ON fo.tenant_id=tl.tenant_id AND fo.movement_id=tl.outgoing_movement_id JOIN finance.movement_cost_facts fi ON fi.tenant_id=tl.tenant_id AND fi.movement_id=tl.incoming_movement_id WHERE tl.tenant_id='$tenant' AND tl.variant_id='$variant'")" == t ]]
+ if [[ "$method" == moving_average ]]; then
+  [[ "$(psql_ci -c "SELECT count(*)=0 FROM finance.fifo_cost_allocations WHERE tenant_id='$tenant' AND variant_id='$variant'")" == t ]]
+ fi
+ psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT finance.assert_inventory_cost_ready('$warehouse','$variant');
+SELECT finance.assert_inventory_cost_ready('$warehouse2','$variant');
+SELECT finance.assert_inventory_cost_ready('$warehouse3','$variant');
+SQL
+done
+[[ "$(psql_ci -c "SELECT count(*)=10 FROM finance.journal_entries WHERE tenant_id='$tenant'")" == t ]]
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT finance.assert_tenant_inventory_cost_ready();
+SQL
+echo 'PASS COGS concurrency: twelve competing lock races (six FIFO, six moving average), distinct chain entry points, 48 extra transfer pairs, readiness and tenant isolation'
+
 
 

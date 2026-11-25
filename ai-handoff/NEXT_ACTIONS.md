@@ -467,3 +467,8 @@
 ## TEST-048 / BUILD-026P — current
 - [x] Verify FIX-012; author 0044 connected transfer capture for both methods.
 - [ ] Verify exact new CI SHA (44 SQL + nine concurrency, ten COGS races, four guard tests), repair. Next chain-specific concurrency/performance and tracked valuation design; financial policy and period-close review pending. No production access.
+
+
+## TEST-049 / TEST-050 — current
+- [x] Verify 0044 and add two distinct-entry chain races and bounded timing sample to existing COGS suite.
+- [ ] Verify exact new CI SHA (44 SQL + nine concurrency, twelve COGS races, four guard tests); record actual CHAIN_TIMING results, repair before proceeding. Next 0045 tracked inventory valuation design/implementation preserving canonical stock ledger and source facts. No production access.
