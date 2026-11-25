@@ -605,3 +605,7 @@
 
 ## FIX-028B — 2026-11-25
 - TEST-076 / FIX-028B: exact TEST-075 run 45630535075 at 5ff26ddc69c7db6821362136b1a9670cd17f3156: foundation job 139262191015 completed SUCCESS (58 contiguous pairs, 86 tables, 67 PASS, all nine concurrency suites, 24 COGS races); independent return-upgrade job 139262189394 failed after UPGRADE_BASELINE committed actual pre-0058 ordinary/traced returns and passed header/movement/empty-line assertions. Snapshot generated SQL referenced to_jsonb(t) without FROM alias; ERROR column t does not exist, before migration 0058. Fix exactly one line by adding AS t to generated SELECT FROM clause. Preserve full all-table comparison, legacy retries, negative tests and new-writer coexistence; no migration/runtime/ACL/policy change. Both jobs must pass before 0059. No production access.
+
+## TEST-077 / REVIEW-027F — current
+- [x] Verify actual pre-0058 committed history upgrade job and document read-only line reconciliation with zero-line legacy fallback limitation.
+- [ ] Verify foundation job 139272048763 / full run 45633317796 at exact 42dd7ea102b417d4026f388dab5c45642cf3f9a9; then implement 0059 only on existing capacity function and matching tests, extend isolated upgrade test to prove actual legacy fallback and reject incomplete/non-sellable evidence. No new table, policy or operational access. Next unused ID 0059.
