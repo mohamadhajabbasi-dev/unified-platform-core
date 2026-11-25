@@ -79,6 +79,11 @@ INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by
  FROM core.tenants t CROSS JOIN platform.modules m WHERE t.tenant_key IN ('inv-a','inv-b') AND m.module_key='finance';
 INSERT INTO inventory.warehouses(tenant_id,warehouse_id,warehouse_key,name) VALUES
  ('90000000-0000-0000-0000-000000000001','94000000-0000-0000-0000-000000000003','second','Second warehouse');
+-- 0053: rollback-only fixture privilege for simulating a closed posting period.
+-- Real close permission and cutoff are tested separately; no migration grants this.
+GRANT UPDATE(closed_at,closed_by) ON finance.fiscal_periods TO upc_inv_a;
+CREATE POLICY test_closed_period_fixture ON finance.fiscal_periods FOR UPDATE TO upc_inv_a
+ USING(tenant_id=iam.current_tenant_id()) WITH CHECK(tenant_id=iam.current_tenant_id());
 SET SESSION AUTHORIZATION upc_inv_a;
 DO $$
 DECLARE t uuid:=iam.current_tenant_id(); w uuid:='94000000-0000-0000-0000-000000000001';
@@ -124,7 +129,10 @@ BEGIN
  OR (SELECT count(*) FROM finance.inventory_period_close_issues(old_period))<>2
  THEN RAISE EXCEPTION 'FAIL cumulative readiness falsely certified historical period'; END IF;
  -- Test already-closed status without claiming preflight enforces closure.
- PERFORM finance.close_period(old_period);
+ BEGIN PERFORM finance.close_period(old_period); RAISE EXCEPTION 'FAIL unsafe actual period close'; EXCEPTION WHEN invalid_transaction_state THEN NULL; END;
+ -- Simulate closed state only inside this rolled-back test fixture.
+ UPDATE finance.fiscal_periods SET closed_at=clock_timestamp(),closed_by=iam.current_user_id()
+ WHERE period_id=old_period;
  IF NOT EXISTS(SELECT 1 FROM finance.inventory_period_close_issues(old_period) i WHERE i.issue_code='period_already_closed')
  THEN RAISE EXCEPTION 'FAIL closed period status'; END IF;
  IF (SELECT count(*) FROM finance.fiscal_periods fp WHERE fp.closed_at IS NOT NULL)<>1

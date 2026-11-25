@@ -79,6 +79,11 @@ INSERT INTO finance.accounts(tenant_id,account_id,account_code,name,account_type
  ('90000000-0000-0000-0000-000000000002','97000000-0000-0000-0000-000000000004','clearing','Foreign tenant','asset','IRR');
 INSERT INTO finance.accounts(tenant_id,account_id,account_code,name,account_type,currency) VALUES
  ('90000000-0000-0000-0000-000000000001','97000000-0000-0000-0000-000000000005','revenue','Sales revenue','revenue','IRR');
+-- 0053: rollback-only fixture privilege for simulating a closed posting period.
+-- Real close permission and cutoff are tested separately; no migration grants this.
+GRANT UPDATE(closed_at,closed_by) ON finance.fiscal_periods TO upc_inv_a;
+CREATE POLICY test_closed_period_fixture ON finance.fiscal_periods FOR UPDATE TO upc_inv_a
+ USING(tenant_id=iam.current_tenant_id()) WITH CHECK(tenant_id=iam.current_tenant_id());
 SET SESSION AUTHORIZATION upc_inv_a;
 DO $$
 DECLARE w uuid:='94000000-0000-0000-0000-000000000001'; v uuid:='93000000-0000-0000-0000-000000000001';
@@ -114,7 +119,10 @@ BEGIN
  PERFORM finance.post_refund(rid);
  IF EXISTS(SELECT 1 FROM finance.trial_balance WHERE net_debit<>0) OR
  (SELECT count(*) FROM finance.journal_entries WHERE period_id=p)<>3 THEN RAISE EXCEPTION 'FAIL revenue reversal'; END IF;
- PERFORM finance.close_period(p);
+ BEGIN PERFORM finance.close_period(p); RAISE EXCEPTION 'FAIL unsafe actual period close'; EXCEPTION WHEN check_violation THEN NULL; END;
+ -- Simulate closed state only inside this rolled-back test fixture.
+ UPDATE finance.fiscal_periods SET closed_at=clock_timestamp(),closed_by=iam.current_user_id()
+ WHERE period_id=p;
  PERFORM finance.close_period(p);
  IF finance.post_capture(pid,ca,adv)<>je THEN RAISE EXCEPTION 'FAIL closed period retry'; END IF;
  BEGIN

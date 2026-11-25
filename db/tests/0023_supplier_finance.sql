@@ -77,6 +77,11 @@ INSERT INTO iam.role_grants SELECT tenant_id,role_id,p.permission_key FROM iam.r
 INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
  SELECT t.tenant_id,m.module_id,true,'91000000-0000-0000-0000-000000000001','Synthetic finance'
  FROM core.tenants t CROSS JOIN platform.modules m WHERE t.tenant_key IN ('inv-a','inv-b') AND m.module_key='finance';
+-- 0053: rollback-only fixture privilege for simulating a closed posting period.
+-- Real close permission and cutoff are tested separately; no migration grants this.
+GRANT UPDATE(closed_at,closed_by) ON finance.fiscal_periods TO upc_inv_a;
+CREATE POLICY test_closed_period_fixture ON finance.fiscal_periods FOR UPDATE TO upc_inv_a
+ USING(tenant_id=iam.current_tenant_id()) WITH CHECK(tenant_id=iam.current_tenant_id());
 SET SESSION AUTHORIZATION upc_inv_a;
 DO $$
 DECLARE t uuid:=iam.current_tenant_id(); w uuid:='94000000-0000-0000-0000-000000000001'; v uuid:='93000000-0000-0000-0000-000000000001';
@@ -122,7 +127,10 @@ BEGIN
  BEGIN PERFORM finance.record_supplier_invoice(po2,'INV-1',d,d+7,2000,'IRR',digest,asset,ap); RAISE EXCEPTION 'FAIL duplicate supplier invoice ref'; EXCEPTION WHEN unique_violation THEN NULL; END;
  DECLARE second_invoice uuid; BEGIN
  second_invoice:=finance.record_supplier_invoice(po2,'INV-2',d,d+7,2000,'IRR',digest,asset,ap);
- PERFORM finance.close_period(per);
+ BEGIN PERFORM finance.close_period(per); RAISE EXCEPTION 'FAIL unsafe actual period close'; EXCEPTION WHEN check_violation THEN NULL; END;
+ -- Simulate closed state only inside this rolled-back test fixture.
+ UPDATE finance.fiscal_periods SET closed_at=clock_timestamp(),closed_by=iam.current_user_id()
+ WHERE period_id=per;
  BEGIN PERFORM finance.record_supplier_settlement(second_invoice,'bank','synthetic-bank','CLOSED',1,'IRR',now_at,digest,cash); RAISE EXCEPTION 'FAIL closed period settlement'; EXCEPTION WHEN check_violation THEN NULL; END;
  IF NOT EXISTS(SELECT 1 FROM finance.supplier_payables WHERE invoice_id=second_invoice AND outstanding=2000) THEN RAISE EXCEPTION 'FAIL closed settlement rollback'; END IF;
  END;

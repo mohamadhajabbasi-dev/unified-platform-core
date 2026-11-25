@@ -472,6 +472,12 @@ await_barrier() {
  done
  return 1
 }
+ended=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT finance.open_period('Synthetic ended barrier period',(clock_timestamp() AT TIME ZONE 'UTC')::date-10,(clock_timestamp() AT TIME ZONE 'UTC')::date);
+SQL
+)
+[[ "$ended" =~ ^[0-9a-f-]{36}$ ]]
 psql_ci >"$tmp/barrier_writer" 2>&1 <<SQL &
 SET application_name='upc_barrier_writer';
 SET SESSION AUTHORIZATION upc_cogs_a;
@@ -490,6 +496,9 @@ DO \$\$ BEGIN
  BEGIN PERFORM finance.try_inventory_period_barrier('$tenant',true); RAISE EXCEPTION 'FAIL exclusive lock acquired over writer'; EXCEPTION WHEN lock_not_available THEN NULL; END;
 END \$\$;
 SET SESSION AUTHORIZATION upc_cogs_a;
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.close_period('$ended'); RAISE EXCEPTION 'FAIL actual close crossed writer'; EXCEPTION WHEN lock_not_available THEN NULL; END;
+END \$\$;
 BEGIN;
 SELECT inventory.adjust_stock('$warehouse','$other_variant',1,'barrier-other-variant','Synthetic rollback');
 ROLLBACK;
@@ -550,7 +559,64 @@ psql_ci <<SQL
 SET SESSION AUTHORIZATION upc_cogs_a;
 SELECT finance.assert_tenant_inventory_cost_ready();
 SQL
-echo 'PASS COGS concurrency: twenty-four competing lock races plus private barrier bidirectional exclusion, concurrent shared writers, independent tenant, rollback and retry'
+# The historical period cannot be certified by a current-state balance once
+# later stock/journals exist. The failed request must not close it.
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.close_period('$ended'); RAISE EXCEPTION 'FAIL unsafe historical close'; EXCEPTION WHEN check_violation THEN NULL; END;
+ IF EXISTS(SELECT 1 FROM finance.fiscal_periods WHERE period_id='$ended' AND closed_at IS NOT NULL) THEN RAISE EXCEPTION 'FAIL refused close persisted'; END IF;
+END \$\$;
+SQL
+# Tenant B genuinely has no inventory history. Revoke the inventory module
+# with an explicit synthetic decision and ensure the finance-only close works.
+psql_ci <<SQL
+INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
+ SELECT '$tenant_b',module_id,false,'b6100000-0000-0000-0000-000000000001','Synthetic finance only' FROM platform.modules WHERE module_key='inventory';
+SQL
+ended_b=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_b;
+SELECT finance.open_period('Synthetic finance only ended',(clock_timestamp() AT TIME ZONE 'UTC')::date-10,(clock_timestamp() AT TIME ZONE 'UTC')::date);
+SQL
+)
+[[ "$ended_b" =~ ^[0-9a-f-]{36}$ ]]
+saved_tenant=$tenant
+tenant=$tenant_b
+psql_ci >"$tmp/real_close" 2>&1 <<SQL &
+SET application_name='upc_real_close';
+SET SESSION AUTHORIZATION upc_cogs_b;
+BEGIN;
+SET LOCAL statement_timeout='25s';
+SELECT finance.close_period('$ended_b');
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.open_period('Mutation after close',(clock_timestamp() AT TIME ZONE 'UTC')::date,(clock_timestamp() AT TIME ZONE 'UTC')::date+2);
+ RAISE EXCEPTION 'FAIL mutation after close'; EXCEPTION WHEN invalid_transaction_state THEN NULL; END;
+END \$\$;
+SELECT pg_sleep(10);
+COMMIT;
+SQL
+holder=$!
+await_barrier upc_real_close ExclusiveLock
+psql_ci <<SQL
+SET statement_timeout='3s';
+SET SESSION AUTHORIZATION upc_cogs_b;
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.close_period('$ended_b'); RAISE EXCEPTION 'FAIL competing actual close'; EXCEPTION WHEN lock_not_available THEN NULL; END;
+END \$\$;
+SQL
+wait "$holder" || { cat "$tmp/real_close"; exit 1; }
+tenant=$saved_tenant
+closed_at=$(psql_ci -c "SELECT closed_at FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_id='$ended_b' AND closed_at IS NOT NULL")
+[[ -n "$closed_at" ]]
+[[ "$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_b;
+SELECT finance.close_period('$ended_b');
+SQL
+)" == "$ended_b" ]]
+[[ "$(psql_ci -c "SELECT closed_at FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_id='$ended_b'")" == "$closed_at" ]]
+[[ "$(psql_ci -c "SELECT count(*)=0 FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_name='Mutation after close'")" == t ]]
+echo 'PASS COGS concurrency: twenty-four competing lock races, barrier exclusion and actual atomic close contention, finance-only tenant, historical rejection and exact retry'
+
 
 
 

@@ -77,6 +77,11 @@ INSERT INTO iam.role_grants SELECT tenant_id,role_id,p.permission_key FROM iam.r
 INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
  SELECT t.tenant_id,m.module_id,true,'91000000-0000-0000-0000-000000000001','Synthetic finance'
  FROM core.tenants t CROSS JOIN platform.modules m WHERE t.tenant_key IN ('inv-a','inv-b') AND m.module_key='finance';
+-- 0053: rollback-only fixture privilege for simulating a closed posting period.
+-- Real close permission and cutoff are tested separately; no migration grants this.
+GRANT UPDATE(closed_at,closed_by) ON finance.fiscal_periods TO upc_inv_a;
+CREATE POLICY test_closed_period_fixture ON finance.fiscal_periods FOR UPDATE TO upc_inv_a
+ USING(tenant_id=iam.current_tenant_id()) WITH CHECK(tenant_id=iam.current_tenant_id());
 SET SESSION AUTHORIZATION upc_inv_a;
 DO $$
 DECLARE w uuid:='94000000-0000-0000-0000-000000000001'; v uuid:='93000000-0000-0000-0000-000000000001';
@@ -182,7 +187,10 @@ BEGIN
  OR (SELECT net_debit FROM finance.trial_balance WHERE account_id=expense)<>2200
  THEN RAISE EXCEPTION 'FAIL resale valuation and journal conservation'; END IF;
  BEGIN PERFORM finance.preview_inventory_valuation(w,v,'IRR','moving_average'); RAISE EXCEPTION 'FAIL unsupported moving average return'; EXCEPTION WHEN check_violation THEN NULL; END;
- PERFORM finance.close_period(period);
+ BEGIN PERFORM finance.close_period(period); RAISE EXCEPTION 'FAIL unsafe actual period close'; EXCEPTION WHEN check_violation THEN NULL; END;
+ -- Simulate closed state only inside this rolled-back test fixture.
+ UPDATE finance.fiscal_periods SET closed_at=clock_timestamp(),closed_by=iam.current_user_id()
+ WHERE period_id=period;
  PERFORM sales.receive_full_return(oid2,'valuation-return-2','All units inspected and sellable');
  BEGIN PERFORM finance.reverse_fifo_cogs(mid2); RAISE EXCEPTION 'FAIL closed period reversal'; EXCEPTION WHEN check_violation THEN NULL; END;
  BEGIN PERFORM finance.capture_movement_costs(w,v); RAISE EXCEPTION 'FAIL unreversed return capture'; EXCEPTION WHEN check_violation THEN NULL; END;
