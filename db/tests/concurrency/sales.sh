@@ -121,22 +121,81 @@ payment=$(race capture "SELECT sales.record_capture('$order','synthetic','acct',
 [[ "$(psql_ci -c "SELECT count(*) FROM sales.payments WHERE tenant_id='a0000000-0000-0000-0000-000000000001'")" == 1 ]]
 [[ "$(psql_ci -c "SELECT count(*) FROM inventory.reservations WHERE tenant_id='a0000000-0000-0000-0000-000000000001'")" == 1 ]]
 
-# 0057: real competing privileged synthetic receipt-line inserts only.
-# Existing runtime writer remains the legacy full-return API. No grants.
-return_id=$(psql_ci <<SQL
+# 0058: actual competing runtime exact retries on existing canonical writer.
+psql_ci <<SQL
 SET SESSION AUTHORIZATION upc_sale_a;
 SELECT sales.fulfill_order('$order');
-SELECT sales.receive_full_return('$order','cap-race-full-return','Synthetic sellable');
+SQL
+runtime_return=$(race full_return "SELECT sales.receive_full_return('$order','runtime-full-return','Synthetic sellable');")
+tenant='a0000000-0000-0000-0000-000000000001'
+[[ "$(psql_ci -c "SELECT count(*)=1 AND sum(received_quantity)=2 FROM sales.return_items WHERE tenant_id='$tenant' AND return_id='$runtime_return'")" == t ]]
+[[ "$(psql_ci -c "SELECT count(*) FROM inventory.stock_ledger WHERE tenant_id='$tenant' AND adjustment_key LIKE 'sales-return:$runtime_return:%'")" == 1 ]]
+# Actual different-key race on another fulfilled order. First commits;
+# second waits on the exact order lock and must reject the returned state.
+order=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_sale_a;
+SELECT sales.create_checkout('return-conflict-order','a5000000-0000-0000-0000-000000000001','a4000000-0000-0000-0000-000000000001','a6000000-0000-0000-0000-000000000001','in_person',clock_timestamp()+interval '1 hour',jsonb_build_array(jsonb_build_object('variant_id','a3000000-0000-0000-0000-000000000001','quantity',2,'expected_unit_price',1000)));
 SQL
 )
-return_id=$(printf '%s\n' "$return_id" | tail -n 1)
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_sale_a;
+SELECT sales.record_capture('$order','synthetic','acct','return-conflict-payment',2000,'IRR',clock_timestamp());
+SELECT sales.fulfill_order('$order');
+SQL
+# Use existing exact order-lock observer for both subsequent races.
+cap_lock() {
+ local app=$1 granted=$2 i
+ for i in {1..50}; do
+  if [[ "$(psql_ci -c "SELECT count(*) FROM pg_locks l JOIN pg_stat_activity a USING(pid) WHERE a.application_name='$app' AND l.locktype='advisory' AND l.mode='ExclusiveLock' AND l.granted=$granted AND l.classid=((hashtextextended(jsonb_build_array('sales-order','$tenant'::uuid,'$order'::uuid)::text,0)>>32)&4294967295)::oid AND l.objid=(hashtextextended(jsonb_build_array('sales-order','$tenant'::uuid,'$order'::uuid)::text,0)&4294967295)::oid AND l.objsubid=1")" == 1 ]]; then return 0; fi
+  sleep 0.1
+ done
+ return 1
+}
+psql_ci >"$tmp/return-conflict-first" 2>&1 <<SQL &
+SET application_name='upc_return_conflict_first';
+SET SESSION AUTHORIZATION upc_sale_a;
+BEGIN;
+SET LOCAL statement_timeout='25s';
+SELECT sales.receive_full_return('$order','return-conflict-first','Synthetic sellable');
+SELECT pg_sleep(8);
+COMMIT;
+SQL
+first=$!
+cap_lock upc_return_conflict_first true
+psql_ci >"$tmp/return-conflict-second" 2>&1 <<SQL &
+\set VERBOSITY verbose
+SET application_name='upc_return_conflict_second';
+SET SESSION AUTHORIZATION upc_sale_a;
+SET statement_timeout='25s';
+SELECT sales.receive_full_return('$order','return-conflict-second','Synthetic sellable');
+SQL
+second=$!
+cap_lock upc_return_conflict_second false
+wait "$first" || { cat "$tmp/return-conflict-first"; exit 1; }
+if wait "$second"; then echo 'FAIL second runtime return'; exit 1; fi
+grep -q '23514: Only fulfilled orders can receive a full return' "$tmp/return-conflict-second"
+[[ "$(psql_ci -c "SELECT count(*)=1 AND sum(received_quantity)=2 FROM sales.return_items WHERE tenant_id='$tenant' AND order_id='$order'")" == t ]]
+[[ "$(psql_ci -c "SELECT count(*) FROM inventory.stock_ledger l JOIN sales.returns h ON h.tenant_id=l.tenant_id AND l.adjustment_key LIKE 'sales-return:'||h.return_id::text||':%' WHERE h.tenant_id='$tenant' AND h.order_id='$order'")" == 1 ]]
+echo 'RETURN_WRITER_RACE same-key replay and different-key exclusion'
+# 0057: preserve privileged aggregate cap race with a separate fulfilled
+# synthetic order and incomplete fixture header, not a second live receipt.
+order=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_sale_a;
+SELECT sales.create_checkout('return-cap-struct-order','a5000000-0000-0000-0000-000000000001','a4000000-0000-0000-0000-000000000001','a6000000-0000-0000-0000-000000000001','in_person',clock_timestamp()+interval '1 hour',jsonb_build_array(jsonb_build_object('variant_id','a3000000-0000-0000-0000-000000000001','quantity',2,'expected_unit_price',1000)));
+SQL
+)
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_sale_a;
+SELECT sales.record_capture('$order','synthetic','acct','return-cap-struct-payment',2000,'IRR',clock_timestamp());
+SELECT sales.fulfill_order('$order');
+SQL
+return_id=$(psql_ci -c "INSERT INTO sales.returns(tenant_id,order_id,request_key,reason,received_by) VALUES('$tenant','$order','cap-struct-fixture','Synthetic structural only','a1000000-0000-0000-0000-000000000001') RETURNING return_id")
 [[ "$return_id" =~ ^[0-9a-f-]{36}$ ]]
-tenant='a0000000-0000-0000-0000-000000000001'
 identity=$(psql_ci -c "SELECT l.movement_id||'|'||l.reservation_id FROM inventory.stock_ledger l JOIN sales.order_items i USING(tenant_id,reservation_id) WHERE i.tenant_id='$tenant' AND i.order_id='$order' AND l.quantity_delta=-2")
 IFS='|' read -r movement reservation <<<"$identity"
 [[ "$movement" =~ ^[0-9a-f-]{36}$ && "$reservation" =~ ^[0-9a-f-]{36}$ ]]
 baseline=$(psql_ci -c "SELECT count(*)||'|'||sum(quantity_delta) FROM inventory.stock_ledger WHERE tenant_id='$tenant'")
-[[ "$(psql_ci -c "SELECT count(*) FROM sales.return_items WHERE tenant_id='$tenant'")" == 0 ]]
+[[ "$(psql_ci -c "SELECT count(*) FROM sales.return_items WHERE tenant_id='$tenant' AND order_id='$order'")" == 0 ]]
 psql_ci >"$tmp/return-cap-first" 2>&1 <<SQL &
 SET application_name='upc_return_cap_first';
 BEGIN;
@@ -147,15 +206,6 @@ SELECT pg_sleep(8);
 COMMIT;
 SQL
 cap_first=$!
-# Observe the exact canonical order lock, not merely any advisory lock.
-cap_lock() {
- local app=$1 granted=$2 i
- for i in {1..50}; do
-  if [[ "$(psql_ci -c "SELECT count(*) FROM pg_locks l JOIN pg_stat_activity a USING(pid) WHERE a.application_name='$app' AND l.locktype='advisory' AND l.mode='ExclusiveLock' AND l.granted=$granted AND l.classid=((hashtextextended(jsonb_build_array('sales-order','$tenant'::uuid,'$order'::uuid)::text,0)>>32)&4294967295)::oid AND l.objid=(hashtextextended(jsonb_build_array('sales-order','$tenant'::uuid,'$order'::uuid)::text,0)&4294967295)::oid AND l.objsubid=1")" == 1 ]]; then return 0; fi
-  sleep 0.1
- done
- return 1
-}
 cap_lock upc_return_cap_first true
 psql_ci >"$tmp/return-cap-second" 2>&1 <<SQL &
 \set VERBOSITY verbose
@@ -174,4 +224,4 @@ grep -q '23514: Return receipt quantity exceeds original sale movement' "$tmp/re
 [[ "$(psql_ci -c "SELECT count(*) FROM sales.refunds WHERE tenant_id='$tenant'")" == 0 ]]
 echo 'RETURN_CAP_RACE competing inserts serialized on exact order lock; one committed and excess rejected'
 
-echo 'PASS sales concurrency: actual competing checkout and capture locks, one order, one hold, one payment, atomic return quantity cap race'
+echo 'PASS sales concurrency: actual competing checkout and capture locks, one order, one hold, one payment, atomic return quantity cap and runtime full-return races'

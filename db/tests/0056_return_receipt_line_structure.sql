@@ -157,6 +157,16 @@ BEGIN
  ret:=sales.receive_full_return(oid,'capacity-ordinary-return','Inspected');
  IF NOT EXISTS(SELECT 1 FROM finance.order_return_capacity(oid) e WHERE e.sold_quantity=2 AND e.remaining_quantity=0 AND e.returned_quantity=2 AND e.return_id=ret AND e.return_movement_id IS NOT NULL)
  THEN RAISE EXCEPTION 'FAIL ordinary returned capacity'; END IF;
+
+ -- Separate fulfilled orders solely for privileged structural examples.
+ oid:=sales.create_checkout('struct-traced-order',c,dst,pl,'in_person',clock_timestamp()+interval '1 hour',
+ jsonb_build_array(jsonb_build_object('variant_id',v,'quantity',3,'expected_unit_price',1000),jsonb_build_object('variant_id',sv,'quantity',2,'expected_unit_price',1000)));
+ PERFORM sales.record_capture(oid,'synthetic','acct','struct-traced-payment',5000,'IRR',clock_timestamp());
+ PERFORM sales.fulfill_order(oid);
+ oid:=sales.create_checkout('struct-ordinary-order',c,w,pl,'in_person',clock_timestamp()+interval '1 hour',
+ jsonb_build_array(jsonb_build_object('variant_id','93000000-0000-0000-0000-000000000005','quantity',2,'expected_unit_price',1000)));
+ PERFORM sales.record_capture(oid,'synthetic','acct','struct-ordinary-payment',2000,'IRR',clock_timestamp());
+ PERFORM sales.fulfill_order(oid);
  BEGIN PERFORM finance.order_return_capacity(NULL); RAISE EXCEPTION 'FAIL null order'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
  BEGIN PERFORM finance.order_return_capacity(gen_random_uuid()); RAISE EXCEPTION 'FAIL missing order'; EXCEPTION WHEN foreign_key_violation THEN NULL; END;
  IF EXISTS(SELECT 1 FROM finance.movement_cost_facts) OR EXISTS(SELECT 1 FROM finance.fifo_cost_allocations) OR (SELECT count(*) FROM finance.journal_entries)<>1
@@ -180,7 +190,12 @@ DO $$ BEGIN
  BEGIN PERFORM finance.tracked_movement_evidence(current_setting('upc.test_foreign_mid')::uuid); RAISE EXCEPTION 'FAIL cross tenant evidence'; EXCEPTION WHEN foreign_key_violation THEN NULL; END;
 END $$;
 RESET SESSION AUTHORIZATION;
--- 0056: legacy writers deliberately do not populate the dormant relation.
+-- Test-only incomplete headers for independent cap/FK classification examples.
+INSERT INTO sales.returns(tenant_id,order_id,request_key,reason,received_by)
+ SELECT tenant_id,order_id,checkout_key||'-fixture','Synthetic structural only','91000000-0000-0000-0000-000000000001'
+ FROM sales.orders WHERE tenant_id='90000000-0000-0000-0000-000000000001'
+ AND checkout_key IN ('struct-traced-order','struct-ordinary-order');
+-- Independent structural fixture; real full return now creates five lines.
 -- Use superuser ONLY for rollback-only structural examples; no runtime DML.
 DO $$
 DECLARE a constant uuid:='90000000-0000-0000-0000-000000000001';
@@ -190,18 +205,19 @@ DECLARE a constant uuid:='90000000-0000-0000-0000-000000000001';
  other_m inventory.stock_ledger%ROWTYPE; adjust_m inventory.stock_ledger%ROWTYPE;
  role_name text; n bigint; js bigint; qs numeric;
 BEGIN
- IF EXISTS(SELECT 1 FROM sales.return_items) THEN RAISE EXCEPTION 'FAIL legacy writer activated dormant relation'; END IF;
+ IF (SELECT count(*) FROM sales.return_items)<>5 OR EXISTS(SELECT 1 FROM sales.return_items WHERE disposition<>'sellable') THEN RAISE EXCEPTION 'FAIL actual full-return evidence'; END IF;
+ IF NOT has_table_privilege('upc_sales_executor','sales.return_items','SELECT') OR NOT has_table_privilege('upc_sales_executor','sales.return_items','INSERT') THEN RAISE EXCEPTION 'FAIL private writer ACL'; END IF;
  IF NOT EXISTS(SELECT 1 FROM pg_class WHERE oid='sales.return_items'::regclass AND relrowsecurity AND relforcerowsecurity)
  OR NOT EXISTS(SELECT 1 FROM pg_trigger WHERE tgrelid='sales.return_items'::regclass AND tgname='inventory_period_mutation_barrier'
  AND NOT tgisinternal AND tgenabled='O' AND tgfoid='finance.guard_inventory_period_mutation()'::regprocedure)
  THEN RAISE EXCEPTION 'FAIL return line RLS/barrier'; END IF;
  FOR role_name IN SELECT rolname FROM pg_roles WHERE rolname LIKE 'upc_%' LOOP
-  IF has_table_privilege(role_name,'sales.return_items','INSERT,UPDATE,DELETE,TRUNCATE,TRIGGER,REFERENCES')
-  OR has_any_column_privilege(role_name,'sales.return_items','INSERT,UPDATE,REFERENCES')
+  IF has_table_privilege(role_name,'sales.return_items','UPDATE,DELETE,TRUNCATE,TRIGGER,REFERENCES') OR (role_name<>'upc_sales_executor' AND has_table_privilege(role_name,'sales.return_items','INSERT'))
+  OR has_any_column_privilege(role_name,'sales.return_items','UPDATE,REFERENCES') OR (role_name<>'upc_sales_executor' AND has_any_column_privilege(role_name,'sales.return_items','INSERT'))
   THEN RAISE EXCEPTION 'FAIL dormant return line mutable by %',role_name; END IF;
  END LOOP;
- SELECT * INTO STRICT h FROM sales.returns WHERE tenant_id=a AND request_key='capacity-ordinary-return';
- SELECT * INTO STRICT h2 FROM sales.returns WHERE tenant_id=a AND request_key='trace-evidence-return';
+ SELECT * INTO STRICT h FROM sales.returns WHERE tenant_id=a AND request_key='struct-ordinary-order-fixture';
+ SELECT * INTO STRICT h2 FROM sales.returns WHERE tenant_id=a AND request_key='struct-traced-order-fixture';
  SELECT l.* INTO STRICT m FROM inventory.stock_ledger l JOIN sales.order_items i USING(tenant_id,reservation_id)
  WHERE i.tenant_id=a AND i.order_id=h.order_id;
  SELECT l.* INTO m2 FROM inventory.stock_ledger l JOIN sales.order_items i USING(tenant_id,reservation_id)
@@ -278,7 +294,7 @@ BEGIN
   RAISE EXCEPTION USING ERRCODE='Z0056',MESSAGE='Rollback-only classification example';
  EXCEPTION WHEN SQLSTATE 'Z0056' THEN NULL;
  END;
- IF (SELECT count(*) FROM sales.return_items)<>2 OR (SELECT count(*) FROM inventory.stock_ledger)<>n
+ IF (SELECT count(*) FROM sales.return_items)<>7 OR (SELECT count(*) FROM inventory.stock_ledger)<>n
  OR (SELECT sum(quantity_delta) FROM inventory.stock_ledger) IS DISTINCT FROM qs
  OR (SELECT count(*) FROM finance.journal_entries)<>js
  OR EXISTS(SELECT 1 FROM sales.refunds) OR EXISTS(SELECT 1 FROM finance.movement_cost_facts)
@@ -286,7 +302,7 @@ BEGIN
 END $$;
 SET SESSION AUTHORIZATION upc_inv_a;
 DO $$ BEGIN
- IF (SELECT count(*) FROM sales.return_items)<>2 THEN RAISE EXCEPTION 'FAIL authorized return line read'; END IF;
+ IF (SELECT count(*) FROM sales.return_items)<>7 THEN RAISE EXCEPTION 'FAIL authorized return line read'; END IF;
  BEGIN
   INSERT INTO sales.return_items(tenant_id,return_id,order_id,reservation_id,sale_movement_id,received_quantity,disposition)
   SELECT tenant_id,return_id,order_id,reservation_id,sale_movement_id,1,'damaged' FROM sales.return_items LIMIT 1;
@@ -303,7 +319,7 @@ END $$;
 RESET SESSION AUTHORIZATION;
 SET SESSION AUTHORIZATION upc_inv_reader;
 DO $$ BEGIN
- IF (SELECT count(*) FROM sales.return_items)<>2 THEN RAISE EXCEPTION 'FAIL sales read-only role'; END IF;
+ IF (SELECT count(*) FROM sales.return_items)<>7 THEN RAISE EXCEPTION 'FAIL sales read-only role'; END IF;
 END $$;
 RESET SESSION AUTHORIZATION;
 DELETE FROM iam.role_grants g USING iam.roles r
@@ -323,5 +339,5 @@ DO $$ BEGIN
 END $$;
 RESET SESSION AUTHORIZATION;
 ROLLBACK;
-\echo PASS dormant return line identity, composite FK, RLS/ACL/barrier, legacy compatibility and no inventory/financial changes
+\echo PASS return line identity, composite FK, RLS/ACL/barrier, legacy compatibility and no inventory/financial changes
 

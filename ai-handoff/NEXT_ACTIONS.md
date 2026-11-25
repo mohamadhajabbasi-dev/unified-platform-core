@@ -591,3 +591,7 @@
 ## REVIEW-027E — current
 - [x] Audit exact writer grants and plan scoped evidence access and independent structural/runtime test fixtures, without removing old assertions.
 - [ ] Verify 0057 exact CI run 45625448713 at aa1dd061853a028ce11d61bfc9a490130fefc4d6, fix failures first; then 0058 integrate same full-return writer and cap with actual runtime concurrency and legacy retry evidence. No partial/non-sellable/refund activation. No operational access.
+
+## TEST-072 / BUILD-027D — current
+- [x] Verify exact 0057 CI and integrate existing full-return writer with immutable lines and cap; extend SQL and concurrency tests.
+- [ ] Verify exact 0058 CI SHA, repair failures without weakening checks. Then actual upgrade fixture pre-0058 legacy retry and read-only capacity exact line reconciliation; retain no partial/non-sellable/refund activation. Owner decisions for quarantine, valuation, late/commit expiry remain open. Next unused ID 0059. No operational access.

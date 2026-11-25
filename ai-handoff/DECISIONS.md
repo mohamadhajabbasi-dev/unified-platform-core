@@ -108,3 +108,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### REVIEW-027E — proposed limited writer privileges
 - No executor role elevation or blanket cross-domain write grant; use exact required evidence reads and tenant-scoped append-only receipt insertion for existing writer. Test structural cap separately from actual full-return runtime and preserve all negative assertions. Historical upgrade compatibility requires actual pre-upgrade fixture. No executable or financial policy change yet.
+
+### BUILD-027D — one existing full-return writer only
+- New full sellable receipt lines represent the same event as legacy ledger and are not added to ledger quantity. Private sales executor gets exact evidence reads and append-only sellable fact INSERT, no role elevation or other new DML. Retry with lines validates evidence; zero-line legacy retry read-only, actual upgrade test pending. No final financial or disposition policy change.

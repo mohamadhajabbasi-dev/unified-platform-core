@@ -157,6 +157,16 @@ BEGIN
  ret:=sales.receive_full_return(oid,'capacity-ordinary-return','Inspected');
  IF NOT EXISTS(SELECT 1 FROM finance.order_return_capacity(oid) e WHERE e.sold_quantity=2 AND e.remaining_quantity=0 AND e.returned_quantity=2 AND e.return_id=ret AND e.return_movement_id IS NOT NULL)
  THEN RAISE EXCEPTION 'FAIL ordinary returned capacity'; END IF;
+
+ -- Separate fulfilled orders solely for privileged structural examples.
+ oid:=sales.create_checkout('struct-traced-order',c,dst,pl,'in_person',clock_timestamp()+interval '1 hour',
+ jsonb_build_array(jsonb_build_object('variant_id',v,'quantity',3,'expected_unit_price',1000),jsonb_build_object('variant_id',sv,'quantity',2,'expected_unit_price',1000)));
+ PERFORM sales.record_capture(oid,'synthetic','acct','struct-traced-payment',5000,'IRR',clock_timestamp());
+ PERFORM sales.fulfill_order(oid);
+ oid:=sales.create_checkout('struct-ordinary-order',c,w,pl,'in_person',clock_timestamp()+interval '1 hour',
+ jsonb_build_array(jsonb_build_object('variant_id','93000000-0000-0000-0000-000000000005','quantity',2,'expected_unit_price',1000)));
+ PERFORM sales.record_capture(oid,'synthetic','acct','struct-ordinary-payment',2000,'IRR',clock_timestamp());
+ PERFORM sales.fulfill_order(oid);
  BEGIN PERFORM finance.order_return_capacity(NULL); RAISE EXCEPTION 'FAIL null order'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
  BEGIN PERFORM finance.order_return_capacity(gen_random_uuid()); RAISE EXCEPTION 'FAIL missing order'; EXCEPTION WHEN foreign_key_violation THEN NULL; END;
  IF EXISTS(SELECT 1 FROM finance.movement_cost_facts) OR EXISTS(SELECT 1 FROM finance.fifo_cost_allocations) OR (SELECT count(*) FROM finance.journal_entries)<>1
@@ -180,23 +190,29 @@ DO $$ BEGIN
  BEGIN PERFORM finance.tracked_movement_evidence(current_setting('upc.test_foreign_mid')::uuid); RAISE EXCEPTION 'FAIL cross tenant evidence'; EXCEPTION WHEN foreign_key_violation THEN NULL; END;
 END $$;
 RESET SESSION AUTHORIZATION;
--- 0057: rollback-only privileged fact tests, no runtime write permission.
+-- Test-only incomplete headers for independent cap/FK classification examples.
+INSERT INTO sales.returns(tenant_id,order_id,request_key,reason,received_by)
+ SELECT tenant_id,order_id,checkout_key||'-fixture','Synthetic structural only','91000000-0000-0000-0000-000000000001'
+ FROM sales.orders WHERE tenant_id='90000000-0000-0000-0000-000000000001'
+ AND checkout_key IN ('struct-traced-order','struct-ordinary-order');
+-- Independent structural fixture; real full return now creates five lines.
 DO $$
 DECLARE a constant uuid:='90000000-0000-0000-0000-000000000001';
  h sales.returns%ROWTYPE; m inventory.stock_ledger%ROWTYPE;
  row_id uuid; msg text; n bigint; q numeric; j bigint; role_name text;
 BEGIN
- IF EXISTS(SELECT 1 FROM sales.return_items) THEN RAISE EXCEPTION 'FAIL unexpected active writer'; END IF;
+ IF (SELECT count(*) FROM sales.return_items)<>5 OR EXISTS(SELECT 1 FROM sales.return_items WHERE disposition<>'sellable') THEN RAISE EXCEPTION 'FAIL actual full-return evidence'; END IF;
+ IF NOT has_table_privilege('upc_sales_executor','sales.return_items','SELECT') OR NOT has_table_privilege('upc_sales_executor','sales.return_items','INSERT') THEN RAISE EXCEPTION 'FAIL private writer ACL'; END IF;
  IF NOT EXISTS(SELECT 1 FROM pg_trigger WHERE tgrelid='sales.return_items'::regclass AND tgname='return_items_quantity_guard' AND tgenabled='O' AND NOT tgisinternal
  AND tgfoid='sales.guard_return_item_quantity()'::regprocedure)
  OR EXISTS(SELECT 1 FROM pg_proc WHERE oid='sales.guard_return_item_quantity()'::regprocedure AND (prosecdef OR provolatile<>'v'))
  THEN RAISE EXCEPTION 'FAIL cap trigger contract'; END IF;
  FOR role_name IN SELECT rolname FROM pg_roles WHERE rolname LIKE 'upc_%' LOOP
-  IF has_table_privilege(role_name,'sales.return_items','INSERT,UPDATE,DELETE,TRUNCATE,TRIGGER,REFERENCES')
-   OR has_any_column_privilege(role_name,'sales.return_items','INSERT,UPDATE,REFERENCES')
+  IF has_table_privilege(role_name,'sales.return_items','UPDATE,DELETE,TRUNCATE,TRIGGER,REFERENCES') OR (role_name<>'upc_sales_executor' AND has_table_privilege(role_name,'sales.return_items','INSERT'))
+   OR has_any_column_privilege(role_name,'sales.return_items','UPDATE,REFERENCES') OR (role_name<>'upc_sales_executor' AND has_any_column_privilege(role_name,'sales.return_items','INSERT'))
   THEN RAISE EXCEPTION 'FAIL cap stage grants write to %',role_name; END IF;
  END LOOP;
- SELECT * INTO STRICT h FROM sales.returns WHERE tenant_id=a AND request_key='capacity-ordinary-return';
+ SELECT * INTO STRICT h FROM sales.returns WHERE tenant_id=a AND request_key='struct-ordinary-order-fixture';
  SELECT l.* INTO STRICT m FROM inventory.stock_ledger l JOIN sales.order_items i USING(tenant_id,reservation_id)
  WHERE i.tenant_id=a AND i.order_id=h.order_id;
  IF m.quantity_delta<>-2 THEN RAISE EXCEPTION 'FAIL cap fixture sale'; END IF;
@@ -219,7 +235,7 @@ BEGIN
   GET STACKED DIAGNOSTICS msg=MESSAGE_TEXT;
   IF msg<>'Return receipt quantity exceeds original sale movement' THEN RAISE; END IF;
  END;
- IF EXISTS(SELECT 1 FROM sales.return_items) THEN RAISE EXCEPTION 'FAIL multi-row failure not atomic'; END IF;
+ IF EXISTS(SELECT 1 FROM sales.return_items WHERE return_id=h.return_id AND tenant_id=a) THEN RAISE EXCEPTION 'FAIL multi-row failure not atomic'; END IF;
  INSERT INTO sales.return_items(tenant_id,return_id,order_id,reservation_id,sale_movement_id,received_quantity,disposition)
  VALUES(a,h.return_id,h.order_id,m.reservation_id,m.movement_id,1,'sellable') RETURNING return_item_id INTO row_id;
  INSERT INTO sales.return_items(tenant_id,return_id,order_id,reservation_id,sale_movement_id,received_quantity,disposition)
@@ -246,8 +262,8 @@ BEGIN
   GET STACKED DIAGNOSTICS msg=MESSAGE_TEXT;
   IF msg<>'Return receipt lines are append-only' THEN RAISE; END IF;
  END;
- IF (SELECT count(*) FROM sales.return_items)<>2
- OR (SELECT sum(received_quantity) FROM sales.return_items)<>2
+ IF (SELECT count(*) FROM sales.return_items WHERE return_id=h.return_id AND tenant_id=a)<>2
+ OR (SELECT sum(received_quantity) FROM sales.return_items WHERE return_id=h.return_id AND tenant_id=a)<>2
  OR (SELECT count(*) FROM inventory.stock_ledger)<>n
  OR (SELECT sum(quantity_delta) FROM inventory.stock_ledger) IS DISTINCT FROM q
  OR (SELECT count(*) FROM finance.journal_entries)<>j
