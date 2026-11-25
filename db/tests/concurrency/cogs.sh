@@ -455,7 +455,103 @@ END \$\$;
 SQL
 done
 [[ "$(psql_ci -c "SELECT count(*)=22 FROM finance.journal_entries WHERE tenant_id='$tenant'")" == t ]]
-echo 'PASS COGS concurrency: twenty-four competing lock races (six per method), exact multi-allocation traced sale and return, chain conservation, readiness and tenant isolation'
+# Exercise the new private barrier independently of close_period (not yet gated).
+# Real two-session tests. The holder rolls back; no artificial uncosted stock persists.
+variant=b6300000-0000-0000-0000-000000000001
+other_variant=b6300000-0000-0000-0000-000000000004
+asset=b6700000-0000-0000-0000-000000000001
+payable=b6700000-0000-0000-0000-000000000002
+tenant_b=b6000000-0000-0000-0000-000000000002
+wh_b=b6400000-0000-0000-0000-000000000002
+variant_b=b6300000-0000-0000-0000-000000000002
+await_barrier() {
+ local app=$1 mode=$2 i
+ for i in {1..50}; do
+  if [[ "$(psql_ci -c "SELECT count(*) FROM pg_locks l JOIN pg_stat_activity a USING(pid) WHERE a.application_name='$app' AND l.locktype='advisory' AND l.granted AND l.mode='$mode' AND l.classid=((hashtextextended(jsonb_build_array('inventory-period-barrier','$tenant'::uuid)::text,0)>>32)&4294967295)::oid AND l.objid=(hashtextextended(jsonb_build_array('inventory-period-barrier','$tenant'::uuid)::text,0)&4294967295)::oid AND l.objsubid=1")" == 1 ]]; then return 0; fi
+  sleep 0.1
+ done
+ return 1
+}
+psql_ci >"$tmp/barrier_writer" 2>&1 <<SQL &
+SET application_name='upc_barrier_writer';
+SET SESSION AUTHORIZATION upc_cogs_a;
+BEGIN;
+SET LOCAL statement_timeout='25s';
+SELECT inventory.adjust_stock('$warehouse','$variant',1,'barrier-held-adjust','Synthetic rollback');
+SELECT pg_sleep(10);
+ROLLBACK;
+SQL
+holder=$!
+await_barrier upc_barrier_writer ShareLock
+# Exclusive fails immediately while writer is uncommitted; another variant is not serialized.
+psql_ci <<SQL
+SET statement_timeout='3s';
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.try_inventory_period_barrier('$tenant',true); RAISE EXCEPTION 'FAIL exclusive lock acquired over writer'; EXCEPTION WHEN lock_not_available THEN NULL; END;
+END \$\$;
+SET SESSION AUTHORIZATION upc_cogs_a;
+BEGIN;
+SELECT inventory.adjust_stock('$warehouse','$other_variant',1,'barrier-other-variant','Synthetic rollback');
+ROLLBACK;
+RESET SESSION AUTHORIZATION;
+SQL
+await_barrier upc_barrier_writer ShareLock
+wait "$holder" || { cat "$tmp/barrier_writer"; exit 1; }
+# Create one confirmed, not yet captured receipt; test actual cost writer while exclusive held.
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+DO \$\$
+DECLARE s uuid; po uuid; d date:=(clock_timestamp() AT TIME ZONE 'UTC')::date;
+BEGIN
+ s:=procurement.register_counterparty('barrier-supplier',NULL,'Synthetic barrier');
+ po:=procurement.issue_purchase('barrier-po',s,'$warehouse','IRR',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',1,'unit_cost',100)));
+ PERFORM procurement.receive_purchase(po,'barrier-receipt','Synthetic');
+ PERFORM finance.record_supplier_invoice(po,'BARRIER-INVOICE',d,d+7,100,'IRR',decode(repeat('ab',32),'hex'),'$asset','$payable');
+END \$\$;
+SQL
+psql_ci >"$tmp/barrier_exclusive" 2>&1 <<SQL &
+SET application_name='upc_barrier_exclusive';
+BEGIN;
+SET LOCAL statement_timeout='25s';
+SELECT finance.try_inventory_period_barrier('$tenant',true);
+SELECT pg_sleep(10);
+ROLLBACK;
+SQL
+holder=$!
+await_barrier upc_barrier_exclusive ExclusiveLock
+psql_ci <<SQL
+SET statement_timeout='3s';
+SET SESSION AUTHORIZATION upc_cogs_a;
+DO \$\$ BEGIN
+ BEGIN PERFORM inventory.adjust_stock('$warehouse','$variant',1,'barrier-denied-adjust','Synthetic denied'); RAISE EXCEPTION 'FAIL stock writer crossed exclusive barrier'; EXCEPTION WHEN lock_not_available THEN NULL; END;
+ BEGIN PERFORM finance.capture_movement_costs('$warehouse','$variant'); RAISE EXCEPTION 'FAIL cost writer crossed exclusive barrier'; EXCEPTION WHEN lock_not_available THEN NULL; END;
+ BEGIN PERFORM finance.post_manual('barrier-denied-journal','IRR','Synthetic denied',jsonb_build_array(jsonb_build_object('account_id','$asset','amount',1),jsonb_build_object('account_id','$payable','amount',-1))); RAISE EXCEPTION 'FAIL journal writer crossed exclusive barrier'; EXCEPTION WHEN lock_not_available THEN NULL; END;
+END \$\$;
+RESET SESSION AUTHORIZATION;
+SET SESSION AUTHORIZATION upc_cogs_b;
+BEGIN;
+SELECT inventory.adjust_stock('$wh_b','$variant_b',1,'barrier-foreign-allowed','Synthetic rollback');
+ROLLBACK;
+RESET SESSION AUTHORIZATION;
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.try_inventory_period_barrier('$tenant',true); RAISE EXCEPTION 'FAIL competing exclusive lock'; EXCEPTION WHEN lock_not_available THEN NULL; END;
+END \$\$;
+SQL
+await_barrier upc_barrier_exclusive ExclusiveLock
+wait "$holder" || { cat "$tmp/barrier_exclusive"; exit 1; }
+[[ "$(psql_ci -c "SELECT count(*)=0 FROM inventory.stock_ledger WHERE adjustment_key IN ('barrier-held-adjust','barrier-other-variant','barrier-denied-adjust','barrier-foreign-allowed')")" == t ]]
+[[ "$(psql_ci -c "SELECT count(*)=0 FROM finance.journal_entries WHERE tenant_id='$tenant' AND source_key='manual:barrier-denied-journal'")" == t ]]
+[[ "$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT finance.capture_movement_costs('$warehouse','$variant');
+SQL
+)" == 1 ]]
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT finance.assert_tenant_inventory_cost_ready();
+SQL
+echo 'PASS COGS concurrency: twenty-four competing lock races plus private barrier bidirectional exclusion, concurrent shared writers, independent tenant, rollback and retry'
+
 
 
 

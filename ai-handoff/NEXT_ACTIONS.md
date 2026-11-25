@@ -522,3 +522,8 @@
 ## DESIGN-0052 — current
 - [x] Review existing mutation and lock paths; document tenant barrier and staged acceptance.
 - [ ] Verify 0051 exact run 45596926623 / aa77ac75e4245c908dad2a9c2744f65cfc8511c7 before new DDL. Then implement 0052 private tenant mutation barrier with two-direction real contention, independent tenant and no-runtime-grant tests, no public close API duplication. Integrate guard in existing close_period only after explicit cutoff/module coverage policy and regression tests. No production access.
+
+
+## TEST-060 / BUILD-026X — current
+- [x] Verify 0051; author private 0052 barrier and bidirectional contention tests.
+- [ ] Verify exact CI SHA (52 SQL + nine concurrency, 24 existing COGS races and new barrier assertions, four guard tests); fix first. Next 0053 guarded single close_period only after cutoff/module/no-inventory and lock upgrade/period lock order policy, admin paths and timestamp review. No production access.
