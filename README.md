@@ -2,7 +2,7 @@
 
 مخزن **در حال حاضر عمومی (Public)** برای طراحی و اجرای کنترل‌شده یک دیتابیس عملیاتی مرکزی PostgreSQL در آینده، به‌جای اطلاعات تکراری میان ERPPlus (MySQL) و CommerceAI (PostgreSQL). برنامه‌های ERPPlus، Commerce، CRM، اپ موبایل و کانال‌های آینده باید از یک منبع معتبر و سرویس امن مشترک استفاده کنند.
 
-> **وضعیت تأییدشده (2026-11-25):** نمونه مستقل PostgreSQL با داده مصنوعی در GitHub Actions؛ ۸۶ جدول، ۵۷ Migration یکتا، ۶۶ مجموعه آزمون و چهار آزمون کنترل شماره‌گذاری موفق. [شاهد CI](https://github.com/mohamadhajabbasi-dev/unified-platform-core/actions/runs/45625448713). توسعه بعدی در PROJECT_STATE/NEXT_ACTIONS؛ هیچ استقرار یا مهاجرت داده عملیاتی انجام نشده است.
+> **وضعیت تأییدشده (2026-11-25):** نمونه مستقل PostgreSQL با داده مصنوعی در GitHub Actions؛ ۸۶ جدول، ۵۸ Migration یکتا، ۶۷ مجموعه آزمون و چهار آزمون کنترل شماره‌گذاری موفق. [شاهد CI](https://github.com/mohamadhajabbasi-dev/unified-platform-core/actions/runs/45628924408). توسعه بعدی در PROJECT_STATE/NEXT_ACTIONS؛ هیچ استقرار یا مهاجرت داده عملیاتی انجام نشده است.
 
 ## شروع الزامی هر عامل هوش مصنوعی
 1. [AGENTS.md](AGENTS.md) — دستورالعمل قطعی، ممنوعیت تکرار کار/جدول و اعمال ناامن
@@ -33,4 +33,4 @@
 
 
 ## پوشش کامل داده‌های قدیمی در طراحی جدید (GitHub-only)
-برای پیگیری «تمام داده‌ها» ابتدا [فهرست ۲۳۴ مدل EF](docs/LEGACY_DBSET_COVERAGE_2026-11-24.md)، [شواهد فیلدهای واقعی](docs/SOURCE_FIELD_EVIDENCE_FA.md) و [ماتریس ۵۷ گروه جدول‌های مرجع مقصد](docs/CANONICAL_TARGET_TABLE_DICTIONARY_V1_FA.md) را بخوان. این فهرست‌ها برای **پوشش نیازها** هستند، نه کپی دیتابیس فعلی. اسکریپت‌ها و تست‌های مستقل با داده مصنوعی به مرحله تأییدشده 0057 رسیده‌اند؛ آخرین وضعیت اجرای CI و مراحل بعد در PROJECT_STATE و NEXT_ACTIONS است. پایگاه‌داده/سرور/سورس پروژه‌های ERPPlus و CommerceAI دست‌نخورده‌اند. GitHub در حال حاضر **Public** است؛ فقط داده synthetic.
+برای پیگیری «تمام داده‌ها» ابتدا [فهرست ۲۳۴ مدل EF](docs/LEGACY_DBSET_COVERAGE_2026-11-24.md)، [شواهد فیلدهای واقعی](docs/SOURCE_FIELD_EVIDENCE_FA.md) و [ماتریس ۵۷ گروه جدول‌های مرجع مقصد](docs/CANONICAL_TARGET_TABLE_DICTIONARY_V1_FA.md) را بخوان. این فهرست‌ها برای **پوشش نیازها** هستند، نه کپی دیتابیس فعلی. اسکریپت‌ها و تست‌های مستقل با داده مصنوعی به مرحله تأییدشده 0058 رسیده‌اند؛ آخرین وضعیت اجرای CI و مراحل بعد در PROJECT_STATE و NEXT_ACTIONS است. پایگاه‌داده/سرور/سورس پروژه‌های ERPPlus و CommerceAI دست‌نخورده‌اند. GitHub در حال حاضر **Public** است؛ فقط داده synthetic.

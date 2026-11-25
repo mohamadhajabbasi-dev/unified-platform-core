@@ -114,3 +114,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ## FIX-028A — 2026-11-25
 - TEST-073 / FIX-028A: exact 0058 run 45627260327 job 139250654541 at cad159104e2d70c7d01e568993ae9e279b373f36 failed only at pricing concurrency after all 58 migrations, SQL suites and identity/inventory/sales races passed. Logs show PASS canonical full-return writer, RETURN_WRITER_RACE, RETURN_CAP_RACE, both stale price checkouts rejected; pricing.sh final count still expected one order/reservation but preceding expanded sales fixture creates three. Fix only pricing test fixture expectation: assert exact three before and after, compare full ordered order and reservation snapshots after each race, retain actual lock wait, SQLSTATE 23514 and rejection checks. No migration, runtime, ACL, RLS or financial change; later concurrency suites skipped, overall CI not yet verified. Rerun full CI, then actual pre-0058 upgrade fixture and 0059. No operational access.
+
+### TEST-075 — independent upgrade evidence
+- Real old return history must be created before applying 0058, not fabricated by disabling constraints. Separate disposable CI service; reuse existing fixture with final commit only in temporary copy. Compare all row data before/after exact legacy retry; no automatic backfill. No runtime or financial change.
