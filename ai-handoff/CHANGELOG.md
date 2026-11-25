@@ -386,3 +386,9 @@ Next 0060 should be a synthetic-only safety prerequisite, not an unapproved part
 
 
 - 2026-11-25 TEST-087 / REVIEW-031B: exact candidate 0063 verified (63/75/90), PR #1 still open, documented queue ACL and acceptance contract. Documentation checkpoint only; main not promoted.
+
+
+## TEST-088 / BUILD-031 — 2026-11-25
+- TEST-088: PR #1 merged f583474cc72a42ece32c6ee0e039aaf5bda343dc, exact main run 45654059400 SUCCESS both jobs 139345880019/139345879319. Logs 63 contiguous pairs, 75 PASS suites, measured 90 base tables, actual tag contention and 24 COGS races. PR #2 documentation merged at 18ee2ad500b2713302440e8814dcde7dea7b947d with exact checkpoint tree. 23 verified/14 partial/20 not implemented; tag/merge partial. Main 0063 verified.
+- BUILD-031: authored 0064 service_queues, nullable composite FK on existing support_tickets, 11-column legacy INSERT ACL preserved and protected queue_id, separate scoped nonlogin executor and shared audit. Exact state replay; ticket row lock for assignment, no routing or SLA/feedback policy. SQL test, real create/assign/opposing contention, separate committed pre-0064 upgrade job reusing 0013 fixture. No previous tests removed. Candidate expected 64 pairs, 77 foundation PASS suites, 91 base tables, separate upgrade proof; not yet verified. Preserve open ticket/customer-conversation consistency gap, privacy, queue access/closed-ticket lifecycle, temporal/financial/custody/domain gates. No production or legacy access.
+- Next verify exact candidate SHA and all three CI jobs, inspect actual failure before any next migration. Main promotion only after PASS if candidate branch used. Next unused 0065 only after 0064 verification.
