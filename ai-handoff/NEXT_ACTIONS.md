@@ -536,3 +536,7 @@
 ## TEST-062 / TEST-063 — current
 - [x] Verify 0053 at run 45601424659 / 36d261c1c1bb57a6e4bf012c52cc155325fea15f (62 suites); add targeted real module decision contention regression to existing harness.
 - [ ] Verify exact new CI SHA, repair if needed; then prove positive nonempty historical close with explicitly synthetic historical fixtures, audit authoritative timestamps, module expiry and privileged/global identity changes. Historical as-of after later activity remains unsupported; partial/damaged/expired returns next only after period close limitations are documented and required decisions approved. Next unused migration 0054. No operational access.
+
+## TEST-063 / TEST-064 — current
+- [x] Verify TEST-063 exact CI; add synthetic positive nonempty historical close fixture to existing COGS harness.
+- [ ] Verify new exact CI SHA and repair failures first. Then test/assess late cost capture relative to cutoff, time before row barrier, expiry and privileged administration boundaries; preserve conservative close until owner approves policy. Historical as-of with later activity remains unsupported. No new migration unless required; next unused ID 0054. Partial/damaged/expired return design afterward. No operational access.

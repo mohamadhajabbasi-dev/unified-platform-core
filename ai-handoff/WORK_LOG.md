@@ -581,3 +581,9 @@
 
 ## TEST-063 — candidate / 2026-11-25
 - TEST-063 candidate: extend existing COGS concurrency suite with actual platform.record_module_decision (non-tenant synthetic platform approver), disabled inventory module with existing history must fail closed, module writer vs close and close vs module writer fail fast 55P03, independent tenant decision allowed and rollback; retain all prior assertions. No new migration, table, public function or policy. CI pending. First verify exact candidate run; then positive nonempty historical close fixture and backdating/admin/expiry review.
+
+## TEST-063 — verified / 2026-11-25
+- TEST-063 verified: run 45604079177 job 139170248068 at a81aa6e62201f47163dbc79ccc164a42869c9d27 completed success; 53 migration/test pairs, 62 PASS suites, four guard tests, 24 COGS races plus actual module decision contention. CHAIN_TIMING FIFO 1397/1394ms, moving_average 382/362ms synthetic only. No production access.
+
+## TEST-064 — candidate / 2026-11-25
+- TEST-064 candidate: positive nonempty historical close using existing COGS tenant B after finance-only cases, one purchase receipt, invoice and captured FIFO cost 200 IRR. Test-only scoped INSERT clock projection creates historical facts through existing APIs, retains existing triggers and removes fixture triggers/function before committed close. Existing journal gate runs for current open period then fixture-only trigger projects historical period; this is synthetic data construction, not evidence of production backdating. Actual close, preflight, cross-tenant rejection, exact retry and no extra facts/journal assertions. 53 migrations, 85 tables, no runtime code change. CI pending. Late cost capture, as-of and module expiry/admin policy remain open.

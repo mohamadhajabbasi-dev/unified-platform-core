@@ -670,7 +670,112 @@ SQL
 [[ "$(psql_ci -c "SELECT closed_at FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_id='$ended_b'")" == "$closed_at" ]]
 [[ "$(psql_ci -c "SELECT count(*)=0 FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_name='Mutation after close'")" == t ]]
 [[ "$(psql_ci -c "SELECT count(*)=0 FROM platform.tenant_module_grants WHERE reason IN ('Synthetic held module decision','Synthetic denied by close','Synthetic other tenant during close')")" == t ]]
-echo 'PASS COGS concurrency: twenty-four competing lock races, barrier exclusion and actual atomic close contention, finance-only tenant, historical rejection, exact retry and actual platform module decision contention'
+# Positive nonempty historical close. Reuse tenant B after finance-only tests.
+# Test-only clock projection on INSERT, restricted to this synthetic tenant.
+# Never disable existing triggers, alter runtime functions or change old facts.
+# The real journal gate still runs first against a current open period; the
+# fixture-only last trigger assigns the historical posting date and period.
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_approver;
+SELECT platform.record_module_decision('$tenant_b','inventory',true,NULL,'Synthetic historical fixture');
+RESET SESSION AUTHORIZATION;
+GRANT upc_supplier_document_verifier TO upc_cogs_b;
+SET SESSION AUTHORIZATION upc_cogs_b;
+SELECT finance.open_period('Synthetic historical populated',(clock_timestamp() AT TIME ZONE 'UTC')::date-30,(clock_timestamp() AT TIME ZONE 'UTC')::date-10);
+SELECT finance.open_period('Synthetic historical fixture current',(clock_timestamp() AT TIME ZONE 'UTC')::date,(clock_timestamp() AT TIME ZONE 'UTC')::date+30);
+RESET SESSION AUTHORIZATION;
+BEGIN;
+CREATE FUNCTION public.upc_test_history_clock() RETURNS trigger
+LANGUAGE plpgsql SET search_path=pg_catalog AS \$\$
+DECLARE base timestamptz:=(((clock_timestamp() AT TIME ZONE 'UTC')::date-15)::timestamp AT TIME ZONE 'UTC');
+BEGIN
+ IF current_database()<>'upc_greenfield_test' OR NEW.tenant_id<>'$tenant_b'::uuid THEN
+  RAISE EXCEPTION 'Unexpected historical fixture scope';
+ END IF;
+ CASE TG_TABLE_NAME
+ WHEN 'counterparties' THEN NEW.created_at:=base;
+ WHEN 'purchase_orders' THEN NEW.issued_at:=base+interval '1 minute';
+ WHEN 'goods_receipts' THEN NEW.received_at:=base+interval '2 minutes';
+ WHEN 'stock_ledger' THEN NEW.recorded_at:=base+interval '3 minutes';
+ WHEN 'supplier_invoices' THEN NEW.recorded_at:=base+interval '4 minutes';
+ WHEN 'journal_entries' THEN
+  NEW.posted_at:=base+interval '5 minutes';
+  SELECT period_id INTO STRICT NEW.period_id FROM finance.fiscal_periods
+   WHERE tenant_id=NEW.tenant_id AND period_name='Synthetic historical populated' AND dates @> (NEW.posted_at AT TIME ZONE 'UTC')::date AND closed_at IS NULL;
+ WHEN 'movement_cost_facts' THEN NEW.captured_at:=base+interval '6 minutes';
+ ELSE RAISE EXCEPTION 'Unexpected historical fixture relation';
+ END CASE;
+ RETURN NEW;
+END \$\$;
+REVOKE ALL ON FUNCTION public.upc_test_history_clock() FROM PUBLIC;
+CREATE TRIGGER zz_upc_test_history_clock BEFORE INSERT ON procurement.counterparties FOR EACH ROW EXECUTE FUNCTION public.upc_test_history_clock();
+CREATE TRIGGER zz_upc_test_history_clock BEFORE INSERT ON procurement.purchase_orders FOR EACH ROW EXECUTE FUNCTION public.upc_test_history_clock();
+CREATE TRIGGER zz_upc_test_history_clock BEFORE INSERT ON procurement.goods_receipts FOR EACH ROW EXECUTE FUNCTION public.upc_test_history_clock();
+CREATE TRIGGER zz_upc_test_history_clock BEFORE INSERT ON inventory.stock_ledger FOR EACH ROW EXECUTE FUNCTION public.upc_test_history_clock();
+CREATE TRIGGER zz_upc_test_history_clock BEFORE INSERT ON finance.supplier_invoices FOR EACH ROW EXECUTE FUNCTION public.upc_test_history_clock();
+CREATE TRIGGER zz_upc_test_history_clock BEFORE INSERT ON finance.journal_entries FOR EACH ROW EXECUTE FUNCTION public.upc_test_history_clock();
+CREATE TRIGGER zz_upc_test_history_clock BEFORE INSERT ON finance.movement_cost_facts FOR EACH ROW EXECUTE FUNCTION public.upc_test_history_clock();
+SET SESSION AUTHORIZATION upc_cogs_b;
+DO \$\$
+DECLARE t uuid:=iam.current_tenant_id(); d date:=(clock_timestamp() AT TIME ZONE 'UTC')::date-15;
+ a uuid:=gen_random_uuid(); p uuid:=gen_random_uuid(); supplier uuid; po uuid;
+BEGIN
+ PERFORM finance.configure_valuation_preview('$variant_b','fifo','IRR');
+ INSERT INTO finance.accounts(tenant_id,account_id,account_code,name,account_type,currency) VALUES
+ (t,a,'historical-inventory','Historical inventory','asset','IRR'),(t,p,'historical-payable','Historical payable','liability','IRR');
+ supplier:=procurement.register_counterparty('historical-supplier',NULL,'Synthetic historical supplier');
+ po:=procurement.issue_purchase('historical-po',supplier,'$wh_b','IRR',jsonb_build_array(jsonb_build_object('variant_id','$variant_b','quantity',2,'unit_cost',100)));
+ PERFORM procurement.receive_purchase(po,'historical-receipt','Synthetic historical receipt');
+ PERFORM finance.record_supplier_invoice(po,'HISTORICAL-INVOICE',d,d+7,200,'IRR',decode(repeat('ab',32),'hex'),a,p);
+ IF finance.capture_movement_costs('$wh_b','$variant_b')<>1 THEN RAISE EXCEPTION 'FAIL historical fixture capture'; END IF;
+ PERFORM finance.assert_tenant_inventory_cost_ready();
+END \$\$;
+RESET SESSION AUTHORIZATION;
+DROP TRIGGER zz_upc_test_history_clock ON procurement.counterparties;
+DROP TRIGGER zz_upc_test_history_clock ON procurement.purchase_orders;
+DROP TRIGGER zz_upc_test_history_clock ON procurement.goods_receipts;
+DROP TRIGGER zz_upc_test_history_clock ON inventory.stock_ledger;
+DROP TRIGGER zz_upc_test_history_clock ON finance.supplier_invoices;
+DROP TRIGGER zz_upc_test_history_clock ON finance.journal_entries;
+DROP TRIGGER zz_upc_test_history_clock ON finance.movement_cost_facts;
+DROP FUNCTION public.upc_test_history_clock();
+COMMIT;
+SQL
+history_period=$(psql_ci -c "SELECT period_id FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_name='Synthetic historical populated'")
+[[ "$history_period" =~ ^[0-9a-f-]{36}$ ]]
+[[ "$(psql_ci -c "SELECT count(*)=1 AND sum(quantity_delta)=2 AND bool_and(recorded_at < (SELECT upper(dates)::timestamp AT TIME ZONE 'UTC' FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_id='$history_period')) FROM inventory.stock_ledger WHERE tenant_id='$tenant_b'")" == t ]]
+[[ "$(psql_ci -c "SELECT count(*)=1 AND sum(value_delta)=200 AND bool_and(captured_at < (SELECT upper(dates)::timestamp AT TIME ZONE 'UTC' FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_id='$history_period')) FROM finance.movement_cost_facts WHERE tenant_id='$tenant_b'")" == t ]]
+[[ "$(psql_ci -c "SELECT count(*)=1 AND bool_and(period_id='$history_period' AND posted_at < (SELECT upper(dates)::timestamp AT TIME ZONE 'UTC' FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_id='$history_period')) FROM finance.journal_entries WHERE tenant_id='$tenant_b'")" == t ]]
+[[ "$(psql_ci -c "SELECT count(*)=2 AND sum(amount)=0 AND max(amount)=200 FROM finance.journal_lines WHERE tenant_id='$tenant_b'")" == t ]]
+[[ "$(psql_ci -c "SELECT to_regprocedure('public.upc_test_history_clock()') IS NULL")" == t ]]
+psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_b;
+DO \$\$ BEGIN
+ IF EXISTS(SELECT 1 FROM finance.inventory_period_close_issues('$history_period')) THEN RAISE EXCEPTION 'FAIL reconciled historical fixture not ready'; END IF;
+ IF NOT EXISTS(SELECT 1 FROM finance.tenant_inventory_cost_totals() WHERE currency='IRR' AND captured_value=200 AND inventory_journal_net=200 AND value_difference=0) THEN RAISE EXCEPTION 'FAIL historical fixture totals'; END IF;
+END \$\$;
+RESET SESSION AUTHORIZATION;
+SET SESSION AUTHORIZATION upc_cogs_a;
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.close_period('$history_period'); RAISE EXCEPTION 'FAIL cross-tenant historical close'; EXCEPTION WHEN foreign_key_violation THEN NULL; END;
+END \$\$;
+RESET SESSION AUTHORIZATION;
+SQL
+[[ "$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_b;
+SELECT finance.close_period('$history_period');
+SQL
+)" == "$history_period" ]]
+history_closed=$(psql_ci -c "SELECT closed_at FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_id='$history_period' AND closed_by='b6100000-0000-0000-0000-000000000002'")
+[[ -n "$history_closed" ]]
+[[ "$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_b;
+SELECT finance.close_period('$history_period');
+SQL
+)" == "$history_period" ]]
+[[ "$(psql_ci -c "SELECT closed_at FROM finance.fiscal_periods WHERE tenant_id='$tenant_b' AND period_id='$history_period'")" == "$history_closed" ]]
+[[ "$(psql_ci -c "SELECT (SELECT count(*) FROM inventory.stock_ledger WHERE tenant_id='$tenant_b')=1 AND (SELECT count(*) FROM finance.movement_cost_facts WHERE tenant_id='$tenant_b')=1 AND (SELECT count(*) FROM finance.journal_entries WHERE tenant_id='$tenant_b')=1")" == t ]]
+echo 'PASS COGS concurrency: twenty-four competing lock races, barrier exclusion and actual atomic close contention, finance-only tenant, historical rejection, exact retry and actual platform module decision contention and positive reconciled nonempty historical close'
 
 
 

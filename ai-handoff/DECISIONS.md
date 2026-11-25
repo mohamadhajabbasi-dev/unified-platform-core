@@ -69,3 +69,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### D-018 / TEST-063 — review note (not a new approved accounting decision)
 - No change to owner-approved policy. Retain 0053 conservative fail-closed behavior; test the existing module-decision API and real history before considering new SQL. Historical as-of, expiry during a statement and privileged bypass are open design/security review items, not certified. No new canonical entity or parallel close API.
+
+### TEST-064 — temporal review (open, not approved)
+- 0051 explicitly checks recorded_at and posted_at cutoff, not captured_at; whether documented late costing may be finalized at close is unapproved. Statement-time module expiry is not reevaluated by repeating same statement-time check. Privileged DB operations require separate trust boundary. Synthetic historical fixture projection is not runtime policy; no migration changes.
