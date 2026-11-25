@@ -587,3 +587,7 @@
 ## TEST-071 / BUILD-027C — current
 - [x] Verify 0056 and add locked aggregate receipt-line cap, append-only enforcement and actual privileged synthetic race with no write grants.
 - [ ] Verify exact 0057 CI, fix failures. Next integrate existing receive_full_return_allocated only, preserve exact retry/old ledger fallback without counting lines twice, add minimal scoped writer privilege and actual runtime race. Evolve dormant-only tests explicitly without weakening negative assertions; no partial/non-sellable/refund/valuation activation until safe and approved. Next unused 0058. No operational access.
+
+## REVIEW-027E — current
+- [x] Audit exact writer grants and plan scoped evidence access and independent structural/runtime test fixtures, without removing old assertions.
+- [ ] Verify 0057 exact CI run 45625448713 at aa1dd061853a028ce11d61bfc9a490130fefc4d6, fix failures first; then 0058 integrate same full-return writer and cap with actual runtime concurrency and legacy retry evidence. No partial/non-sellable/refund activation. No operational access.

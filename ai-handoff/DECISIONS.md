@@ -105,3 +105,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### BUILD-027C — provisional quantity fact guard, no operational writer
 - Use existing order lock and READ COMMITTED for receipt-line aggregate. Cap is per original sale movement across dispositions, not a policy for legacy plus partial receipts. Append-only; no new grants. Keep existing receipt/valuation APIs. A future writer must have complete tenant-scoped evidence visibility, same locks, validate consumed reservation and exact sale/return evidence, and treat prior legacy rows as the same event, never count twice. No approval of final cutoff, entitlement or disposition/refund policy.
+
+### REVIEW-027E — proposed limited writer privileges
+- No executor role elevation or blanket cross-domain write grant; use exact required evidence reads and tenant-scoped append-only receipt insertion for existing writer. Test structural cap separately from actual full-return runtime and preserve all negative assertions. Historical upgrade compatibility requires actual pre-upgrade fixture. No executable or financial policy change yet.
