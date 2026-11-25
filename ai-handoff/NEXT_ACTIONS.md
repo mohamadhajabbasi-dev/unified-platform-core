@@ -492,3 +492,8 @@
 ## TEST-053 / BUILD-026S — current
 - [x] Verify 0046, implement shared 0047 traced receipt/sale cost replay and capture.
 - [ ] Verify exact new CI SHA (47 SQL + nine concurrency, twelve COGS races, four guard tests), repair. Next 0048 exact traced multi-line transfers via connected component; then traced COGS, return reversal and readiness. Policy approval and load testing pending. No production access.
+
+
+## TEST-054 / BUILD-026T — current
+- [x] Verify 0047, author 0048 multi-line traced transfer capture.
+- [ ] Verify exact CI SHA (48 SQL + nine concurrency, twelve COGS races, four guard tests), repair. Next 0049 traced COGS and then return reversal/replay/readiness. No production access.
