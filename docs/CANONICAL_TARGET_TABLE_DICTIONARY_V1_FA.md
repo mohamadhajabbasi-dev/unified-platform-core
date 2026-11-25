@@ -9,7 +9,7 @@ Use with [complete 234-DbSet inventory](LEGACY_DBSET_COVERAGE_2026-11-24.md) and
 | core / tenancy | `tenants` | **VERIFIED PROTOTYPE** — 0001 core.tenants | Tenants / legal organization identity; One tenant per org; identity scope |
 | core / tenancy | `tenant_profiles, tenant_stakeholders, tenant_addresses, tenant_settings` | **VERIFIED PROTOTYPE** — 0011 core.tenant_profiles, tenant_stakeholders, tenant_addresses, tenant_settings | Legal, investor/partners, business addresses, typed config; Dependencies of tenants, NOT second organizations |
 | core / tenancy | `business_locations (branches/stores)` | **VERIFIED PROTOTYPE** — 0061 core.business_locations, same-tenant address FK, scoped ACL/RLS, audit and actual duplicate-key race; exact retry API remains open | ERP Branches; Commerce Stores; physical branch/store distinct from warehouse, address and tenant |
-| core / tenancy | `sites_and_domains` | **NOT IMPLEMENTED** — No site/domain registry; analytics and platform.applications are not site masters | Storefront channels, shop domains, web/app handoff; Tenant-owned site/app associations |
+| core / tenancy | `sites_and_domains` | **PARTIAL** — 0062 core.sites dormant identity verified; domain ownership/routing/activation absent; website_host unchanged | Storefront channels, shop domains, web/app handoff; Tenant-owned site/app associations |
 | core / tenancy | `external_parties` | **PARTIAL** — 0022 procurement.counterparties with optional CRM customer FK; broader legal party identity/roles unresolved | Companies, Suppliers, BusinessPartners; Separate corporate suppliers from own tenant and customer master without duplicating persons |
 | iam / security | `users` | **VERIFIED PROTOTYPE** — 0001 core.users | ERP/Commerce Users; One global account identity |
 | iam / security | `memberships, roles, permissions, role_grants, membership_roles` | **VERIFIED PROTOTYPE** — 0001–0002 iam.memberships, roles, permissions, role_grants, membership_roles; db_principals | Tenant staff access, platform IAM; Reused by every domain |
@@ -127,3 +127,16 @@ BUILD-030A candidate: 0062 adds only immutable dormant core.sites identity (tena
 
 ## TEST-084 status
 0062 candidate CI run 45647070040 failed at snapshot query in acceptance test; corrected explicit table aliases only. Counts remain 23 verified prototype, 12 partial, 22 not implemented until full pass. Site/domain remains unverified; no policy change.
+
+
+## REVIEW-030B design note
+CRM customer_tags/customer_tag_links/customer_merge_reviews remains NOT IMPLEMENTED. [Tag design](CRM_CUSTOMER_TAG_DESIGN_FA.md) covers proposed tag/link metadata only; merge policy remains separately gated. No coverage count change pending exact 0062 CI completion.
+
+
+## TEST-085 verified coverage
+TEST-085: exact correction SHA 843483533613e7d577cb6953d4f0c51827cf3247 run 45649134004 SUCCESS; foundation 139328451364, return-upgrade 139328451042 both SUCCESS. Logs: 62 contiguous pairs, 73 PASS suites, direct catalog count 88 base tables, site exact retry with two actual advisory waiters, conflict 23505 and one audit; 24 COGS races. Site/domain group now PARTIAL, not complete domain lifecycle. 23 verified prototype, 13 partial, 21 not implemented.
+BUILD-030B: 0063 customer_tags/customer_tag_links candidate only, 2 normalized relations linked to existing customer PK, no duplicate customer/consent/pricing. Existing CRM module and crm.read plus dedicated tag ACL, nonlogin executor, no direct runtime DML, shared audit. Exact create and state replay, detach absent no tombstone, same relationship identity on reattach. Real duplicate create and attach contention test; no claim historical command exactly-once, no concurrent opposing-state test yet. 0052 period barrier protects financial paths and module decisions; tags have no financial effects and use existing statement-time permission/module checks, no commit-time policy change. Free-text name normalization limited to lower(btrim), no sensitive semantic classification/retention or operational activation. Expected 63 pairs, 75 PASS, 90 tables after CI; pending verification.
+
+
+## TEST-086 status
+0063 candidate run 45650762864 failed at combined detach retry assertion. Correction sequences calls and checks independently, full-row replay strengthened. CRM tag group remains NOT IMPLEMENTED until full verification; verified counts 23/13/21 unchanged.

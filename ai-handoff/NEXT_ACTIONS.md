@@ -655,3 +655,18 @@
 ## TEST-084 / FIX-030A — current (supersedes prior next action)
 - [x] Verify failed exact 0062 CI run 45647070040; inspect actual log and fix missing aliases in both full JSON snapshots only; preserve all assertions.
 - [ ] Verify new correction SHA and both CI jobs; if any actual failure, inspect and fix root cause before next migration. Check runtime base-table count diagnostic and actual site concurrency evidence. Last fully verified 0061; next unused 0063 after success. Then advance independent CRM/catalog favorites/tag or counterparty design. No domain routing/ownership activation or duplicated host; existing temporal/financial/custody gates unchanged. No production access.
+
+
+## REVIEW-030B — current
+- [x] Verify intermediate 0062 correction job steps and design CRM tag relationship/test matrix in docs/CRM_CUSTOMER_TAG_DESIGN_FA.md.
+- [ ] Verify final exact run 45649134004 both jobs and logs (runtime base table count and actual site contention). If failed fix actual root cause. If PASS, update counts and sites_and_domains PARTIAL, then implement minimal 0063 tags/links per design, inspect module/ACL/locking and run exact SQL/concurrency CI. No tag-driven commercial/security/marketing rules or merge. No duplicate customer. Preserve existing gates; next unused 0063.
+
+
+## TEST-085 / BUILD-030B — current
+- [x] Verify exact 0062 CI; reuse prepared design commit; author 0063 and matched acceptance/concurrency tests.
+- [ ] Confirm 0063 SHA reachable from main; verify exact CI both jobs. If failed fix actual cause only. If success update verified group CRM tags/merge to PARTIAL and runtime counts; next unused 0064. Independent favorites/queues or counterparty design; preserve owner-gated policies and no legacy/production access.
+
+
+## TEST-086 / FIX-030B — current
+- [x] Inspect exact failed 0063 run 45650762864, separate volatile state transitions from acceptance assertions and strengthen exact replay row checks.
+- [ ] Verify correction branch ref and exact run, both jobs plus actual CRM create/attach contention and catalog count. If failed, diagnose precise new assertion. If PASS, promote exact branch changes to main preserving history (fast-forward or verified PR), verify resulting main SHA and required CI before next development. Last verified 0062. No 0064 until full success. All previous policy and production gates remain.
