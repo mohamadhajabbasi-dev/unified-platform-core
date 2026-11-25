@@ -123,3 +123,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### REVIEW-027F — distinguish receipt evidence from stock quantity
 - Zero-line legacy fallback is necessary and upgrade-tested; when any lines exist require complete exact sellable evidence. Receipt rows and ledger movements are same event, never additive. Privileged total deletion is indistinguishable from legacy absence without a trusted marker; do not claim complete corruption detection. No new table or final policy.
+
+### BUILD-027E — exact receipt reconciliation, no new quantity source
+- Keep existing capacity API and its read gates. New line-bearing receipts must exactly match validated return movements, legacy zero-line receipts retain ledger fallback. No double count, no new writer or financial rule. Total privileged deletion remains a known limit; no independent marker added.

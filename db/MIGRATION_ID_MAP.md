@@ -65,3 +65,6 @@ TEST-070 verified 55 pairs at run 45621026901. 0056_return_receipt_line_structur
 
 ## TEST-074 verified / TEST-075 candidate
 0058 verified at run 45628924408, 58 contiguous pairs. TEST-075 adds isolated upgrade job only; next unused ID 0059.
+
+## TEST-078 / BUILD-027E
+Both 0058 jobs verified run 45633317796. 0059_return_receipt_reconciliation.sql and matching test authored, CI pending. Next unused ID 0060.

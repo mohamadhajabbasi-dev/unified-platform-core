@@ -609,3 +609,7 @@
 ## TEST-077 / REVIEW-027F — current
 - [x] Verify actual pre-0058 committed history upgrade job and document read-only line reconciliation with zero-line legacy fallback limitation.
 - [ ] Verify foundation job 139272048763 / full run 45633317796 at exact 42dd7ea102b417d4026f388dab5c45642cf3f9a9; then implement 0059 only on existing capacity function and matching tests, extend isolated upgrade test to prove actual legacy fallback and reject incomplete/non-sellable evidence. No new table, policy or operational access. Next unused ID 0059.
+
+## TEST-078 / BUILD-027E — current
+- [x] Verify both corrected 0058 jobs; implement 0059 exact read-only receipt reconciliation and extend actual upgrade evidence.
+- [ ] Verify exact 0059 CI both jobs; fix any failures. Next review partial/damaged/expired physical receipt lifecycle, quarantine and independent facts without duplicates. Do not activate partial/non-sellable/valuation/refund without approved policy. Owner decisions for commit entitlement and temporal cutoff still open. Next unused ID 0060. No operational access.

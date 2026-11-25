@@ -125,3 +125,70 @@ DO $$ BEGIN
 END $$;
 SQL
 echo 'PASS actual 0057-to-0058 upgrade: committed legacy ordinary/traced returns, exact read-only replay, no backfill, new writer coexistence'
+
+# After all original 0058 checks, apply 0059 to the same actual history.
+snapshot > "$tmp/pre_0059"
+psql_ci < db/migrations/0059_return_receipt_reconciliation.sql
+psql_ci <<'SQL'
+SET SESSION AUTHORIZATION upc_inv_a;
+DO $$
+DECLARE h sales.returns%ROWTYPE; n bigint; q numeric;
+BEGIN
+ FOR h IN SELECT * FROM sales.returns ORDER BY return_id LOOP
+  SELECT count(*),sum(e.returned_quantity) INTO n,q FROM finance.order_return_capacity(h.order_id) e;
+  IF (h.request_key='trace-evidence-return' AND (n<>4 OR q<>5))
+  OR (h.request_key IN ('capacity-ordinary-return','upgrade-new-return') AND (n<>1 OR q<>2))
+  OR EXISTS(SELECT 1 FROM finance.order_return_capacity(h.order_id) e WHERE e.remaining_quantity<>0 OR e.return_id IS DISTINCT FROM h.return_id)
+  THEN RAISE EXCEPTION 'FAIL legacy/new exact reconciliation'; END IF;
+ END LOOP;
+ IF (SELECT count(*) FROM sales.return_items)<>1 THEN RAISE EXCEPTION 'FAIL read-only backfill'; END IF;
+END $$;
+RESET SESSION AUTHORIZATION;
+SQL
+snapshot > "$tmp/post_0059"
+cmp "$tmp/pre_0059" "$tmp/post_0059"
+# Actual pre-0058 committed headers, valid-cap facts, no disabled guards.
+# Each deliberately inconsistent scenario is isolated and rolled back.
+for scenario in short damaged mixed incomplete; do
+ psql_ci -v scenario="$scenario" <<'SQL'
+BEGIN;
+SELECT set_config('upc.test_reconciliation_scenario', :'scenario',true);
+DO $$
+DECLARE h sales.returns%ROWTYPE; m record; scenario text:=current_setting('upc.test_reconciliation_scenario');
+BEGIN
+ SELECT * INTO STRICT h FROM sales.returns
+ WHERE request_key=CASE WHEN scenario='incomplete' THEN 'trace-evidence-return' ELSE 'capacity-ordinary-return' END;
+ SELECT l.movement_id,l.reservation_id,l.quantity_delta INTO STRICT m FROM inventory.stock_ledger l
+ JOIN sales.order_items i USING(tenant_id,reservation_id)
+ WHERE i.tenant_id=h.tenant_id AND i.order_id=h.order_id ORDER BY l.movement_id LIMIT 1;
+ INSERT INTO sales.return_items(tenant_id,return_id,order_id,reservation_id,sale_movement_id,received_quantity,disposition)
+ VALUES(h.tenant_id,h.return_id,h.order_id,m.reservation_id,m.movement_id,
+ CASE WHEN scenario IN ('short','mixed') THEN 1 ELSE -m.quantity_delta END,
+ CASE WHEN scenario='damaged' THEN 'damaged' ELSE 'sellable' END);
+ IF scenario='mixed' THEN
+  INSERT INTO sales.return_items(tenant_id,return_id,order_id,reservation_id,sale_movement_id,received_quantity,disposition)
+  VALUES(h.tenant_id,h.return_id,h.order_id,m.reservation_id,m.movement_id,1,'expired');
+ END IF;
+END $$;
+SET SESSION AUTHORIZATION upc_inv_a;
+DO $$
+DECLARE oid uuid; msg text;
+BEGIN
+ SELECT order_id INTO STRICT oid FROM sales.returns WHERE request_key=
+ CASE WHEN current_setting('upc.test_reconciliation_scenario')='incomplete' THEN 'trace-evidence-return' ELSE 'capacity-ordinary-return' END;
+ BEGIN
+  PERFORM finance.order_return_capacity(oid);
+  RAISE EXCEPTION 'FAIL inconsistent receipt accepted';
+ EXCEPTION WHEN check_violation THEN
+  GET STACKED DIAGNOSTICS msg=MESSAGE_TEXT;
+  IF msg<>'Exact full return receipt line required' THEN RAISE; END IF;
+ END;
+END $$;
+RESET SESSION AUTHORIZATION;
+ROLLBACK;
+SQL
+ echo "RECONCILIATION_REJECTED $scenario"
+done
+snapshot > "$tmp/post_negative_0059"
+cmp "$tmp/pre_0059" "$tmp/post_negative_0059"
+echo 'PASS 0059 actual legacy/new reconciliation: no backfill or double count, short/damaged/mixed/incomplete evidence rejected, all rows unchanged'
