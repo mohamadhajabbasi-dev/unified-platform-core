@@ -325,7 +325,138 @@ psql_ci <<SQL
 SET SESSION AUTHORIZATION upc_cogs_a;
 SELECT finance.assert_tenant_inventory_cost_ready();
 SQL
-echo 'PASS COGS concurrency: twelve competing lock races (six FIFO, six moving average), distinct chain entry points, 48 extra transfer pairs, readiness and tenant isolation'
+# Reuse the same tenant, permissions, warehouses, sale price list and lock harness.
+# Two traced variants, each with two distinct original receipt identities/costs.
+psql_ci <<SQL
+INSERT INTO catalog.variants(tenant_id,variant_id,product_id,sku,name) VALUES
+ ('$tenant','b6300000-0000-0000-0000-000000000005','b6200000-0000-0000-0000-000000000004','race-lot','Synthetic lot race'),
+ ('$tenant','b6300000-0000-0000-0000-000000000006','b6200000-0000-0000-0000-000000000004','race-serial','Synthetic serial race');
+INSERT INTO catalog.price_entries(tenant_id,variant_id,price_list_id,amount,valid_during)
+ SELECT '$tenant',v.variant_id,'$pricelist',1000,tstzrange('2020-01-01 00:00+00',NULL,'[)')
+ FROM catalog.variants v WHERE v.tenant_id='$tenant'
+ AND v.variant_id IN ('b6300000-0000-0000-0000-000000000005','b6300000-0000-0000-0000-000000000006');
+SQL
+for method in lot_fifo serial_specific; do
+ if [[ "$method" == lot_fifo ]]; then
+  variant=b6300000-0000-0000-0000-000000000005
+  asset=b6700000-0000-0000-0000-000000000007
+  expense=b6700000-0000-0000-0000-000000000008
+  tracking=lot
+  units=2
+ else
+  variant=b6300000-0000-0000-0000-000000000006
+  asset=b6700000-0000-0000-0000-000000000009
+  expense=b6700000-0000-0000-0000-000000000010
+  tracking=serial
+  units=1
+ fi
+ expected=$((300 * units))
+ psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+DO \$\$
+DECLARE t uuid:=iam.current_tenant_id(); supplier uuid; po uuid; lot uuid; serial uuid; i integer; unit_cost numeric;
+ d date:=(clock_timestamp() AT TIME ZONE 'UTC')::date; digest bytea:=decode(repeat('ab',32),'hex');
+BEGIN
+ PERFORM inventory.configure_tracking('$variant','$tracking','$tracking'='lot');
+ PERFORM finance.configure_valuation_preview('$variant','$method','IRR');
+ INSERT INTO finance.accounts(tenant_id,account_id,account_code,name,account_type,currency) VALUES
+ (t,'$asset','$method-inventory','Traced inventory','asset','IRR'),(t,'$expense','$method-cogs','Traced COGS','expense','IRR');
+ supplier:=procurement.register_counterparty('race-supplier-$method',NULL,'Synthetic traced');
+ FOR i IN 1..2 LOOP
+  unit_cost:=100*i;
+  IF '$tracking'='lot' THEN
+   lot:=inventory.register_lot('$variant','RACE-LOT-'||i,d-1,d+10*i);
+  ELSE
+   serial:=inventory.register_serial('$variant','RACE-SERIAL-'||i);
+  END IF;
+  po:=procurement.issue_purchase('race-po-$method-'||i,supplier,'$warehouse','IRR',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',$units,'unit_cost',unit_cost)));
+  PERFORM procurement.receive_purchase_allocated(po,'race-receipt-$method-'||i,'Synthetic',jsonb_build_array(jsonb_build_object('variant_id','$variant','lot_id',lot,'serial_id',serial,'quantity',$units)));
+  PERFORM finance.record_supplier_invoice(po,'RACE-INVOICE-$method-'||i,d,d+7,$units*unit_cost,'IRR',digest,'$asset','b6700000-0000-0000-0000-000000000002');
+ END LOOP;
+END \$\$;
+SQL
+ race "trace_receipt_$method" "SELECT finance.capture_movement_costs('$warehouse','$variant');"
+ [[ "$(grep -E '^[0-9]+$' "$tmp/first")" == 2 ]]
+ [[ "$(grep -E '^[0-9]+$' "$tmp/second")" == 0 ]]
+ tid=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT inventory.transfer_allocated('race-transfer-$method','$warehouse','$warehouse2','Synthetic traced transfer',
+ (SELECT jsonb_agg(jsonb_build_object('variant_id',l.variant_id,'lot_id',l.lot_id,'serial_id',l.serial_id,'quantity',1))
+ FROM inventory.stock_ledger l WHERE l.tenant_id='$tenant' AND l.variant_id='$variant' AND l.warehouse_id='$warehouse' AND l.quantity_delta>0));
+SQL
+)
+ [[ "$tid" =~ ^[0-9a-f-]{36}$ ]]
+ race "trace_transfer_$method" "SELECT finance.capture_transfer_costs('$tid','$variant');"
+ [[ "$(grep -E '^[0-9]+$' "$tmp/first")" == 4 ]]
+ [[ "$(grep -E '^[0-9]+$' "$tmp/second")" == 0 ]]
+ [[ "$(psql_ci -c "SELECT count(*)=2 AND sum(fi.value_delta)=300 AND bool_and(fo.value_delta=-fi.value_delta AND fo.quantity_delta=-fi.quantity_delta AND lo.lot_id IS NOT DISTINCT FROM li.lot_id AND lo.serial_id IS NOT DISTINCT FROM li.serial_id) FROM inventory.transfer_lines tl JOIN finance.movement_cost_facts fo ON fo.tenant_id=tl.tenant_id AND fo.movement_id=tl.outgoing_movement_id JOIN finance.movement_cost_facts fi ON fi.tenant_id=tl.tenant_id AND fi.movement_id=tl.incoming_movement_id JOIN inventory.stock_ledger lo ON lo.tenant_id=tl.tenant_id AND lo.movement_id=tl.outgoing_movement_id JOIN inventory.stock_ledger li ON li.tenant_id=tl.tenant_id AND li.movement_id=tl.incoming_movement_id WHERE tl.tenant_id='$tenant' AND tl.transfer_id='$tid'")" == t ]]
+ oid=$(psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT sales.create_checkout('race-sale-$method','$customer','$warehouse2','$pricelist','in_person',clock_timestamp()+interval '1 hour',jsonb_build_array(jsonb_build_object('variant_id','$variant','quantity',2,'expected_unit_price',1000)));
+SQL
+)
+ [[ "$oid" =~ ^[0-9a-f-]{36}$ ]]
+ psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT sales.record_capture('$oid','synthetic','acct','race-payment-$method',2000,'IRR',clock_timestamp());
+SELECT sales.fulfill_order('$oid');
+SQL
+ race "trace_sale_$method" "SELECT finance.capture_movement_costs('$warehouse2','$variant');"
+ [[ "$(grep -E '^[0-9]+$' "$tmp/first")" == 2 ]]
+ [[ "$(grep -E '^[0-9]+$' "$tmp/second")" == 0 ]]
+ mids=$(psql_ci -c "SELECT cf.movement_id FROM finance.movement_cost_facts cf JOIN inventory.stock_ledger l ON l.tenant_id=cf.tenant_id AND l.movement_id=cf.movement_id JOIN sales.order_items si ON si.tenant_id=l.tenant_id AND si.reservation_id=l.reservation_id WHERE si.tenant_id='$tenant' AND si.order_id='$oid' ORDER BY cf.movement_id")
+ mapfile -t sale_ids <<< "$mids"
+ [[ "${#sale_ids[@]}" == 2 ]]
+ for id in "${sale_ids[@]}"; do [[ "$id" =~ ^[0-9a-f-]{36}$ ]]; done
+ m1=${sale_ids[0]}
+ m2=${sale_ids[1]}
+ # Both requests post the same two allocations; first locks the order, second waits.
+ race "trace_post_$method" "SELECT finance.post_inventory_cogs('$m1','$asset','$expense','$method'); SELECT finance.post_inventory_cogs('$m2','$asset','$expense','$method');" "BEGIN; SELECT finance.post_inventory_cogs('$m1','$asset','$expense','$method'); SELECT finance.post_inventory_cogs('$m2','$asset','$expense','$method'); COMMIT;"
+ first_ids=$(grep -E '^[0-9a-f-]{36}$' "$tmp/first")
+ [[ "$(grep -Ec '^[0-9a-f-]{36}$' "$tmp/first")" == 2 ]]
+ [[ "$first_ids" == "$(grep -E '^[0-9a-f-]{36}$' "$tmp/second")" ]]
+ [[ "$(psql_ci -c "SELECT count(*)=2 FROM finance.journal_entries WHERE tenant_id='$tenant' AND cogs_movement_id IN ('$m1','$m2')")" == t ]]
+ psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT sales.receive_full_return_allocated('$oid','race-return-$method','Inspected sellable',
+ (SELECT jsonb_agg(jsonb_build_object('variant_id',ra.variant_id,'lot_id',ra.lot_id,'serial_id',ra.serial_id,'quantity',ra.quantity))
+ FROM sales.order_items si JOIN inventory.reservation_allocations ra USING(tenant_id,reservation_id) WHERE si.tenant_id='$tenant' AND si.order_id='$oid'));
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.capture_movement_costs('$warehouse2','$variant'); RAISE EXCEPTION 'FAIL capture before traced reversal'; EXCEPTION WHEN check_violation THEN NULL; END;
+END \$\$;
+SQL
+ race "trace_reverse_$method" "SELECT finance.reverse_inventory_cogs('$m1','$method'); SELECT finance.reverse_inventory_cogs('$m2','$method');" "BEGIN; SELECT finance.reverse_inventory_cogs('$m1','$method'); SELECT finance.reverse_inventory_cogs('$m2','$method'); COMMIT;"
+ first_ids=$(grep -E '^[0-9a-f-]{36}$' "$tmp/first")
+ [[ "$(grep -Ec '^[0-9a-f-]{36}$' "$tmp/first")" == 2 ]]
+ [[ "$first_ids" == "$(grep -E '^[0-9a-f-]{36}$' "$tmp/second")" ]]
+ race "trace_return_$method" "SELECT finance.capture_movement_costs('$warehouse2','$variant');"
+ [[ "$(grep -E '^[0-9]+$' "$tmp/first")" == 2 ]]
+ [[ "$(grep -E '^[0-9]+$' "$tmp/second")" == 0 ]]
+ [[ "$(psql_ci -c "SELECT count(*)=10 AND sum(value_delta)=$expected AND sum(quantity_delta)=2*$units AND sum(value_delta) FILTER(WHERE warehouse_id='$warehouse2')=300 AND sum(quantity_delta) FILTER(WHERE warehouse_id='$warehouse2')=2 FROM finance.movement_cost_facts WHERE tenant_id='$tenant' AND variant_id='$variant'")" == t ]]
+ [[ "$(psql_ci -c "SELECT count(*)=4 AND sum(fa.cost)=600 AND bool_and(src.lot_id IS NOT DISTINCT FROM dst.lot_id AND src.serial_id IS NOT DISTINCT FROM dst.serial_id) FROM finance.fifo_cost_allocations fa JOIN inventory.stock_ledger src ON src.tenant_id=fa.tenant_id AND src.movement_id=fa.receipt_movement_id JOIN inventory.stock_ledger dst ON dst.tenant_id=fa.tenant_id AND dst.movement_id=fa.outgoing_movement_id WHERE fa.tenant_id='$tenant' AND fa.variant_id='$variant'")" == t ]]
+ [[ "$(psql_ci -c "SELECT count(*)=2 AND sum(cf.value_delta)=300 FROM finance.journal_entries j JOIN finance.movement_cost_facts cf ON cf.tenant_id=j.tenant_id AND cf.movement_id=j.cogs_return_movement_id WHERE j.tenant_id='$tenant' AND cf.variant_id='$variant'")" == t ]]
+ [[ "$(psql_ci -c "SELECT sum(amount) FILTER(WHERE account_id='$asset')=$expected AND sum(amount) FILTER(WHERE account_id='$expense')=0 FROM finance.journal_lines WHERE tenant_id='$tenant'")" == t ]]
+ psql_ci <<SQL
+SET SESSION AUTHORIZATION upc_cogs_a;
+SELECT finance.assert_inventory_cost_ready('$warehouse','$variant');
+SELECT finance.assert_inventory_cost_ready('$warehouse2','$variant');
+SELECT finance.assert_tenant_inventory_cost_ready();
+RESET SESSION AUTHORIZATION;
+SET SESSION AUTHORIZATION upc_cogs_reader;
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.reverse_inventory_cogs('$m1','$method'); RAISE EXCEPTION 'FAIL unauthorized traced reversal'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END \$\$;
+RESET SESSION AUTHORIZATION;
+SET SESSION AUTHORIZATION upc_cogs_b;
+DO \$\$ BEGIN
+ BEGIN PERFORM finance.post_inventory_cogs('$m1','$asset','$expense','$method'); RAISE EXCEPTION 'FAIL cross-tenant traced COGS'; EXCEPTION WHEN foreign_key_violation THEN NULL; END;
+ BEGIN PERFORM finance.reverse_inventory_cogs('$m1','$method'); RAISE EXCEPTION 'FAIL cross-tenant traced reversal'; EXCEPTION WHEN foreign_key_violation THEN NULL; END;
+END \$\$;
+SQL
+done
+[[ "$(psql_ci -c "SELECT count(*)=22 FROM finance.journal_entries WHERE tenant_id='$tenant'")" == t ]]
+echo 'PASS COGS concurrency: twenty-four competing lock races (six per method), exact multi-allocation traced sale and return, chain conservation, readiness and tenant isolation'
+
 
 
 
