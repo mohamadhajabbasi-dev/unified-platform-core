@@ -33,13 +33,7 @@ jobs:
       - name: Apply ordered greenfield migrations
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}
-        run: |
-          set -euo pipefail
-          export LC_ALL=C
-          for migration in db/migrations/*.sql; do
-            echo "Applying $migration"
-            docker exec -i "$PG_CONTAINER" psql -X -U postgres -d upc_greenfield_test -v ON_ERROR_STOP=1 < "$migration"
-          done
+        run: bash db/ci/apply_migrations.sh
       - name: Run synthetic acceptance tests
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}
@@ -108,11 +102,6 @@ jobs:
           PG_CONTAINER: ${{ job.services.postgres.id }}
         run: bash db/tests/concurrency/service_queues.sh
 
-      - name: Run concurrent COGS acceptance test
-        env:
-          PG_CONTAINER: ${{ job.services.postgres.id }}
-        run: bash db/tests/concurrency/cogs.sh
-
   return-upgrade:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -158,3 +147,30 @@ jobs:
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}
         run: bash db/tests/upgrade/0064_ticket_queues.sh
+
+  cogs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: upc_greenfield_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres -d upc_greenfield_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Validate migration IDs and matching SQL tests
+        run: python3 db/check_migrations.py
+      - name: Apply ordered greenfield migrations
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/ci/apply_migrations.sh
+      - name: Run concurrent COGS acceptance test
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/tests/concurrency/cogs.sh
