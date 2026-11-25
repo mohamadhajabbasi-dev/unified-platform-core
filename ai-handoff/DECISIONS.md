@@ -117,3 +117,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### TEST-075 — independent upgrade evidence
 - Real old return history must be created before applying 0058, not fabricated by disabling constraints. Separate disposable CI service; reuse existing fixture with final commit only in temporary copy. Compare all row data before/after exact legacy retry; no automatic backfill. No runtime or financial change.
+
+## FIX-028B — 2026-11-25
+- TEST-076 / FIX-028B: exact TEST-075 run 45630535075 at 5ff26ddc69c7db6821362136b1a9670cd17f3156: foundation job 139262191015 completed SUCCESS (58 contiguous pairs, 86 tables, 67 PASS, all nine concurrency suites, 24 COGS races); independent return-upgrade job 139262189394 failed after UPGRADE_BASELINE committed actual pre-0058 ordinary/traced returns and passed header/movement/empty-line assertions. Snapshot generated SQL referenced to_jsonb(t) without FROM alias; ERROR column t does not exist, before migration 0058. Fix exactly one line by adding AS t to generated SELECT FROM clause. Preserve full all-table comparison, legacy retries, negative tests and new-writer coexistence; no migration/runtime/ACL/policy change. Both jobs must pass before 0059. No production access.

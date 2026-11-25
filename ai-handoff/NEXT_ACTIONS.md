@@ -602,3 +602,6 @@
 ## TEST-074 / TEST-075 — current
 - [x] Verify exact corrected 0058 full CI; add isolated actual 0057-to-0058 upgrade test job without altering existing migrations or foundation tests.
 - [ ] Verify both jobs at exact TEST-075 SHA, fix any failure. Then 0059 read-only exact receipt line reconciliation in existing capacity API; keep zero-line legacy fallback and no double count. No partial/non-sellable/refund activation or final financial policy. Next unused migration 0059. No operational access.
+
+## FIX-028B — 2026-11-25
+- TEST-076 / FIX-028B: exact TEST-075 run 45630535075 at 5ff26ddc69c7db6821362136b1a9670cd17f3156: foundation job 139262191015 completed SUCCESS (58 contiguous pairs, 86 tables, 67 PASS, all nine concurrency suites, 24 COGS races); independent return-upgrade job 139262189394 failed after UPGRADE_BASELINE committed actual pre-0058 ordinary/traced returns and passed header/movement/empty-line assertions. Snapshot generated SQL referenced to_jsonb(t) without FROM alias; ERROR column t does not exist, before migration 0058. Fix exactly one line by adding AS t to generated SELECT FROM clause. Preserve full all-table comparison, legacy retries, negative tests and new-writer coexistence; no migration/runtime/ACL/policy change. Both jobs must pass before 0059. No production access.

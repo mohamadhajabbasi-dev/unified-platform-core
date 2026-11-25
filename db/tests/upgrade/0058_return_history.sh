@@ -41,7 +41,7 @@ psql_ci < "$tmp/legacy.sql"
 # journals, memberships, decisions and immutable facts; synthetic data only.
 snapshot() {
  psql_ci <<'SQL'
-SELECT format('SELECT %L,COALESCE(jsonb_agg(to_jsonb(t) ORDER BY to_jsonb(t)::text),''[]''::jsonb) FROM %I.%I;',schemaname||'.'||tablename,schemaname,tablename)
+SELECT format('SELECT %L,COALESCE(jsonb_agg(to_jsonb(t) ORDER BY to_jsonb(t)::text),''[]''::jsonb) FROM %I.%I AS t;',schemaname||'.'||tablename,schemaname,tablename)
  FROM pg_tables WHERE schemaname NOT IN ('pg_catalog','information_schema')
  AND schemaname NOT LIKE 'pg_%' ORDER BY schemaname,tablename
 \gexec
