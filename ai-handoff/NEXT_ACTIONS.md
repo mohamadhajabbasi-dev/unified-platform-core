@@ -517,3 +517,8 @@
 ## TEST-059 / BUILD-026W — current
 - [x] Verify all 24 contention cases, implement 0051 read-only conservative period preflight.
 - [ ] Verify exact new CI SHA (51 SQL + nine concurrency, 24 COGS races, four guard tests), repair. Next atomic period closure with explicit cutoff semantics and tenant write barrier, preserve one close_period API and exact retries, review module coverage and historical as-of policy. No production access.
+
+
+## DESIGN-0052 — current
+- [x] Review existing mutation and lock paths; document tenant barrier and staged acceptance.
+- [ ] Verify 0051 exact run 45596926623 / aa77ac75e4245c908dad2a9c2744f65cfc8511c7 before new DDL. Then implement 0052 private tenant mutation barrier with two-direction real contention, independent tenant and no-runtime-grant tests, no public close API duplication. Integrate guard in existing close_period only after explicit cutoff/module coverage policy and regression tests. No production access.
