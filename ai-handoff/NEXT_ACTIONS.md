@@ -566,3 +566,8 @@
 ## TEST-067 / FIX-027A — current
 - [x] Inspect exact 0055 failed CI, isolate role-grant and membership fixture namespace and tenant scope; preserve all guards.
 - [ ] Verify exact new full CI SHA, especially independent committed late-cost close rejection. Repair further failure before any new migration. Then execute REVIEW-027A commit-expiry and pre-barrier timestamp observations and proceed with DESIGN-0054. No production or final financial policy changes. Next unused ID 0056.
+
+## REVIEW-027B — current
+- [x] Audit all 55 migration table declarations and return/refund dependencies; establish independent receipt/disposition line gap and compatibility matrix in inventory valuation design.
+- [ ] Verify FIX-027A run 45618642657 at 0f0614a49dd5ce236e88528d43afddde42b62c59; repair any failure before advancing.
+- [ ] Execute REVIEW-027A commit expiry and pre-barrier timing observations, then minimal 0056 only with exact composite FK/RLS/ACL/barrier and legacy compatibility. Keep existing unique order/payment constraints until cap and dependent paths are safe; no active partial valuation/refund or production access.

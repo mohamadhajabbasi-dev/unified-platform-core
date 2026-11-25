@@ -623,3 +623,6 @@
 
 ## FIX-027A — candidate / 2026-11-25
 - FIX-027A candidate: namespace temporal fixture role keys and scope EVERY role-grant/membership selection to exact two synthetic tenant IDs and three synthetic users. Assert isolated role/membership cardinalities, preserve PK and all existing assertions. No ON CONFLICT suppression, no changes to migrations, RLS, runtime or financial policy. Re-run full CI and prove independent committed late-cost rejection. Next unused 0056.
+
+## REVIEW-027B — 2026-11-25
+- REVIEW-027B: audited all 55 migration files at 0f0614a49dd5ce236e88528d43afddde42b62c59 for table declarations/return-refund references and reviewed active 0007,0009,0027,0050,0054 contracts. No equivalent independent return receipt/disposition line relation found; documented necessity, candidate composite FK design, full-return/replay/refund caller matrix, and barrier scope (returns covered, payment/refund not listed; journals covered). No executable changes while run 45618642657 in progress. Next verify full CI, then REVIEW-027A observations, then minimal 0056 with no financial activation. No production access.

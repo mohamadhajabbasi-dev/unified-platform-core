@@ -90,3 +90,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### FIX-027A — synthetic fixture isolation
 - Role keys are tenant-local, not globally unique. All committed concurrency fixture bootstrap queries must explicitly restrict tenant/user scope, even when names are namespaced. Preserve uniqueness constraints; do not suppress duplicate-grant failures. No runtime decision or policy change.
+
+### REVIEW-027B — independent event gap confirmed; proposal only
+- No current equivalent to a physical return receipt/disposition line was found in all 55 migrations. sales.return_items is a justified candidate dependent fact, not a new master; no table or writer added. Existing unique order/payment constraints and full-return/refund/replay semantics remain unchanged pending tested compatibility; final financial and quarantine policies still require approval.
