@@ -452,3 +452,8 @@
 ## TEST-045 / TEST-046 — current
 - [x] Verify 0042; extend current COGS harness to ten actual lock races, five per method.
 - [ ] Verify exact new CI SHA (42 SQL + nine concurrency, ten COGS race cases, four guard tests). Repair failures. Next canonical 0043 tenant-level inventory cost reconciliation, complex transfer chains and tracked valuation. No production access.
+
+
+## TEST-047 / BUILD-026O — current
+- [x] Verify ten COGS races; author 0043 tenant-level reconciliation.
+- [ ] Verify exact new CI SHA (43 SQL + nine concurrency, ten COGS race cases, four guard tests). Repair failures. Next complex transfer dependency capture, tracked valuation, accounting policy and period-close review. No production access.

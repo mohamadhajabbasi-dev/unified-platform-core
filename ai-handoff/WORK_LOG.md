@@ -472,3 +472,10 @@
 
 ## TEST-046 — candidate
 - TEST-046 candidate: extend same existing COGS concurrency harness with five additional moving-average two-session lock races (capture, COGS posting, paired transfer, reversal, return cost capture), using existing unused variant and separate synthetic asset/expense accounts, no duplicated fixture or migration. Expect exact retry counts/IDs, 1320 historical initial COGS, paired 330 transfer and return, 880 net inventory, 1320 net expense, no FIFO allocations, ten total journal headers across both scenarios and readiness checks in both warehouses. Tenant/permission and wrong-method checks. No runtime/DDL changes. Suite count remains 51; ten actual COGS races pending CI. No production access; next tenant-level reconciliation, complex chains, tracked valuation and policy approval.
+
+
+## TEST-047 / 2026-11-25
+- TEST-047: run 45475840661 job 138735731458 at b37d5aa5df13e211498a7b2c4d542d61814ac1d8 success; 42 migrations, 51 SQL/concurrency suites (42 SQL + nine concurrency), four migration guard tests; ten observed lock races, five FIFO and five moving-average, verified. 85 tables.
+
+## BUILD-026O
+- BUILD-026O: canonical 0043 tenant-wide read-only inventory reconciliation reuses existing per-scope diagnostics and canonical ledger, reports missing valuation policy even without facts, compares signed captured value to inventory-source asset journal net separately per currency, reports each inventory-related asset account and outside journal activity (including net-zero outside activity), explicit conservative tenant readiness assertion. No table, stored balance, account mapping or auto posting. Outside activity is a review flag, not necessarily erroneous; totals are currency-level comparison, NOT independently attributed expected balance per account, and not full financial certification or locked period close. Tests cover clean FIFO, missing facts, two currencies/methods, unconfigured scope, manual offset, tenant isolation and permission. New CI pending. Complex chain capture, tracked valuation, approved accounting and performance/period-lock review pending; no production access.
