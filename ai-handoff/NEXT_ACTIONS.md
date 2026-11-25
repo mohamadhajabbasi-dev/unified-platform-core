@@ -477,3 +477,8 @@
 ## DESIGN-0045 — current
 - [x] Review canonical tracked sources and document staged design, acceptance and limitations.
 - [ ] Verify TEST-050 exact SHA 9410c90335794e4b2b27b04278315deca3e2bc67 (or repair) before writing migration 0045. First 0045A read-only evidence via existing joins and tenant/permission gates, then phased tracked policy/replay/COGS. No production access.
+
+
+## TEST-051 / BUILD-026Q — current
+- [x] Verify TEST-050, document invalid timing, author 0045 traced evidence and monotonic timing fix.
+- [ ] Verify exact new CI SHA (45 SQL + nine concurrency, twelve COGS races, four guard tests); record valid timings; repair before proceeding to 0046 explicit tracked valuation policy and shared replay design. No production access.

@@ -450,3 +450,10 @@
 
 ## DESIGN-0045 — latest
 - DESIGN-0045: reviewed tracking policies, lots/serials, allocated receipt/transfer, reservation allocations, tracked return keys, existing cost facts, FIFO allocation and journal boundaries; added staged proposed trace valuation design and acceptance criteria to existing valuation design doc, no new table/migration/runtime change. Explicit provisional serial specific identification / lot-restricted FIFO, never equate FEFO with financial costing. First 0045 read-only trace evidence, then policy/replay/capture/journals in increments. TEST-050 run 45582369761 job 139095338216 at 9410c90335794e4b2b27b04278315deca3e2bc67 is in_progress; no new test pass claimed. No operational access.
+
+
+## TEST-051 — verified
+- TEST-051: TEST-050 run 45582369761 job 139095338216 at 9410c90335794e4b2b27b04278315deca3e2bc67 success; 44 migrations, 53 suites (44 SQL + nine concurrency), four guard tests and twelve COGS races. CHAIN_TIMING FIFO 1191ms capture/1170ms retry, moving-average -263ms capture (INVALID wall-clock discontinuity)/341ms retry. 85 tables. No production benchmark claim.
+
+## BUILD-026Q — latest
+- BUILD-026Q: 0045 read-only tracked_movement_evidence, one canonical movement lookup with four module/permission gates, exact traced identity, receipt/invoice, paired multi-line transfers, consumed sale allocation and full returned allocation/source evidence. Reject unsupported or missing/ambiguous evidence, tenant isolation; no cost fact, policy, journal or table writes. Tests cover split receipt/one invoice, four-line transfer, FEFO sale allocation, full return identity, unsupported adjustment and permissions. Also fix timing harness using monotonic_ns and nonnegative assertion; rerun timings. New CI pending. Valuation policy/engine/COGS still unsupported for tracked variants; no operational access.

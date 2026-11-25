@@ -244,6 +244,7 @@ DO \$\$ BEGIN
 END \$\$;
 RESET SESSION AUTHORIZATION;
 SQL
+monotonic_ms() { python3 -c 'import time; print(time.monotonic_ns() // 1000000)'; }
 # Two different entry points into one historical connected component must share the
 # same variant lock, without duplicating facts or posting any transfer journals.
 warehouse3=b6400000-0000-0000-0000-000000000004
@@ -287,24 +288,25 @@ BEGIN
  END LOOP;
 END \$\$;
 SQL
- start_ms=$(date +%s%3N)
+ start_ms=$(monotonic_ms)
  result=$(psql_ci <<SQL
 SET SESSION AUTHORIZATION upc_cogs_a;
 SET statement_timeout='60s';
 SELECT finance.capture_transfer_costs('$tid1','$variant');
 SQL
 )
- capture_ms=$(( $(date +%s%3N) - start_ms ))
+ capture_ms=$(( $(monotonic_ms) - start_ms ))
  [[ "$result" == 48 ]]
- start_ms=$(date +%s%3N)
+ start_ms=$(monotonic_ms)
  result=$(psql_ci <<SQL
 SET SESSION AUTHORIZATION upc_cogs_a;
 SET statement_timeout='60s';
 SELECT finance.capture_transfer_costs('$tid3','$variant');
 SQL
 )
- retry_ms=$(( $(date +%s%3N) - start_ms ))
+ retry_ms=$(( $(monotonic_ms) - start_ms ))
  [[ "$result" == 0 ]]
+ [[ "$capture_ms" -ge 0 && "$retry_ms" -ge 0 ]]
  echo "CHAIN_TIMING method=$method transfers=24 new_facts=48 capture_ms=$capture_ms retry_ms=$retry_ms"
  [[ "$(psql_ci -c "SELECT count(*)=61 AND sum(value_delta)=$expected AND sum(quantity_delta)=8 AND sum(quantity_delta) FILTER(WHERE warehouse_id='$warehouse')=5 AND sum(quantity_delta) FILTER(WHERE warehouse_id='$warehouse2')=2 AND sum(quantity_delta) FILTER(WHERE warehouse_id='$warehouse3')=1 AND sum(value_delta) FILTER(WHERE warehouse_id='$warehouse')=5*$unit AND sum(value_delta) FILTER(WHERE warehouse_id='$warehouse2')=2*$unit AND sum(value_delta) FILTER(WHERE warehouse_id='$warehouse3')=$unit FROM finance.movement_cost_facts WHERE tenant_id='$tenant' AND variant_id='$variant'")" == t ]]
  [[ "$(psql_ci -c "SELECT count(*)=28 AND bool_and(fo.quantity_delta=-tl.quantity AND fi.quantity_delta=tl.quantity AND fo.value_delta=-fi.value_delta) FROM inventory.transfer_lines tl JOIN finance.movement_cost_facts fo ON fo.tenant_id=tl.tenant_id AND fo.movement_id=tl.outgoing_movement_id JOIN finance.movement_cost_facts fi ON fi.tenant_id=tl.tenant_id AND fi.movement_id=tl.incoming_movement_id WHERE tl.tenant_id='$tenant' AND tl.variant_id='$variant'")" == t ]]
