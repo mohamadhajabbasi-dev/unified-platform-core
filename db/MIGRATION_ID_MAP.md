@@ -92,3 +92,8 @@ TEST-083: exact 0061 run 45643530975 at 27faa6a220cf327a2d60047c6b63cedd97aaca1a
 
 ## FIX-030A
 0062 remains authored, not verified. Run 45647070040 failed in acceptance test; corrected only table alias references. Next unused 0063 after successful CI.
+
+
+## TEST-085 / BUILD-030B
+TEST-085: exact correction SHA 843483533613e7d577cb6953d4f0c51827cf3247 run 45649134004 SUCCESS; foundation 139328451364, return-upgrade 139328451042 both SUCCESS. Logs: 62 contiguous pairs, 73 PASS suites, direct catalog count 88 base tables, site exact retry with two actual advisory waiters, conflict 23505 and one audit; 24 COGS races. Site/domain group now PARTIAL, not complete domain lifecycle. 23 verified prototype, 13 partial, 21 not implemented.
+0063_customer_tags.sql and matching test authored; candidate CI pending. Next unused 0064 after verification.

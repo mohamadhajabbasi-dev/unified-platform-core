@@ -98,6 +98,11 @@ jobs:
           PG_CONTAINER: ${{ job.services.postgres.id }}
         run: bash db/tests/concurrency/sites.sh
 
+      - name: Run concurrent CRM tag acceptance test
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/tests/concurrency/customer_tags.sh
+
       - name: Run concurrent COGS acceptance test
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}

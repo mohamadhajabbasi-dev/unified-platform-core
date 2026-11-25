@@ -660,3 +660,8 @@
 ## REVIEW-030B — current
 - [x] Verify intermediate 0062 correction job steps and design CRM tag relationship/test matrix in docs/CRM_CUSTOMER_TAG_DESIGN_FA.md.
 - [ ] Verify final exact run 45649134004 both jobs and logs (runtime base table count and actual site contention). If failed fix actual root cause. If PASS, update counts and sites_and_domains PARTIAL, then implement minimal 0063 tags/links per design, inspect module/ACL/locking and run exact SQL/concurrency CI. No tag-driven commercial/security/marketing rules or merge. No duplicate customer. Preserve existing gates; next unused 0063.
+
+
+## TEST-085 / BUILD-030B — current
+- [x] Verify exact 0062 CI; reuse prepared design commit; author 0063 and matched acceptance/concurrency tests.
+- [ ] Confirm 0063 SHA reachable from main; verify exact CI both jobs. If failed fix actual cause only. If success update verified group CRM tags/merge to PARTIAL and runtime counts; next unused 0064. Independent favorites/queues or counterparty design; preserve owner-gated policies and no legacy/production access.
