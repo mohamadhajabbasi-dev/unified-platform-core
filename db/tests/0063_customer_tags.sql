@@ -45,17 +45,34 @@ RESET SESSION AUTHORIZATION;
 SELECT set_config('upc.test_foreign_tag',:'btag',true);
 SET SESSION AUTHORIZATION upc_tag_a;
 DO $$
-DECLARE tid uuid; second_tag uuid; lid uuid; cust uuid:='d0630000-0000-0000-0000-000000000001'; before_facts jsonb; bad text; cmd text;
+DECLARE tid uuid; second_tag uuid; lid uuid; cust uuid:='d0630000-0000-0000-0000-000000000001'; before_facts jsonb; before_replay jsonb; replay_id uuid; bad text; cmd text;
 BEGIN
  tid:=crm.register_customer_tag('main','Synthetic tag');
  second_tag:=crm.register_customer_tag('second','Synthetic second');
  IF crm.register_customer_tag('main','Synthetic tag') IS DISTINCT FROM tid THEN RAISE EXCEPTION 'FAIL tag replay'; END IF;
  IF crm.set_customer_tag(cust,tid,false) IS NOT NULL THEN RAISE EXCEPTION 'FAIL missing detach'; END IF;
+ -- Separate volatile mutations from assertions: a subquery in the same
+ -- expression can use its pre-mutation snapshot, and OR order is not guaranteed.
  lid:=crm.set_customer_tag(cust,tid,true);
- IF lid IS NULL OR crm.set_customer_tag(cust,tid,true) IS DISTINCT FROM lid THEN RAISE EXCEPTION 'FAIL attach retry'; END IF;
- IF crm.set_customer_tag(cust,tid,false) IS DISTINCT FROM lid OR crm.set_customer_tag(cust,tid,false) IS DISTINCT FROM lid
- OR NOT EXISTS(SELECT 1 FROM crm.customer_tag_links WHERE link_id=lid AND NOT is_active) THEN RAISE EXCEPTION 'FAIL detach retry'; END IF;
- IF crm.set_customer_tag(cust,tid,true) IS DISTINCT FROM lid THEN RAISE EXCEPTION 'FAIL reattach identity'; END IF;
+ IF lid IS NULL OR NOT EXISTS(SELECT 1 FROM crm.customer_tag_links WHERE link_id=lid AND is_active)
+ THEN RAISE EXCEPTION 'FAIL initial attach state'; END IF;
+ SELECT to_jsonb(l) INTO STRICT before_replay FROM crm.customer_tag_links AS l WHERE l.link_id=lid;
+ replay_id:=crm.set_customer_tag(cust,tid,true);
+ IF replay_id IS DISTINCT FROM lid
+ OR before_replay IS DISTINCT FROM (SELECT to_jsonb(l) FROM crm.customer_tag_links AS l WHERE l.link_id=lid)
+ THEN RAISE EXCEPTION 'FAIL attach retry identity or unchanged row'; END IF;
+ replay_id:=crm.set_customer_tag(cust,tid,false);
+ IF replay_id IS DISTINCT FROM lid THEN RAISE EXCEPTION 'FAIL detach identity'; END IF;
+ IF NOT EXISTS(SELECT 1 FROM crm.customer_tag_links WHERE link_id=lid AND NOT is_active)
+ THEN RAISE EXCEPTION 'FAIL detach persisted state'; END IF;
+ SELECT to_jsonb(l) INTO STRICT before_replay FROM crm.customer_tag_links AS l WHERE l.link_id=lid;
+ replay_id:=crm.set_customer_tag(cust,tid,false);
+ IF replay_id IS DISTINCT FROM lid
+ OR before_replay IS DISTINCT FROM (SELECT to_jsonb(l) FROM crm.customer_tag_links AS l WHERE l.link_id=lid)
+ THEN RAISE EXCEPTION 'FAIL detach retry identity or unchanged row'; END IF;
+ replay_id:=crm.set_customer_tag(cust,tid,true);
+ IF replay_id IS DISTINCT FROM lid OR NOT EXISTS(SELECT 1 FROM crm.customer_tag_links WHERE link_id=lid AND is_active)
+ THEN RAISE EXCEPTION 'FAIL reattach identity or persisted state'; END IF;
  PERFORM crm.set_customer_tag(cust,second_tag,true);
  PERFORM crm.set_customer_tag('d0630000-0000-0000-0000-000000000003',tid,true);
  IF (SELECT count(*) FROM crm.customer_tags)<>2 OR (SELECT count(*) FROM crm.customer_tag_links WHERE is_active)<>3

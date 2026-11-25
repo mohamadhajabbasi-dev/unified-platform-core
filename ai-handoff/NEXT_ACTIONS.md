@@ -665,3 +665,8 @@
 ## TEST-085 / BUILD-030B — current
 - [x] Verify exact 0062 CI; reuse prepared design commit; author 0063 and matched acceptance/concurrency tests.
 - [ ] Confirm 0063 SHA reachable from main; verify exact CI both jobs. If failed fix actual cause only. If success update verified group CRM tags/merge to PARTIAL and runtime counts; next unused 0064. Independent favorites/queues or counterparty design; preserve owner-gated policies and no legacy/production access.
+
+
+## TEST-086 / FIX-030B — current
+- [x] Inspect exact failed 0063 run 45650762864, separate volatile state transitions from acceptance assertions and strengthen exact replay row checks.
+- [ ] Verify correction branch ref and exact run, both jobs plus actual CRM create/attach contention and catalog count. If failed, diagnose precise new assertion. If PASS, promote exact branch changes to main preserving history (fast-forward or verified PR), verify resulting main SHA and required CI before next development. Last verified 0062. No 0064 until full success. All previous policy and production gates remain.
