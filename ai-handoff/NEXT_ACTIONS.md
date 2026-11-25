@@ -544,3 +544,8 @@
 ## TEST-064 / TEST-065 — current
 - [x] Verify exact TEST-064 CI; extend existing suite with rollback-only late capture and expiry observations, and targeted privileged role/grant assertions.
 - [ ] Verify TEST-065 exact new CI SHA, repair failures first. Review timestamp-before-row-barrier risk with controlled synthetic test if necessary; document unresolved cutoff/as-of, late capture and expiry policy for owner rather than silently change accounting. Then design partial/damaged/expired returns from existing canonical sales/inventory/finance structures. Next unused migration ID 0054. No operational access.
+
+## DESIGN-0054 — current
+- [x] Review existing return/refund and cost sources; document staged partial/damaged/expired design, open policies, acceptance and no duplicate masters.
+- [ ] Verify TEST-065 run 45606515589 at 7ad0480313c54bc7160f14786dccaa89e5859dbd; repair before executable changes.
+- [ ] Audit full return/refund callers and constraints against latest migration tree, then first minimal 0054 read-only evidence or independently justified line fact; keep unapproved valuation/refund/disposition choices provisional and fail closed. Time-before-barrier risk remains unverified; as-of and temporal policy still open. Do not start financial activation or production access. Next unused migration 0054.

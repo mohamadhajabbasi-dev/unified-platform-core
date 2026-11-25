@@ -75,3 +75,6 @@ Owner's latest request **explicitly permits read-only inspection of GitHub sourc
 
 ### TEST-065 — temporal characterization only (no new policy approval)
 - Preserve 0053 runtime code. Late cost capture and within-statement module expiry observations are characterization tests, not desired accounting/security policy; if behavior changes, review and update the observation rather than treating current behavior as an invariant. Privileged login/grant checks cover only selected synthetic roles/relations, not all production operations. Owner approval remains required for final effective-date, cutoff and entitlement semantics.
+
+### DESIGN-0054 — return design proposal (not owner-approved)
+- Reuse canonical return/refund headers, order/items, stock ledger, cost facts, allocations and journal. Per-return line fact candidate only for independent receipt/disposition; validate all existing structures first. Preserve cap/identity/availability and legacy full-return retries. Final disposition, partial cost allocation/rounding, effective date and refund policies remain open; no runtime or production change.

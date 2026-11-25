@@ -593,3 +593,9 @@
 
 ## TEST-065 — candidate / 2026-11-25
 - TEST-065 candidate: characterize actual existing late cost capture in rollback-only historical fixture and statement-time inventory entitlement expiry across actual close (rolled back, fresh statement denies, restore entitlement and retain positive close). Check four actual synthetic logins for SUPERUSER/BYPASSRLS/CREATEROLE, executor membership, direct table/column mutation privileges on eight protected relations. No new runtime behavior/policy, table or migration; new CI pending. Time-at-row-barrier boundary remains untested; historical as-of and expiry/late-cost final policy unapproved.
+
+## TEST-065 — pending observation / 2026-11-25
+- TEST-065 run 45606515589 at 7ad0480313c54bc7160f14786dccaa89e5859dbd still in progress; at last job inspection guard, migrations, SQL and eight concurrency suites passed; final COGS pending.
+
+## DESIGN-0054 — 2026-11-25
+- DESIGN-0054 / 2026-11-25: Reviewed current full-return/refund, order locks and item/reservation identity, tracked sales and expiry, FIFO/moving-average/traced reversal and replay, current financial posting, warehouse transfer and period barrier. Added candidate phased partial/damaged/expired return design to existing inventory valuation design; retain canonical sales.returns, sales.refunds, stock_ledger, cost facts, FIFO allocations and journal entries. Independent per-return line fact is proposed only if validated as necessary; no new DDL/table/function/test. Preserve full-return contracts and exact retry; physical receipt, refund and financial valuation are distinct, not automatically coupled. Disposition, partial FIFO cost allocation, impairment, refund calculation and period-effective policy require approval before financial activation. No production access.
