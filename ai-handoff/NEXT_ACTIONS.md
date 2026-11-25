@@ -497,3 +497,8 @@
 ## TEST-054 / BUILD-026T — current
 - [x] Verify 0047, author 0048 multi-line traced transfer capture.
 - [ ] Verify exact CI SHA (48 SQL + nine concurrency, twelve COGS races, four guard tests), repair. Next 0049 traced COGS and then return reversal/replay/readiness. No production access.
+
+
+## TEST-055 / BUILD-026U — current
+- [x] Verify 0048, author 0049 shared traced COGS and scoped readiness.
+- [ ] Verify exact CI SHA (49 SQL + nine concurrency, twelve COGS races, four guard tests), repair. Next 0050 tracked full-return reversal and historical cost replay, reconciliation and traced concurrency. No production access.

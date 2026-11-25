@@ -478,3 +478,10 @@
 
 ## BUILD-026T — latest
 - BUILD-026T: 0048 extends same replay and connected capture for tracked transfer pairs, multi-line same variant via existing header FK, exact lot/serial evidence and original receipt identity, no transfer journal or new table. Tracked return replay and COGS posting remain blocked. Tests cover mixed lot/serial multi-line A-B-C-A, rollback with later uninvoiced receipt, exact retries, remote FEFO and serial sale provenance, conserved value and tenant permissions. Existing 0047 isolated-capture rollback assertion retained (now fails because missing peer). New CI pending; no operational access.
+
+
+## TEST-055 — verified
+- TEST-055: run 45587060563 job 139111239826 at b571a3205323205313177954cf8d55b8a5488f27 success; 48 migrations, 57 suites (48 SQL + nine concurrency), four guard tests and twelve COGS races. Traced multiline transfer chain verified. CHAIN_TIMING FIFO 777/765 ms, moving_average 258/253 ms, synthetic. 85 tables.
+
+## BUILD-026U — latest
+- BUILD-026U: 0049 extends existing post_inventory_cogs and inventory_cost_issues; traced sale identified by exact 0045 evidence, same order/variant locks, confirmed prefix replay and exact source allocations required before writing one journal per sale movement using existing cogs key. Same asset/expense scope and original invoice debit plus exact lot/serial identity. No duplicate writer/table. Readiness now accepts supported traced receipt/sale/transfer histories and still blocks traced returns; replay checks remain. Test on multi-hop lot and serial sale plus a second order with two lot allocations, four COGS journals, exact/conflicting retries, wrong account/method and transfer rejection, tenant-level conservation 680 inventory/740 expense, permissions. 0046 obsolete unsupported receipt diagnostic assertion updated to purchase_invoice_missing. Traced reversal/return replay still pending. New CI pending. No production access.

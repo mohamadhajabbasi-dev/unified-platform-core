@@ -132,7 +132,7 @@ BEGIN
  BEGIN PERFORM finance.capture_movement_costs(w,sv); RAISE EXCEPTION 'FAIL unconfirmed tracked capture'; EXCEPTION WHEN check_violation THEN NULL; END;
  IF EXISTS(SELECT 1 FROM finance.movement_cost_facts) OR EXISTS(SELECT 1 FROM finance.fifo_cost_allocations) OR EXISTS(SELECT 1 FROM finance.journal_entries)
  THEN RAISE EXCEPTION 'FAIL policy wrote financial facts'; END IF;
- IF NOT EXISTS(SELECT 1 FROM finance.tenant_inventory_cost_issues() i WHERE i.variant_id=v AND i.issue_code='unsupported_movement')
+ IF NOT EXISTS(SELECT 1 FROM finance.tenant_inventory_cost_issues() i WHERE i.variant_id=v AND i.issue_code='purchase_invoice_missing')
  OR NOT EXISTS(SELECT 1 FROM finance.tenant_inventory_cost_issues() i WHERE i.variant_id=late_v AND i.issue_code='valuation_policy_missing')
  THEN RAISE EXCEPTION 'FAIL pending tracked financial readiness hidden'; END IF;
 END $$;
