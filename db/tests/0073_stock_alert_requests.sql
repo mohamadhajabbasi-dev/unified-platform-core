@@ -108,22 +108,22 @@ INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by
 INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
  SELECT 'a0730000-0000-0000-0000-000000000001',module_id,false,'b0730000-0000-0000-0000-000000000001','Synthetic disabled' FROM platform.modules WHERE module_key='inventory';
 SET SESSION AUTHORIZATION upc_stock_alert_a;
-DO $ BEGIN
+DO $$ BEGIN
  IF EXISTS(SELECT 1 FROM catalog.stock_alert_subscriptions) THEN RAISE EXCEPTION 'FAIL disabled inventory read'; END IF;
  BEGIN PERFORM catalog.set_stock_alert_request('d0730000-0000-0000-0000-000000000001','e0730000-0000-0000-0000-000000000001',true); RAISE EXCEPTION 'FAIL disabled inventory write'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
-END $;
+END $$;
 RESET SESSION AUTHORIZATION;
 INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
  SELECT 'a0730000-0000-0000-0000-000000000001',module_id,true,'b0730000-0000-0000-0000-000000000001','Synthetic reenable' FROM platform.modules WHERE module_key='inventory';
 DELETE FROM iam.role_grants WHERE tenant_id='a0730000-0000-0000-0000-000000000001' AND permission_key='inventory.read';
 SET SESSION AUTHORIZATION upc_stock_alert_a;
-DO $ BEGIN
+DO $$ BEGIN
  IF EXISTS(SELECT 1 FROM catalog.stock_alert_subscriptions) THEN RAISE EXCEPTION 'FAIL missing inventory permission'; END IF;
  BEGIN PERFORM catalog.set_stock_alert_request('d0730000-0000-0000-0000-000000000001','e0730000-0000-0000-0000-000000000001',true); RAISE EXCEPTION 'FAIL missing inventory write'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
-END $;
+END $$;
 RESET SESSION AUTHORIZATION;
 SET SESSION AUTHORIZATION upc_stock_alert_b;
-DO $ BEGIN
+DO $$ BEGIN
  IF (SELECT count(*) FROM catalog.stock_alert_subscriptions)<>1 OR NOT EXISTS(SELECT 1 FROM catalog.stock_alert_subscriptions WHERE variant_id='e0730000-0000-0000-0000-000000000002' AND customer_id='d0730000-0000-0000-0000-000000000002') THEN RAISE EXCEPTION 'FAIL B scope'; END IF;
 END $$;
 RESET SESSION AUTHORIZATION;
