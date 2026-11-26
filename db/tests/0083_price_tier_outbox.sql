@@ -101,7 +101,7 @@ INSERT INTO catalog.price_entries(tenant_id,price_id,variant_id,price_list_id,am
 INSERT INTO catalog.price_quantity_tiers(tenant_id,price_id,quantity_range,tier_amount)
  VALUES(iam.current_tenant_id(),'d0830000-0000-0000-0000-000000000012',int8range(5,10,'[)'),70);
 RESET SESSION AUTHORIZATION;
-DO $
+DO $$
 DECLARE a uuid:='a0830000-0000-0000-0000-000000000001'; b uuid:='a0830000-0000-0000-0000-000000000002';
 BEGIN
  IF (SELECT count(*) FROM ops.outbox_events WHERE tenant_id=a AND event_kind='catalog.price_list.changed')<>4
