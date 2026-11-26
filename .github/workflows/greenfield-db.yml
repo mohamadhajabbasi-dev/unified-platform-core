@@ -41,13 +41,12 @@ jobs:
           set -euo pipefail
           export LC_ALL=C
           for test in db/tests/*.sql; do
+            case "$(basename "$test")" in
+              0078_price_outbox.sql|0079_inventory_outbox.sql) continue ;; # Historical exact contracts run separately at 0081.
+            esac
             echo "Testing $test"
             docker exec -i "$PG_CONTAINER" psql -X -U postgres -d upc_greenfield_test -v ON_ERROR_STOP=1 < "$test"
           done
-      - name: Run concurrent transactional price outbox acceptance test
-        env:
-          PG_CONTAINER: ${{ job.services.postgres.id }}
-        run: bash db/tests/concurrency/price_outbox.sh
 
       - name: Run concurrent identity acceptance test
         env:
@@ -171,10 +170,6 @@ jobs:
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}
         run: bash db/tests/concurrency/sla_policies.sh
-      - name: Run concurrent inventory outbox acceptance test
-        env:
-          PG_CONTAINER: ${{ job.services.postgres.id }}
-        run: bash db/tests/concurrency/inventory_outbox.sh
       - name: Run concurrent support feedback acceptance test
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}
@@ -183,6 +178,10 @@ jobs:
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}
         run: bash db/tests/concurrency/shipping_zones.sh
+      - name: Run concurrent price-list outbox acceptance test
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/tests/concurrency/price_list_outbox.sh
 
   return-upgrade:
     runs-on: ubuntu-latest
@@ -648,3 +647,49 @@ jobs:
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}
         run: bash db/tests/upgrade/0081_shipping_zones.sh
+
+  price-list-outbox-upgrade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: upc_greenfield_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres -d upc_greenfield_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Validate migration IDs and matching SQL tests
+        run: python3 db/check_migrations.py
+      - name: Verify committed price-list outbox upgrade
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/tests/upgrade/0082_price_list_outbox.sh
+
+  historical-outbox:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: upc_greenfield_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres -d upc_greenfield_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Validate migration IDs and matching SQL tests
+        run: python3 db/check_migrations.py
+      - name: Verify unchanged historical outbox contracts at 0081
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/ci/test_historical_outbox.sh
