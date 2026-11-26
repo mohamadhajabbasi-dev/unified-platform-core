@@ -175,6 +175,10 @@ jobs:
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}
         run: bash db/tests/concurrency/inventory_outbox.sh
+      - name: Run concurrent support feedback acceptance test
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/tests/concurrency/support_feedback.sh
 
   return-upgrade:
     runs-on: ubuntu-latest
@@ -594,3 +598,26 @@ jobs:
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}
         run: bash db/tests/upgrade/0079_inventory_outbox.sh
+
+  support-feedback-upgrade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: upc_greenfield_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres -d upc_greenfield_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Validate migration IDs and matching SQL tests
+        run: python3 db/check_migrations.py
+      - name: Verify committed support feedback upgrade
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/tests/upgrade/0080_support_feedback.sh
