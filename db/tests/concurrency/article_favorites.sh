@@ -7,11 +7,11 @@ trap 'rm -rf "$tmp"' EXIT
 psql_ci <<'SQL'
 CREATE ROLE upc_article_favorite_race LOGIN NOSUPERUSER NOBYPASSRLS;
 GRANT upc_runtime TO upc_article_favorite_race;
-INSERT INTO core.tenants(tenant_id,tenant_key,display_name) VALUES('a0750000-0000-0000-0000-000000000099','favorite-race','Synthetic race');
-INSERT INTO core.users(user_id,identity_issuer,identity_subject) VALUES('b0750000-0000-0000-0000-000000000099','test','favorite-race');
+INSERT INTO core.tenants(tenant_id,tenant_key,display_name) VALUES('a0750000-0000-0000-0000-000000000099','article-favorite-race','Synthetic race');
+INSERT INTO core.users(user_id,identity_issuer,identity_subject) VALUES('b0750000-0000-0000-0000-000000000099','test','article-favorite-race');
 INSERT INTO iam.memberships(tenant_id,user_id) VALUES('a0750000-0000-0000-0000-000000000099','b0750000-0000-0000-0000-000000000099');
 INSERT INTO iam.db_principals VALUES('upc_article_favorite_race','a0750000-0000-0000-0000-000000000099','b0750000-0000-0000-0000-000000000099');
-INSERT INTO iam.roles(tenant_id,role_id,role_key) VALUES('a0750000-0000-0000-0000-000000000099','c0750000-0000-0000-0000-000000000099','favorite-race');
+INSERT INTO iam.roles(tenant_id,role_id,role_key) VALUES('a0750000-0000-0000-0000-000000000099','c0750000-0000-0000-0000-000000000099','article-favorite-race');
 INSERT INTO iam.role_grants SELECT 'a0750000-0000-0000-0000-000000000099','c0750000-0000-0000-0000-000000000099',permission_key FROM iam.permissions WHERE permission_key IN ('crm.read','content.read','content.favorites.read','content.favorites.write');
 INSERT INTO iam.membership_roles VALUES('a0750000-0000-0000-0000-000000000099','b0750000-0000-0000-0000-000000000099','c0750000-0000-0000-0000-000000000099');
 INSERT INTO crm.customers(tenant_id,customer_id,display_name) VALUES('a0750000-0000-0000-0000-000000000099','d0750000-0000-0000-0000-000000000099','Synthetic');

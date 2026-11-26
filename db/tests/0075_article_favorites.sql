@@ -8,9 +8,9 @@ CREATE ROLE upc_article_favorite_unmapped LOGIN NOSUPERUSER NOBYPASSRLS;
 CREATE ROLE upc_article_favorite_none LOGIN NOSUPERUSER NOBYPASSRLS;
 GRANT upc_runtime TO upc_article_favorite_a,upc_article_favorite_b,upc_article_favorite_reader,upc_article_favorite_nocrm,upc_article_favorite_unmapped,upc_article_favorite_none;
 INSERT INTO core.tenants(tenant_id,tenant_key,display_name) VALUES
- ('a0750000-0000-0000-0000-000000000001','favorite-a','Synthetic A'),('a0750000-0000-0000-0000-000000000002','favorite-b','Synthetic B');
+ ('a0750000-0000-0000-0000-000000000001','article-favorite-a','Synthetic A'),('a0750000-0000-0000-0000-000000000002','article-favorite-b','Synthetic B');
 INSERT INTO core.users(user_id,identity_issuer,identity_subject)
- SELECT ('b0750000-0000-0000-0000-00000000000'||i)::uuid,'test','favorite-'||i FROM generate_series(1,5) i;
+ SELECT ('b0750000-0000-0000-0000-00000000000'||i)::uuid,'test','article-favorite-'||i FROM generate_series(1,5) i;
 INSERT INTO iam.memberships(tenant_id,user_id)
  SELECT CASE WHEN i=2 THEN 'a0750000-0000-0000-0000-000000000002'::uuid ELSE 'a0750000-0000-0000-0000-000000000001'::uuid END,
  ('b0750000-0000-0000-0000-00000000000'||i)::uuid FROM generate_series(1,5) i;
@@ -19,23 +19,23 @@ INSERT INTO iam.db_principals(login_role,tenant_id,user_id)
  CASE WHEN i=2 THEN 'a0750000-0000-0000-0000-000000000002'::uuid ELSE 'a0750000-0000-0000-0000-000000000001'::uuid END,
  ('b0750000-0000-0000-0000-00000000000'||i)::uuid FROM generate_series(1,5) i;
 INSERT INTO iam.roles(tenant_id,role_id,role_key)
- SELECT tenant_id,('c0750000-0000-0000-0000-00000000000'||right(user_id::text,1))::uuid,'favorite-'||right(user_id::text,1)
+ SELECT tenant_id,('c0750000-0000-0000-0000-00000000000'||right(user_id::text,1))::uuid,'article-favorite-'||right(user_id::text,1)
  FROM iam.memberships WHERE tenant_id IN ('a0750000-0000-0000-0000-000000000001','a0750000-0000-0000-0000-000000000002');
 INSERT INTO iam.membership_roles SELECT m.tenant_id,m.user_id,r.role_id FROM iam.memberships m JOIN iam.roles r
- ON r.tenant_id=m.tenant_id AND r.role_key='favorite-'||right(m.user_id::text,1)
+ ON r.tenant_id=m.tenant_id AND r.role_key='article-favorite-'||right(m.user_id::text,1)
  WHERE m.tenant_id IN ('a0750000-0000-0000-0000-000000000001','a0750000-0000-0000-0000-000000000002');
 INSERT INTO iam.role_grants SELECT r.tenant_id,r.role_id,p.permission_key FROM iam.roles r CROSS JOIN iam.permissions p
  WHERE r.tenant_id IN ('a0750000-0000-0000-0000-000000000001','a0750000-0000-0000-0000-000000000002') AND (
- (r.role_key IN ('favorite-1','favorite-2') AND p.permission_key IN ('crm.read','content.read','content.favorites.read','content.favorites.write','ops.audit.read'))
- OR (r.role_key='favorite-3' AND p.permission_key IN ('crm.read','content.read','content.favorites.read'))
- OR (r.role_key='favorite-4' AND p.permission_key IN ('content.favorites.read','content.favorites.write')));
+ (r.role_key IN ('article-favorite-1','article-favorite-2') AND p.permission_key IN ('crm.read','content.read','content.favorites.read','content.favorites.write','ops.audit.read'))
+ OR (r.role_key='article-favorite-3' AND p.permission_key IN ('crm.read','content.read','content.favorites.read'))
+ OR (r.role_key='article-favorite-4' AND p.permission_key IN ('content.favorites.read','content.favorites.write')));
 INSERT INTO crm.customers(tenant_id,customer_id,display_name) VALUES
  ('a0750000-0000-0000-0000-000000000001','d0750000-0000-0000-0000-000000000001','Synthetic A'),
  ('a0750000-0000-0000-0000-000000000001','d0750000-0000-0000-0000-000000000003','Synthetic A2'),
  ('a0750000-0000-0000-0000-000000000002','d0750000-0000-0000-0000-000000000002','Synthetic B');
 INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
  SELECT t.tenant_id,m.module_id,true,'b0750000-0000-0000-0000-000000000001','Synthetic fixture' FROM core.tenants t CROSS JOIN platform.modules m
- WHERE t.tenant_key IN ('favorite-a','favorite-b') AND m.module_key IN ('crm','content');
+ WHERE t.tenant_key IN ('article-favorite-a','article-favorite-b') AND m.module_key IN ('crm','content');
 INSERT INTO content.articles(tenant_id,article_id,slug,title,body) VALUES ('a0750000-0000-0000-0000-000000000001','e0750000-0000-0000-0000-000000000001','synthetic-a','Synthetic A','Text A'),('a0750000-0000-0000-0000-000000000002','e0750000-0000-0000-0000-000000000002','synthetic-b','Synthetic B','Text B'),('a0750000-0000-0000-0000-000000000001','e0750000-0000-0000-0000-000000000003','synthetic-a2','Synthetic A2','Text A2');
 SET SESSION AUTHORIZATION upc_article_favorite_b;
 SELECT content.set_article_favorite('d0750000-0000-0000-0000-000000000002','e0750000-0000-0000-0000-000000000002',true);
