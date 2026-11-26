@@ -20,15 +20,15 @@ INSERT INTO iam.db_principals VALUES
  ('upc_stockbox_b','a0790000-0000-0000-0000-000000000002','b0790000-0000-0000-0000-000000000002'),
  ('upc_stockbox_reader','a0790000-0000-0000-0000-000000000001','b0790000-0000-0000-0000-000000000003');
 INSERT INTO iam.roles(tenant_id,role_key) VALUES
- ('a0790000-0000-0000-0000-000000000001','inventory-editor'),
- ('a0790000-0000-0000-0000-000000000002','inventory-editor'),
- ('a0790000-0000-0000-0000-000000000001','inventory-reader');
+ ('a0790000-0000-0000-0000-000000000001','stockbox-editor'),
+ ('a0790000-0000-0000-0000-000000000002','stockbox-editor'),
+ ('a0790000-0000-0000-0000-000000000001','stockbox-reader');
 INSERT INTO iam.role_grants SELECT r.tenant_id,r.role_id,p.permission_key FROM iam.roles r CROSS JOIN iam.permissions p
- WHERE r.role_key='inventory-editor' AND p.permission_key LIKE 'inventory.%';
-INSERT INTO iam.role_grants SELECT tenant_id,role_id,'inventory.read' FROM iam.roles WHERE role_key='inventory-reader';
+ WHERE r.tenant_id IN ('a0790000-0000-0000-0000-000000000001','a0790000-0000-0000-0000-000000000002') AND r.role_key='stockbox-editor' AND p.permission_key LIKE 'inventory.%';
+INSERT INTO iam.role_grants SELECT tenant_id,role_id,'inventory.read' FROM iam.roles WHERE tenant_id='a0790000-0000-0000-0000-000000000001' AND role_key='stockbox-reader';
 INSERT INTO iam.membership_roles SELECT m.tenant_id,m.user_id,r.role_id FROM iam.memberships m JOIN iam.roles r USING(tenant_id)
- WHERE (m.user_id='b0790000-0000-0000-0000-000000000003' AND r.role_key='inventory-reader')
- OR (m.user_id<>'b0790000-0000-0000-0000-000000000003' AND r.role_key='inventory-editor');
+ WHERE m.tenant_id IN ('a0790000-0000-0000-0000-000000000001','a0790000-0000-0000-0000-000000000002') AND ((m.user_id='b0790000-0000-0000-0000-000000000003' AND r.role_key='stockbox-reader')
+ OR (m.user_id<>'b0790000-0000-0000-0000-000000000003' AND r.role_key='stockbox-editor'));
 INSERT INTO platform.tenant_module_grants(tenant_id,module_id,enabled,decided_by,reason)
  SELECT t.tenant_id,m.module_id,true,'b0790000-0000-0000-0000-000000000001','Synthetic test'
  FROM core.tenants t CROSS JOIN platform.modules m WHERE t.tenant_key IN ('stockbox-a','stockbox-b') AND m.module_key='inventory';
