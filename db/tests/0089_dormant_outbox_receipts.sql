@@ -36,7 +36,7 @@ DECLARE a uuid:='a0890000-0000-0000-0000-000000000001'; b uuid:='a0890000-0000-0
 BEGIN
  SELECT event_id INTO STRICT ea FROM ops.outbox_events WHERE tenant_id=a AND event_kind='catalog.brand.changed';
  SELECT event_id INTO STRICT eb FROM ops.outbox_events WHERE tenant_id=b AND event_kind='catalog.brand.changed';
- SELECT jsonb_agg(to_jsonb(e) ORDER BY tenant_id,event_id) INTO prior FROM ops.outbox_events WHERE tenant_id IN(a,b);
+ SELECT jsonb_agg(to_jsonb(e) ORDER BY tenant_id,event_id) INTO prior FROM ops.outbox_events AS e WHERE tenant_id IN(a,b);
  INSERT INTO ops.outbox_consumer_receipts(tenant_id,consumer_id,event_id) VALUES(a,ca,ea),(a,ca2,ea),(b,cb,eb);
  BEGIN INSERT INTO ops.outbox_consumer_receipts(tenant_id,consumer_id,event_id) VALUES(a,ca,ea);
   RAISE EXCEPTION 'FAIL duplicate receipt'; EXCEPTION WHEN unique_violation THEN NULL; END;
@@ -54,7 +54,7 @@ BEGIN
   RAISE EXCEPTION 'synthetic rollback' USING ERRCODE='P0002'; EXCEPTION WHEN no_data_found THEN NULL; END;
  IF (SELECT count(*) FROM ops.outbox_consumers WHERE tenant_id IN(a,b))<>3
  OR (SELECT count(*) FROM ops.outbox_consumer_receipts WHERE tenant_id IN(a,b))<>3
- OR prior IS DISTINCT FROM (SELECT jsonb_agg(to_jsonb(e) ORDER BY tenant_id,event_id) FROM ops.outbox_events WHERE tenant_id IN(a,b))
+ OR prior IS DISTINCT FROM (SELECT jsonb_agg(to_jsonb(e) ORDER BY tenant_id,event_id) FROM ops.outbox_events AS e WHERE tenant_id IN(a,b))
  THEN RAISE EXCEPTION 'FAIL rollback or existing event mutation'; END IF;
  FOREACH rel IN ARRAY ARRAY['ops.outbox_consumers'::regclass,'ops.outbox_consumer_receipts'::regclass] LOOP
   IF NOT EXISTS(SELECT 1 FROM pg_class WHERE oid=rel AND relrowsecurity AND relforcerowsecurity)
