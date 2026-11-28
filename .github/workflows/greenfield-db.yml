@@ -1339,3 +1339,27 @@ jobs:
         env:
           PG_CONTAINER: ${{ job.services.postgres.id }}
         run: bash db/tests/upgrade/0105_outbox_retry_backoff.sh
+
+
+  outbox-worker-recovery-upgrade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: upc_greenfield_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres -d upc_greenfield_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Validate migration IDs and matching SQL tests
+        run: python3 db/check_migrations.py
+      - name: Verify committed upgrade and real disposable worker recovery
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: bash db/tests/upgrade/0106_outbox_worker_recovery.sh
